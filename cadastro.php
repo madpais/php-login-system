@@ -96,32 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="style.css">
     <title>Cadastro de Usuário</title>
     <script src="script.js?v=1"></script>
-    <style>
-        .error-list {
-            background-color: rgba(231, 76, 60, 0.2);
-            border-left: 4px solid #e74c3c;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            color: #fff;
-        }
-        
-        .error-list ul {
-            margin: 5px 0 5px 20px;
-            padding: 0;
-        }
-        
-        .form-container {
-            max-width: 400px;
-        }
-        
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-    </style>
+
 </head>
 <body>
     <section class="container">
@@ -148,7 +123,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="password" name="confirmar_senha" placeholder="CONFIRMAR SENHA" />
                     <button type="submit" class="opacity">CADASTRAR</button>
                 </form>
-                <a href="login.php" class="back-link opacity">VOLTAR PARA LOGIN</a>
+                <div class="register-forget opacity">
+                    <a href="login.php">VOLTAR PARA LOGIN</a>
+                </div>
             </div>
             <div class="circle circle-two"></div>
         </div>
