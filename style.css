@@ -38,8 +38,9 @@ h1 {
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 2rem 0;
 }
 
 .login-container {
@@ -159,7 +160,7 @@ h1 {
 .register-forget {
     margin: 1rem 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .register-forget a {

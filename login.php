@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt->execute();
                     
                     // Redirecionar para a página principal
-                    header("Location: dashboard.php");
+                    header("Location: index.php");
                     exit;
                 } else {
                     // Senha incorreta
