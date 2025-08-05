@@ -1,9 +1,10 @@
 <?php
 // Configurações de conexão com o banco de dados
-define('DB_HOST', '127.0.0.1:3306'); // Host do banco de dados
-define('DB_USER', 'root');      // Usuário do MySQL (altere conforme necessário)
-define('DB_PASS', '');          // Senha do MySQL (altere conforme necessário)
-define('DB_NAME', 'db_daydreamming_project');  // Nome do banco de dados
+// Usa variáveis de ambiente do Docker ou valores padrão para desenvolvimento local
+define('DB_HOST', $_ENV['DB_HOST'] ?? '127.0.0.1:3306'); // Host do banco de dados
+define('DB_USER', $_ENV['DB_USER'] ?? 'root');      // Usuário do MySQL
+define('DB_PASS', $_ENV['DB_PASS'] ?? '');          // Senha do MySQL
+define('DB_NAME', $_ENV['DB_NAME'] ?? 'db_daydreamming_project');  // Nome do banco de dados
 
 // Função para conectar ao banco de dados
 function conectarBD() {

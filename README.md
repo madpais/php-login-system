@@ -1,54 +1,121 @@
 <<<<<<< HEAD
 # Sistema de Login com MySQL e PHP
 
-Este é um sistema de login completo com interface responsiva, desenvolvido em PHP e MySQL. O sistema inclui funcionalidades de login, cadastro de novos usuários, recuperação de senha e um painel de controle básico.
+Este é um sistema de login completo com interface responsiva, desenvolvido em PHP e MySQL. O sistema inclui funcionalidades de login, cadastro de novos usuários, recuperação de senha, testes internacionais e uma home page moderna.
 
 ## Funcionalidades
 
-- Login de usuários
-- Cadastro de novos usuários
-- Recuperação de senha
-- Painel de controle (dashboard)
-- Interface responsiva com temas personalizáveis
-- Segurança com senhas criptografadas
-- Registro de logs de acesso
+- 🏠 **Home Page Moderna** - Interface atrativa para público jovem
+- 🔐 **Sistema de Login** - Autenticação segura com criptografia
+- 👤 **Cadastro de Usuários** - Registro de novos usuários
+- 🔑 **Recuperação de Senha** - Sistema de reset de senha
+- 🌍 **Testes Internacionais** - 15 países com filtros por continente
+- 📱 **Interface Responsiva** - Design adaptável para todos os dispositivos
+- 🔒 **Segurança Avançada** - Senhas criptografadas e logs de acesso
+- 🎨 **Design Moderno** - Background temático com nuvens dos sonhos
 
-## Requisitos
+## 🚀 Execução com Docker (Recomendado)
 
-- PHP 7.0 ou superior
-- MySQL 5.6 ou superior
+### Pré-requisitos
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows/Mac)
+- Docker Engine + Docker Compose (Linux)
+
+### Instalação do Docker
+
+**Windows/Mac:**
+1. Baixe e instale o [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+2. Reinicie o computador após a instalação
+3. Verifique a instalação: `docker --version`
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+```
+
+### Instalação Rápida
+
+1. **Clone o repositório:**
+```bash
+git clone https://github.com/madpais/php-login-system.git
+cd php-login-system
+```
+
+2. **Execute com Docker Compose:**
+```bash
+# Docker Desktop (Windows/Mac) ou versões mais novas
+docker compose up -d
+
+# Ou versão standalone do docker-compose
+docker-compose up -d
+```
+
+3. **Acesse a aplicação:**
+- **Sistema:** http://localhost:8080
+- **phpMyAdmin:** http://localhost:8081
+
+### Comandos Úteis
+
+```bash
+# Parar os containers
+docker compose down
+
+# Ver logs em tempo real
+docker compose logs -f
+
+# Reconstruir containers após mudanças
+docker compose up -d --build
+
+# Limpar volumes (reset completo do banco)
+docker compose down -v
+```
+
+### Serviços Incluídos
+
+- **Web Server:** Apache + PHP 8.1 (porta 8080)
+- **Banco de Dados:** MySQL 8.0 (porta 3306)
+- **phpMyAdmin:** Interface web para MySQL (porta 8081)
+
+### Credenciais de Acesso
+
+**Usuários do Sistema:**
+- **Admin:** `admin` / `123456`
+- **Teste:** `teste` / `123456`
+- **Maria:** `maria.santos` / `123456`
+
+**Banco de Dados:**
+- **Root:** `root` / `rootpassword`
+- **User:** `user` / `userpassword`
+
+## 🛠️ Instalação Manual
+
+### Requisitos
+- PHP 7.4 ou superior
+- MySQL 5.7 ou superior
 - Servidor web (Apache, Nginx, etc.)
-
-## Configuração
 
 ### 1. Banco de Dados
 
-Importe o arquivo `db_structure.sql` para o seu servidor MySQL. Isso criará as tabelas necessárias (`usuarios` e `logs_acesso`) e alguns usuários de exemplo.
+Importe os arquivos SQL na seguinte ordem:
 
 ```bash
-mysql -u seu_usuario -p seu_banco_de_dados < db_structure.sql
+mysql -u root -p sistema_login < db_structure.sql
+mysql -u root -p sistema_login < reset_database.sql
 ```
 
-Ou use uma ferramenta como phpMyAdmin para importar o arquivo SQL.
+### 2. Configuração
 
-### 2. Configuração da Conexão
+O arquivo `config.php` está configurado para usar variáveis de ambiente do Docker, mas também funciona com valores padrão para desenvolvimento local.
 
-Edite o arquivo `config.php` e atualize as informações de conexão com o banco de dados:
+### 3. Servidor Local
 
-```php
-define('DB_HOST', '127.0.0.1:3306'); // Host do banco de dados
-define('DB_USER', 'seu_usuario'); // Usuário do MySQL
-define('DB_PASS', 'sua_senha'); // Senha do MySQL
-define('DB_NAME', 'db_daydreamming_project'); // Nome do banco de dados
+```bash
+php -S localhost:8080
 ```
 
-### 3. Servidor Web
-
-Certifique-se de que os arquivos estão em um diretório acessível pelo seu servidor web. Acesse o sistema através do navegador:
-
-```
-http://localhost/caminho/para/o/projeto/
-```
+Acesse: http://localhost:8080
 
 ## Usuários de Exemplo
 
