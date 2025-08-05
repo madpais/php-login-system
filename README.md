@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sistema de Login com MySQL e PHP
 
 Este é um sistema de login completo com interface responsiva, desenvolvido em PHP e MySQL. O sistema inclui funcionalidades de login, cadastro de novos usuários, recuperação de senha e um painel de controle básico.
@@ -101,3 +102,6 @@ O sistema inclui um seletor de temas que permite ao usuário escolher entre dife
 ## Licença
 
 Este projeto está disponível como código aberto sob os termos da [Licença MIT](https://opensource.org/licenses/MIT).
+=======
+# php-login-system
+>>>>>>> e7d03ca0bebfe0dc01ab7fbee36fbcf482a0321a
