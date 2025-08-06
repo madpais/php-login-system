@@ -1,18 +1,52 @@
 <<<<<<< HEAD
-# Sistema de Login com MySQL e PHP
+# StudyAbroad - Plataforma de Estudos Internacionais
 
-Este é um sistema de login completo com interface responsiva, desenvolvido em PHP e MySQL. O sistema inclui funcionalidades de login, cadastro de novos usuários, recuperação de senha, testes internacionais e uma home page moderna.
+## 📚 Sobre o Projeto
 
-## Funcionalidades
+StudyAbroad é uma plataforma completa para estudantes que desejam estudar no exterior. O sistema oferece informações detalhadas sobre testes internacionais, universidades, processos de aplicação e muito mais.
 
-- 🏠 **Home Page Moderna** - Interface atrativa para público jovem
-- 🔐 **Sistema de Login** - Autenticação segura com criptografia
-- 👤 **Cadastro de Usuários** - Registro de novos usuários
-- 🔑 **Recuperação de Senha** - Sistema de reset de senha
-- 🌍 **Testes Internacionais** - 15 países com filtros por continente
-- 📱 **Interface Responsiva** - Design adaptável para todos os dispositivos
-- 🔒 **Segurança Avançada** - Senhas criptografadas e logs de acesso
-- 🎨 **Design Moderno** - Background temático com nuvens dos sonhos
+## ✨ Funcionalidades
+
+### 🎯 Testes Internacionais
+- **TOEFL** - Test of English as a Foreign Language
+- **IELTS** - International English Language Testing System
+- **SAT** - Scholastic Assessment Test
+- **ACT** - American College Testing
+- **GRE** - Graduate Record Examinations
+- **GMAT** - Graduate Management Admission Test
+- **Testes específicos por país** (DELE, DELF, TestDaF, HSK, JLPT, etc.)
+
+### 🌍 Países e Universidades
+- **América do Norte**: Estados Unidos, Canadá
+- **Europa**: Reino Unido, Alemanha, França, Espanha, Itália
+- **Ásia**: Japão, China, Coreia do Sul
+- **Oceania**: Austrália, Nova Zelândia
+- **África**: África do Sul
+
+### 👥 Sistema de Usuários
+- Cadastro e login de usuários
+- Dashboard personalizado
+- Sistema de administração
+- Logs de acesso e atividades
+
+### 💬 Fórum Comunitário
+- Discussões sobre estudos no exterior
+- Troca de experiências
+- Suporte da comunidade
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Backend**: PHP 8.2+
+- **Banco de Dados**: MySQL
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Estilização**: CSS customizado com variáveis CSS
+- **Servidor**: PHP Built-in Server (desenvolvimento)
+
+## 📋 Pré-requisitos
+
+- PHP 8.2 ou superior
+- MySQL 5.7 ou superior
+- Servidor web (Apache, Nginx) ou PHP Built-in Server
 
 ## 🚀 Execução com Docker (Recomendado)
 
