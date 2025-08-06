@@ -1,25 +1,28 @@
 <?php
-session_start();
+// Verificação de segurança para dashboard
+require_once 'verificar_auth.php';
 
-// Verificar se o usuário está logado
-if (!isset($_SESSION['usuario_id'])) {
-    // Se não estiver logado, redirecionar para a página de login
-    header("Location: login.php");
-    exit;
-}
+// Verificar se o usuário está logado e ativo
+$user_data = verificarUsuarioAtivo();
 
 // Obter informações do usuário da sessão
 $nome = $_SESSION['usuario_nome'];
 $usuario = $_SESSION['usuario_login'];
+
+// Gerar token CSRF para formulários
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="public/css/style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <title>Dashboard</title>
-    <script src="script.js?v=1"></script>
+    <script src="public/js/main.js?v=1"></script>
     <style>
         .dashboard-container {
             max-width: 800px;
@@ -103,6 +106,8 @@ $usuario = $_SESSION['usuario_login'];
     </style>
 </head>
 <body>
+    <?php include 'header_status.php'; ?>
+    
     <section class="container">
         <div class="dashboard-container">
             <div class="welcome-message">

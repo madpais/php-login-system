@@ -1,9 +1,15 @@
+<?php
+session_start();
+
+// Verificar se o usuário está logado
+$usuario_logado = isset($_SESSION['usuario_id']);
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="public/css/style.css">
     <title>Testes Internacionais - Guia Completo</title>
     <style>
         .content-container {
@@ -399,6 +405,8 @@
     </style>
 </head>
 <body>
+    <?php include 'header_status.php'; ?>
+    
     <section class="container">
         <div class="content-container">
             <div class="header-section">
@@ -451,7 +459,7 @@
                                     <li><strong>LSAT:</strong> Para Direito</li>
                                     <li><strong>MCAT:</strong> Para Medicina</li>
                                 </ul>
-                                <button class="simulator-button" onclick="alert('Simulador SAT/TOEFL em desenvolvimento!')">Simulador SAT/TOEFL</button>
+                                <button class="simulator-button" onclick="verificarLogin()">Simulador SAT/TOEFL</button>
                             </div>
                             
                             <div class="country-card" data-country="canada">
@@ -463,7 +471,7 @@
                                     <li><strong>Pós-graduação:</strong> GRE/GMAT conforme área</li>
                                     <li><strong>TEF:</strong> Test d'Évaluation de Français</li>
                                 </ul>
-                                <button class="simulator-button" onclick="alert('Simulador IELTS/DELF em desenvolvimento!')">Simulador IELTS/DELF</button>
+                                <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS/DELF</button>
                             </div>
                             
                             <div class="country-card" data-country="argentina">
@@ -474,7 +482,7 @@
                                      <li><strong>Graduação:</strong> Bachillerato ou equivalente</li>
                                      <li><strong>Universidades públicas:</strong> Gratuitas</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador DELE em desenvolvimento!')">Simulador DELE</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador DELE</button>
                              </div>
                         </div>
                     </div>
@@ -491,7 +499,7 @@
                                      <li><strong>LNAT:</strong> Para Direito</li>
                                      <li><strong>IELTS for UKVI:</strong> Para vistos</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador IELTS em desenvolvimento!')">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
                              </div>
                              
                              <div class="country-card" data-country="germany">
@@ -502,7 +510,7 @@
                                      <li><strong>Graduação:</strong> Abitur ou Studienkolleg</li>
                                      <li><strong>Goethe-Zertifikat:</strong> Certificação alemã</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador TestDaF em desenvolvimento!')">Simulador TestDaF</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador TestDaF</button>
                              </div>
                              
                              <div class="country-card" data-country="france">
@@ -513,7 +521,7 @@
                                      <li><strong>Graduação:</strong> Baccalauréat</li>
                                      <li><strong>Grandes Écoles:</strong> Concursos específicos</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador DELF/DALF em desenvolvimento!')">Simulador DELF/DALF</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador DELF/DALF</button>
                              </div>
                              
                              <div class="country-card" data-country="spain">
@@ -524,7 +532,7 @@
                                      <li><strong>Graduação:</strong> Bachillerato + PCE</li>
                                      <li><strong>EBAU:</strong> Evaluación de Bachillerato</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador DELE em desenvolvimento!')">Simulador DELE</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador DELE</button>
                              </div>
                              
                              <div class="country-card" data-country="italy">
@@ -535,7 +543,7 @@
                                      <li><strong>Graduação:</strong> Diploma di Maturità</li>
                                      <li><strong>TOLC:</strong> Test Online CISIA</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador CILS em desenvolvimento!')">Simulador CILS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador CILS</button>
                              </div>
                          </div>
                     </div>
@@ -551,7 +559,7 @@
                                      <li><strong>EJU:</strong> Examination for Japanese Universities</li>
                                      <li><strong>Graduação:</strong> 12 anos de educação</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador JLPT em desenvolvimento!')">Simulador JLPT</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador JLPT</button>
                              </div>
                              
                              <div class="country-card" data-country="china">
@@ -562,7 +570,7 @@
                                      <li><strong>Graduação:</strong> Gaokao ou equivalente</li>
                                      <li><strong>BCT:</strong> Business Chinese Test</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador HSK em desenvolvimento!')">Simulador HSK</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador HSK</button>
                              </div>
                              
                              <div class="country-card" data-country="southkorea">
@@ -573,7 +581,7 @@
                                      <li><strong>KSAT:</strong> Korean Scholastic Aptitude Test</li>
                                      <li><strong>Graduação:</strong> 12 anos de educação</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador TOPIK em desenvolvimento!')">Simulador TOPIK</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador TOPIK</button>
                              </div>
                          </div>
                     </div>
@@ -590,7 +598,7 @@
                                      <li><strong>GAMSAT:</strong> Graduate Medical School</li>
                                      <li><strong>PTE Academic:</strong> Alternativa ao IELTS</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador IELTS em desenvolvimento!')">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
                              </div>
                              
                              <div class="country-card" data-country="newzealand">
@@ -601,7 +609,7 @@
                                      <li><strong>UCAT ANZ:</strong> Para Medicina</li>
                                      <li><strong>Imigração:</strong> IELTS General Training</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador IELTS em desenvolvimento!')">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
                              </div>
                          </div>
                     </div>
@@ -617,7 +625,7 @@
                                      <li><strong>NBT:</strong> National Benchmark Tests</li>
                                      <li><strong>Afrikaans:</strong> Para algumas universidades</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="alert('Simulador IELTS em desenvolvimento!')">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
                              </div>
                          </div>
                     </div>
@@ -739,7 +747,7 @@
                             <li><strong>SAT Subject Tests:</strong> Para universidades mais competitivas</li>
                             <li><strong>Universidades aceitas:</strong> Todas as principais universidades</li>
                         </ul>
-                        <button class="simulator-button" onclick="alert('Simulador SAT/TOEFL em desenvolvimento!')">Simulador SAT/TOEFL</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simulador SAT/TOEFL</button>
                     </div>
                     
                     <div class="country-card">
@@ -750,7 +758,7 @@
                             <li><strong>Pós-graduação:</strong> Varia por universidade</li>
                             <li><strong>Especial:</strong> IELTS for UKVI para vistos</li>
                         </ul>
-                        <button class="simulator-button" onclick="alert('Simulador IELTS em desenvolvimento!')">Simulador IELTS</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
                     </div>
                     
                     <div class="country-card">
@@ -761,7 +769,7 @@
                             <li><strong>Graduação:</strong> Varia por província</li>
                             <li><strong>Pós-graduação:</strong> GRE/GMAT conforme área</li>
                         </ul>
-                        <button class="simulator-button" onclick="alert('Simulador IELTS/DELF em desenvolvimento!')">Simulador IELTS/DELF</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS/DELF</button>
                     </div>
                     
                     <div class="country-card">
@@ -772,7 +780,7 @@
                             <li><strong>Pós-graduação:</strong> Varia por universidade</li>
                             <li><strong>Imigração:</strong> IELTS General Training</li>
                         </ul>
-                        <button class="simulator-button" onclick="alert('Simulador IELTS em desenvolvimento!')">Simulador IELTS</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
                     </div>
                     
                     <div class="country-card">
@@ -783,7 +791,7 @@
                             <li><strong>Graduação:</strong> Baccalauréat ou equivalente</li>
                             <li><strong>Grandes Écoles:</strong> Concursos específicos</li>
                         </ul>
-                        <button class="simulator-button" onclick="alert('Simulador DELF/DALF em desenvolvimento!')">Simulador DELF/DALF</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simulador DELF/DALF</button>
                     </div>
                     
                     <div class="country-card">
@@ -794,7 +802,7 @@
                             <li><strong>Graduação:</strong> Abitur ou equivalente</li>
                             <li><strong>Universidades públicas:</strong> Geralmente gratuitas</li>
                         </ul>
-                        <button class="simulator-button" onclick="alert('Simulador TestDaF em desenvolvimento!')">Simulador TestDaF</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simulador TestDaF</button>
                     </div>
                 </div>
             </div>
@@ -912,6 +920,21 @@
                     }
                 }
             });
+        }
+        
+        // Função para verificar login antes de acessar simulador
+        function verificarLogin() {
+            <?php if (!$usuario_logado): ?>
+                alert('Você precisa estar logado para prosseguir!');
+                
+                if (confirm('Deseja efetuar o login?')) {
+                    window.location.href = 'login.php';
+                }
+                return false;
+            <?php else: ?>
+                alert('Simulador em desenvolvimento!');
+                return true;
+            <?php endif; ?>
         }
         
         // Inicializar mostrando todos os continentes e países

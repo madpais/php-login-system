@@ -1,3 +1,7 @@
+<?php
+// Incluir header de status de login antes de qualquer saída HTML
+require_once 'header_status.php';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -209,6 +213,10 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
             text-align: center;
         }
 
@@ -438,10 +446,7 @@
                     <h3>1000+</h3>
                     <p>Questões Práticas</p>
                 </div>
-                <div class="stat-item">
-                    <h3>95%</h3>
-                    <p>Taxa de Aprovação</p>
-                </div>
+
             </div>
         </div>
     </section>

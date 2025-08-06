@@ -141,8 +141,8 @@ O sistema vem com dois usuários pré-cadastrados para testes:
 - `logout.php` - Script para fazer logout
 - `config.php` - Configurações de conexão com o banco de dados
 - `db_structure.sql` - Estrutura do banco de dados
-- `style.css` - Estilos CSS
-- `script.js` - Scripts JavaScript
+- `public/css/style.css` - Estilos CSS principais
+- `public/js/main.js` - Scripts JavaScript principais
 
 ## Segurança
 
@@ -156,7 +156,7 @@ Este sistema implementa várias medidas de segurança:
 
 ## Personalização
 
-O sistema inclui um seletor de temas que permite ao usuário escolher entre diferentes esquemas de cores. Você pode adicionar mais temas editando o array no arquivo `script.js`.
+O sistema inclui funcionalidades JavaScript modernas para interatividade, validação de formulários e otimizações de performance no arquivo `public/js/main.js`.
 
 ## Melhorias Futuras
 

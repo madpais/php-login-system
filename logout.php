@@ -1,5 +1,25 @@
 <?php
 session_start();
+require_once 'config.php';
+
+// Registrar logout no banco de dados se o usuário estiver logado
+if (isset($_SESSION['usuario_id'])) {
+    try {
+        $pdo = conectarBD();
+        
+        // Atualizar último logout do usuário
+        $stmt = $pdo->prepare("UPDATE usuarios SET ultimo_logout = NOW() WHERE id = ?");
+        $stmt->execute([$_SESSION['usuario_id']]);
+        
+        // Log da ação de logout (opcional)
+        $stmt = $pdo->prepare("INSERT INTO logs_sistema (usuario_id, acao, detalhes, data_hora) VALUES (?, 'logout', 'Usuário fez logout', NOW())");
+        $stmt->execute([$_SESSION['usuario_id']]);
+        
+    } catch (PDOException $e) {
+        // Em caso de erro no banco, continuar com o logout
+        error_log("Erro ao registrar logout: " . $e->getMessage());
+    }
+}
 
 // Destruir todas as variáveis de sessão
 $_SESSION = array();
@@ -16,6 +36,9 @@ if (ini_get("session.use_cookies")) {
 // Finalmente, destruir a sessão
 session_destroy();
 
-// Redirecionar para a página de login
-header("Location: login.php");
+// Redirecionar para a página inicial com mensagem de sucesso
+session_start();
+$_SESSION['mensagem'] = "Logout realizado com sucesso!";
+header("Location: index.php");
+exit();
 exit;

@@ -16,8 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Conectar ao banco de dados
             $conn = conectarBD();
             
-            // Preparar a consulta SQL
-            $stmt = $conn->prepare("SELECT id, usuario, senha, nome FROM usuarios WHERE usuario = :usuario AND ativo = TRUE");
+            // Primeiro, verificar se o usuário existe (independente do status)
+            $stmt = $conn->prepare("SELECT id, usuario, senha, nome, is_admin, ativo FROM usuarios WHERE usuario = :usuario");
             $stmt->bindParam(':usuario', $usuario);
             $stmt->execute();
             
@@ -25,28 +25,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->rowCount() > 0) {
                 $usuario_dados = $stmt->fetch(PDO::FETCH_ASSOC);
                 
-                // Verificar a senha
+                // Verificar a senha primeiro
                 if (password_verify($senha, $usuario_dados['senha'])) {
-                    // Senha correta, iniciar a sessão
-                    $_SESSION['usuario_id'] = $usuario_dados['id'];
-                    $_SESSION['usuario_nome'] = $usuario_dados['nome'];
-                    $_SESSION['usuario_login'] = $usuario_dados['usuario'];
-                    
-                    // Registrar o login bem-sucedido
-                    $ip = $_SERVER['REMOTE_ADDR'];
-                    $stmt = $conn->prepare("INSERT INTO logs_acesso (usuario_id, ip, sucesso) VALUES (:usuario_id, :ip, TRUE)");
-                    $stmt->bindParam(':usuario_id', $usuario_dados['id']);
-                    $stmt->bindParam(':ip', $ip);
-                    $stmt->execute();
-                    
-                    // Atualizar o último acesso
-                    $stmt = $conn->prepare("UPDATE usuarios SET ultimo_acesso = NOW() WHERE id = :id");
-                    $stmt->bindParam(':id', $usuario_dados['id']);
-                    $stmt->execute();
-                    
-                    // Redirecionar para a página principal
-                    header("Location: index.php");
-                    exit;
+                    // Senha correta, agora verificar se o usuário está ativo
+                    if (!$usuario_dados['ativo']) {
+                        // Usuário banido
+                        $erro = "Este usuário foi banido por violar as regras de conduta do Portal!";
+                        
+                        // Registrar tentativa de login de usuário banido
+                        $ip = $_SERVER['REMOTE_ADDR'];
+                        $stmt = $conn->prepare("INSERT INTO logs_acesso (usuario_id, ip, sucesso) VALUES (:usuario_id, :ip, FALSE)");
+                        $stmt->bindParam(':usuario_id', $usuario_dados['id']);
+                        $stmt->bindParam(':ip', $ip);
+                        $stmt->execute();
+                    } else {
+                        // Senha correta, iniciar a sessão
+                        $_SESSION['usuario_id'] = $usuario_dados['id'];
+                        $_SESSION['usuario_nome'] = $usuario_dados['nome'];
+                        $_SESSION['usuario_login'] = $usuario_dados['usuario'];
+                        $_SESSION['is_admin'] = (bool)$usuario_dados['is_admin'];
+                        
+                        // Registrar o login bem-sucedido
+                        $ip = $_SERVER['REMOTE_ADDR'];
+                        $stmt = $conn->prepare("INSERT INTO logs_acesso (usuario_id, ip, sucesso) VALUES (:usuario_id, :ip, TRUE)");
+                        $stmt->bindParam(':usuario_id', $usuario_dados['id']);
+                        $stmt->bindParam(':ip', $ip);
+                        $stmt->execute();
+                        
+                        // Atualizar o último acesso
+                        $stmt = $conn->prepare("UPDATE usuarios SET ultimo_acesso = NOW() WHERE id = :id");
+                        $stmt->bindParam(':id', $usuario_dados['id']);
+                        $stmt->execute();
+                        
+                        // Redirecionar baseado no tipo de usuário
+                        if ($usuario_dados['is_admin']) {
+                            header("Location: admin_forum.php");
+                        } else {
+                            header("Location: index.php");
+                        }
+                        exit;
+                    }
                 } else {
                     // Senha incorreta
                     $erro = "Usuário ou senha incorretos.";
@@ -80,11 +98,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="public/css/style.css">
     <title>Formulário de Login</title>
-    <script src="script.js?v=1"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="public/js/main.js?v=1"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #187bcb 0%, #6c5ce7 100%) !important;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('dream-clouds.svg') center/cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 </head>
 <body>
+    <?php include 'header_status.php'; ?>
+    
     <section class="container">
         <div class="login-container">
             <div class="circle circle-one"></div>
