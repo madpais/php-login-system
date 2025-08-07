@@ -386,24 +386,23 @@ require_once 'header_status.php';
     <section class="features">
         <div class="container">
             <div class="section-title">
-                <h2>Por que escolher o StudyAbroad?</h2>
-                <p>Oferecemos tudo que você precisa para conquistar sua vaga no exterior</p>
             </div>
             
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card" onclick="window.location.href='simulador_provas.php'" style="cursor: pointer;">
                     <span class="feature-icon">🎯</span>
                     <h3>Testes Personalizados</h3>
                     <p>Simulados específicos para cada país e tipo de exame, adaptados ao seu nível e objetivos acadêmicos.</p>
                 </div>
                 
-                <div class="feature-card">
+                <div class="feature-card" onclick="window.location.href='testes_internacionais.php'" style="cursor: pointer;">
                     <span class="feature-icon">🌍</span>
                     <h3>Cobertura Global</h3>
                     <p>Informações sobre testes de proficiência para mais de 15 países em 5 continentes diferentes.</p>
                 </div>
                 
-                <div class="feature-card">
+                <div class="feature-card"  onclick="window.location.href='simulador_provas.php#ancora'" style="cursor: pointer;">
+
                     <span class="feature-icon">📊</span>
                     <h3>Acompanhamento Detalhado</h3>
                     <p>Monitore seu progresso com relatórios detalhados e dicas personalizadas para melhorar seu desempenho.</p>
@@ -412,7 +411,7 @@ require_once 'header_status.php';
                 <div class="feature-card">
                     <span class="feature-icon">🎓</span>
                     <h3>Preparação Completa</h3>
-                    <p>Desde testes de idioma até exames específicos como SAT, GMAT, GRE e muito mais.</p>
+                    <p>Informações específicas SAT, MEXT, GMAT, GRE e muito mais.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -421,7 +420,7 @@ require_once 'header_status.php';
                     <p>Feedback imediato nos simulados com explicações detalhadas para cada questão.</p>
                 </div>
                 
-                <div class="feature-card">
+                <div class="feature-card" onclick="window.location.href='forum.php'" style="cursor: pointer;">
                     <span class="feature-icon">💡</span>
                     <h3>Dicas de Especialistas</h3>
                     <p>Conteúdo criado por especialistas em educação internacional e ex-estudantes no exterior.</p>

@@ -326,7 +326,7 @@ $tipos_provas = [
         </div>
         
         <!-- Nível do Usuário -->
-        <div class="nivel-usuario">
+        <div class="nivel-usuario" id="ancora">
             <div class="nivel-badge">Nível Iniciante</div>
             <p>Continue fazendo testes para avançar de nível!</p>
         </div>
