@@ -472,9 +472,11 @@ $usuario_logado = isset($_SESSION['usuario_id']);
         
         .filter-btn.active {
             background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+            color: #1a1a1a !important;
             box-shadow: var(--shadow-lg);
             border-color: var(--accent-color);
             transform: translateY(-1px);
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         
         .country-filter-section {
