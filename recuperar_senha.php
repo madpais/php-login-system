@@ -36,9 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mensagem = "Um link para redefinição de senha foi enviado para o seu e-mail. ";
                 $mensagem .= "Por favor, verifique sua caixa de entrada e siga as instruções.";
                 
-                // Em um sistema real, você enviaria um e-mail como este:
-                // $link = "https://seusite.com/redefinir_senha.php?token=$token";
-                // mail($email, "Redefinição de Senha", "Clique no link para redefinir sua senha: $link");
+                // Em um sistema real, você enviaria um e-mail com o link de redefinição
                 
                 $sucesso = true;
             } else {
@@ -46,8 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } catch(PDOException $e) {
             $erro = "Erro ao processar a solicitação. Por favor, tente novamente mais tarde.";
-            // Em ambiente de produção, você deve registrar o erro em um log
-            // error_log("Erro na recuperação de senha: " . $e->getMessage());
+            error_log("Erro na recuperação de senha: " . $e->getMessage());
         }
     }
 }
@@ -58,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/css/style.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Recuperar Senha</title>
     <script src="public/js/main.js?v=1"></script>
     <style>

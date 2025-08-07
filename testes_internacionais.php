@@ -373,9 +373,10 @@ $usuario_logado = isset($_SESSION['usuario_id']);
         }
         
         .simulator-button:hover {
-            background: linear-gradient(135deg, var(--primary-dark), var(--accent-color));
+            background: linear-gradient(135deg, #1e40af, #0891b2);
             transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
+            color: #ffffff;
         }
         
         .simulator-button:hover::after {
@@ -519,20 +520,21 @@ $usuario_logado = isset($_SESSION['usuario_id']);
         }
         
         .country-dropdown {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: var(--bg-white);
-            border: 2px solid var(--primary-light);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: 2px solid #3b82f6;
             padding: 12px 20px;
             border-radius: var(--border-radius-md);
             cursor: pointer;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-sm);
             width: 100%;
             max-width: 350px;
             margin: 0 auto;
             outline: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .country-dropdown:hover {
@@ -548,10 +550,18 @@ $usuario_logado = isset($_SESSION['usuario_id']);
         }
         
         .country-dropdown option {
-            background: var(--bg-white);
-            color: var(--text-primary);
+            background: #ffffff;
+            color: #1f2937;
             padding: 10px;
             font-weight: 500;
+            border: none;
+        }
+        
+        .country-dropdown option:hover,
+        .country-dropdown option:focus,
+        .country-dropdown option:checked {
+            background: #2563eb;
+            color: #ffffff;
         }
         
         .continent-section {
@@ -798,7 +808,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                     <li><strong>LSAT:</strong> Para Direito</li>
                                     <li><strong>MCAT:</strong> Para Medicina</li>
                                 </ul>
-                                <button class="simulator-button" onclick="verificarLogin()">Simulador SAT/TOEFL</button>
+                                <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                             </div>
                             
                             <div class="country-card" data-country="canada">
@@ -810,7 +820,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                     <li><strong>Pós-graduação:</strong> GRE/GMAT conforme área</li>
                                     <li><strong>TEF:</strong> Test d'Évaluation de Français</li>
                                 </ul>
-                                <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS/DELF</button>
+                                <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                             </div>
                             
                             <div class="country-card" data-country="argentina">
@@ -821,7 +831,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>Graduação:</strong> Bachillerato ou equivalente</li>
                                      <li><strong>Universidades públicas:</strong> Gratuitas</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador DELE</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                         </div>
                     </div>
@@ -838,7 +848,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>LNAT:</strong> Para Direito</li>
                                      <li><strong>IELTS for UKVI:</strong> Para vistos</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                              
                              <div class="country-card" data-country="germany">
@@ -849,7 +859,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>Graduação:</strong> Abitur ou Studienkolleg</li>
                                      <li><strong>Goethe-Zertifikat:</strong> Certificação alemã</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador TestDaF</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                              
                              <div class="country-card" data-country="france">
@@ -860,7 +870,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>Graduação:</strong> Baccalauréat</li>
                                      <li><strong>Grandes Écoles:</strong> Concursos específicos</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador DELF/DALF</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                              
                              <div class="country-card" data-country="spain">
@@ -882,7 +892,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>Graduação:</strong> Diploma di Maturità</li>
                                      <li><strong>TOLC:</strong> Test Online CISIA</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador CILS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                          </div>
                     </div>
@@ -898,7 +908,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>EJU:</strong> Examination for Japanese Universities</li>
                                      <li><strong>Graduação:</strong> 12 anos de educação</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador JLPT</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                              
                              <div class="country-card" data-country="china">
@@ -909,7 +919,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>Graduação:</strong> Gaokao ou equivalente</li>
                                      <li><strong>BCT:</strong> Business Chinese Test</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador HSK</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                              
                              <div class="country-card" data-country="southkorea">
@@ -920,7 +930,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>KSAT:</strong> Korean Scholastic Aptitude Test</li>
                                      <li><strong>Graduação:</strong> 12 anos de educação</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador TOPIK</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                          </div>
                     </div>
@@ -937,7 +947,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>GAMSAT:</strong> Graduate Medical School</li>
                                      <li><strong>PTE Academic:</strong> Alternativa ao IELTS</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                              
                              <div class="country-card" data-country="newzealand">
@@ -948,7 +958,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>UCAT ANZ:</strong> Para Medicina</li>
                                      <li><strong>Imigração:</strong> IELTS General Training</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                          </div>
                     </div>
@@ -964,7 +974,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                                      <li><strong>NBT:</strong> National Benchmark Tests</li>
                                      <li><strong>Afrikaans:</strong> Para algumas universidades</li>
                                  </ul>
-                                 <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS</button>
+                                 <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                              </div>
                          </div>
                     </div>
@@ -1086,7 +1096,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                             <li><strong>SAT Subject Tests:</strong> Para universidades mais competitivas</li>
                             <li><strong>Universidades aceitas:</strong> Todas as principais universidades</li>
                         </ul>
-                        <button class="simulator-button" onclick="verificarLogin()">Simulador SAT/TOEFL</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                     </div>
                     
                     <div class="country-card">
@@ -1108,7 +1118,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                             <li><strong>Graduação:</strong> Varia por província</li>
                             <li><strong>Pós-graduação:</strong> GRE/GMAT conforme área</li>
                         </ul>
-                        <button class="simulator-button" onclick="verificarLogin()">Simulador IELTS/DELF</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                     </div>
                     
                     <div class="country-card">
@@ -1130,7 +1140,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                             <li><strong>Graduação:</strong> Baccalauréat ou equivalente</li>
                             <li><strong>Grandes Écoles:</strong> Concursos específicos</li>
                         </ul>
-                        <button class="simulator-button" onclick="verificarLogin()">Simulador DELF/DALF</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                     </div>
                     
                     <div class="country-card">
@@ -1141,7 +1151,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                             <li><strong>Graduação:</strong> Abitur ou equivalente</li>
                             <li><strong>Universidades públicas:</strong> Geralmente gratuitas</li>
                         </ul>
-                        <button class="simulator-button" onclick="verificarLogin()">Simulador TestDaF</button>
+                        <button class="simulator-button" onclick="verificarLogin()">Simular Teste</button>
                     </div>
                 </div>
             </div>
@@ -1271,7 +1281,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                 }
                 return false;
             <?php else: ?>
-                alert('Simulador em desenvolvimento!');
+                window.location.href = 'http://localhost:8000/simulador_provas.php';
                 return true;
             <?php endif; ?>
         }

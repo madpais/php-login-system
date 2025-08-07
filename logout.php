@@ -11,7 +11,6 @@ if (isset($_SESSION['usuario_id'])) {
         $stmt = $pdo->prepare("UPDATE usuarios SET ultimo_logout = NOW() WHERE id = ?");
         $stmt->execute([$_SESSION['usuario_id']]);
         
-        // Log da ação de logout (opcional)
         $stmt = $pdo->prepare("INSERT INTO logs_sistema (usuario_id, acao, detalhes, data_hora) VALUES (?, 'logout', 'Usuário fez logout', NOW())");
         $stmt->execute([$_SESSION['usuario_id']]);
         

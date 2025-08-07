@@ -87,8 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } catch(PDOException $e) {
             $erro = "Erro ao processar o login. Por favor, tente novamente mais tarde.";
-            // Em ambiente de produção, você deve registrar o erro em um log
-            // error_log("Erro no login: " . $e->getMessage());
+            error_log("Erro no login: " . $e->getMessage());
         }
     }
 }
@@ -100,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/css/style.css">
     <title>Formulário de Login</title>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="public/js/main.js?v=1"></script>
     
     <style>

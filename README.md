@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # StudyAbroad - Plataforma de Estudos Internacionais
 
 ## 📚 Sobre o Projeto
@@ -203,6 +202,3 @@ O sistema inclui funcionalidades JavaScript modernas para interatividade, valida
 ## Licença
 
 Este projeto está disponível como código aberto sob os termos da [Licença MIT](https://opensource.org/licenses/MIT).
-=======
-# php-login-system
->>>>>>> e7d03ca0bebfe0dc01ab7fbee36fbcf482a0321a
