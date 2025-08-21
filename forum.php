@@ -450,7 +450,7 @@ if (isset($_GET['topico'])) {
                 <h1>🌟 Fórum da Comunidade</h1>
                 <p>Bem-vindo, <strong><?php echo htmlspecialchars($usuario_nome); ?></strong>! Participe das discussões e compartilhe conhecimento.</p>
                 <div style="margin-top: 15px;">
-                    <a href="dashboard.php" class="btn btn-secondary">🏠 Dashboard</a>
+                    <a href="simulador_provas.php" class="btn btn-secondary">🎯 Simulador</a>
                     <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
                         <a href="admin_forum.php" class="btn">⚙️ Painel Admin</a>
                     <?php endif; ?>

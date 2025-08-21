@@ -719,7 +719,6 @@ $usuarios = $stmt->fetchAll();
                 <p>Bem-vindo, <strong><?php echo htmlspecialchars($usuario_nome); ?></strong>! Gerencie o conteúdo do fórum.</p>
                 <div style="margin-top: 15px;">
                     <a href="forum.php" class="btn btn-secondary">🏠 Voltar ao Fórum</a>
-                    <a href="dashboard.php" class="btn btn-secondary">📊 Dashboard</a>
                     <a href="admin_questoes.php" class="btn btn-primary">📝 Gerenciar Questões</a>
                 </div>
             </div>

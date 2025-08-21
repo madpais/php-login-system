@@ -1,8 +1,53 @@
-# StudyAbroad - Plataforma de Estudos Internacionais
+# 🎓 DayDreaming - Sistema de Simulados para Exames Internacionais
 
 ## 📚 Sobre o Projeto
 
-StudyAbroad é uma plataforma completa para estudantes que desejam estudar no exterior. O sistema oferece informações detalhadas sobre testes internacionais, universidades, processos de aplicação e muito mais.
+Sistema completo de preparação para exames internacionais (SAT, TOEFL, IELTS, GRE) com simulados, histórico de desempenho e sistema de badges.
+
+## 🚀 Configuração Rápida para Colaboradores
+
+### Pré-requisitos
+- PHP 7.4+
+- MySQL 5.7+
+- Servidor web (Apache/Nginx) ou PHP built-in server
+
+### 📥 Instalação
+
+1. **Clone o repositório:**
+```bash
+git clone [URL_DO_REPOSITORIO]
+cd DayDreaming
+```
+
+2. **Configure o banco de dados:**
+```bash
+php setup_database.php
+```
+
+3. **Carregue as questões do SAT:**
+```bash
+php seed_questoes.php
+```
+
+4. **Inicie o servidor:**
+```bash
+php -S localhost:8080
+```
+
+5. **Acesse o sistema:**
+```
+http://localhost:8080
+```
+
+### 🔑 Credenciais Padrão
+
+**Administrador:**
+- Login: `admin`
+- Senha: `admin123`
+
+**Usuário Teste:**
+- Login: `teste`
+- Senha: `teste123`
 
 ## ✨ Funcionalidades
 

@@ -139,7 +139,7 @@ function verify_csrf_token($token) {
 }
 
 // Session Configuration (must be set before session_start())
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     ini_set('session.cookie_httponly', 1);
     ini_set('session.cookie_secure', 0); // Set to 1 for HTTPS
     ini_set('session.use_strict_mode', 1);

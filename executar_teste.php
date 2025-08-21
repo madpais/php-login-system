@@ -19,23 +19,29 @@ $tipo_prova = $_GET['tipo'];
 
 // Definir configurações das provas
 $config_provas = [
+    'sat' => [
+        'nome' => 'SAT',
+        'duracao_minutos' => 180, // 3h
+        'questoes_total' => 120,
+        'cor' => '#FF9800'
+    ],
     'toefl' => [
         'nome' => 'TOEFL',
         'duracao_minutos' => 180, // 3h
-        'questoes_total' => 120,
+        'questoes_total' => 100,
         'cor' => '#4CAF50'
     ],
     'ielts' => [
         'nome' => 'IELTS',
         'duracao_minutos' => 165, // 2h45min
-        'questoes_total' => 100,
+        'questoes_total' => 40,
         'cor' => '#2196F3'
     ],
-    'sat' => [
-        'nome' => 'SAT',
-        'duracao_minutos' => 180, // 3h
-        'questoes_total' => 154,
-        'cor' => '#FF9800'
+    'gre' => [
+        'nome' => 'GRE',
+        'duracao_minutos' => 225, // 3h45min
+        'questoes_total' => 80,
+        'cor' => '#9C27B0'
     ],
     'dele' => [
         'nome' => 'DELE',
@@ -90,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['iniciar_teste'])) {
     
     // Criar nova sessão de teste
     $stmt = $pdo->prepare("INSERT INTO sessoes_teste (usuario_id, tipo_prova, inicio, duracao_minutos, status) VALUES (?, ?, NOW(), ?, 'ativo')");
-    $stmt->execute([$_SESSION['user_id'], $tipo_prova, $prova['duracao_minutos']]);
+    $stmt->execute([$_SESSION['usuario_id'], $tipo_prova, $prova['duracao_minutos']]);
     $sessao_id = $pdo->lastInsertId();
     
     // Redirecionar para a execução do teste
@@ -104,7 +110,7 @@ if (isset($_GET['executando']) && isset($_GET['sessao'])) {
     
     // Verificar se a sessão existe e pertence ao usuário
     $stmt = $pdo->prepare("SELECT * FROM sessoes_teste WHERE id = ? AND usuario_id = ? AND status = 'ativo'");
-    $stmt->execute([$sessao_id, $_SESSION['user_id']]);
+    $stmt->execute([$sessao_id, $_SESSION['usuario_id']]);
     $sessao = $stmt->fetch();
     
     if (!$sessao) {
@@ -128,21 +134,93 @@ if (isset($_GET['executando']) && isset($_GET['sessao'])) {
     
     $tempo_restante = $tempo_limite - $tempo_decorrido;
     
-    // Carregar questões (simuladas por enquanto)
+    // Carregar questões reais do banco de dados
+    $limite_questoes = (int)$prova['questoes_total'];
+    $stmt = $pdo->prepare("
+        SELECT id, numero_questao, enunciado,
+               alternativa_a, alternativa_b, alternativa_c, alternativa_d, alternativa_e,
+               resposta_correta, tipo_questao, resposta_dissertativa,
+               dificuldade, materia, assunto, explicacao
+        FROM questoes
+        WHERE tipo_prova = ? AND ativa = 1
+        ORDER BY numero_questao
+        LIMIT $limite_questoes
+    ");
+    $stmt->execute([$tipo_prova]);
+    $questoes_db = $stmt->fetchAll();
+
+    // Processar questões para o formato JavaScript
     $questoes_simuladas = [];
-    for ($i = 1; $i <= $prova['questoes_total']; $i++) {
-        $questoes_simuladas[] = [
-            'id' => $i,
-            'enunciado' => "Esta é a questão número $i do simulado {$prova['nome']}. O conteúdo das questões será carregado posteriormente de um arquivo JSON/XML.",
-            'alternativas' => [
-                'a' => 'Alternativa A - Primeira opção de resposta',
-                'b' => 'Alternativa B - Segunda opção de resposta', 
-                'c' => 'Alternativa C - Terceira opção de resposta',
-                'd' => 'Alternativa D - Quarta opção de resposta',
-                'e' => 'Alternativa E - Quinta opção de resposta'
-            ],
-            'resposta_correta' => ['a', 'b', 'c', 'd', 'e'][rand(0, 4)]
+    foreach ($questoes_db as $questao) {
+        $questao_formatada = [
+            'id' => $questao['id'],
+            'numero' => $questao['numero_questao'],
+            'enunciado' => $questao['enunciado'],
+            'tipo_questao' => $questao['tipo_questao'] ?: 'multipla_escolha',
+            'dificuldade' => $questao['dificuldade'],
+            'materia' => $questao['materia'],
+            'assunto' => $questao['assunto'],
+            'explicacao' => $questao['explicacao']
         ];
+
+        // Adicionar alternativas ou resposta dissertativa
+        if ($questao['tipo_questao'] === 'dissertativa') {
+            $questao_formatada['resposta_esperada'] = $questao['resposta_dissertativa'] ?: $questao['resposta_correta'];
+        } else {
+            $questao_formatada['alternativas'] = [];
+            if (!empty($questao['alternativa_a'])) $questao_formatada['alternativas']['a'] = $questao['alternativa_a'];
+            if (!empty($questao['alternativa_b'])) $questao_formatada['alternativas']['b'] = $questao['alternativa_b'];
+            if (!empty($questao['alternativa_c'])) $questao_formatada['alternativas']['c'] = $questao['alternativa_c'];
+            if (!empty($questao['alternativa_d'])) $questao_formatada['alternativas']['d'] = $questao['alternativa_d'];
+            if (!empty($questao['alternativa_e'])) $questao_formatada['alternativas']['e'] = $questao['alternativa_e'];
+            $questao_formatada['resposta_correta'] = $questao['resposta_correta'];
+        }
+
+        $questoes_simuladas[] = $questao_formatada;
+    }
+
+    // Verificar se há questões suficientes
+    if (count($questoes_simuladas) == 0) {
+        // Nenhuma questão encontrada - exame não disponível
+        echo "<!DOCTYPE html>
+        <html lang='pt-BR'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Exame em Preparação - DayDreaming</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+                .container { max-width: 600px; margin: 50px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+                .icon { font-size: 4rem; margin-bottom: 20px; }
+                h1 { color: #333; margin-bottom: 20px; }
+                p { color: #666; line-height: 1.6; margin-bottom: 30px; }
+                .btn { display: inline-block; padding: 12px 24px; background: {$prova['cor']}; color: white; text-decoration: none; border-radius: 5px; transition: opacity 0.3s; }
+                .btn:hover { opacity: 0.8; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='icon'>🚧</div>
+                <h1>Exame {$prova['nome']} em Preparação</h1>
+                <p>Este exame está sendo preparado e receberá questões reais em breve.</p>
+                <p>Atualmente, apenas o <strong>SAT</strong> está disponível com questões completas do Practice Test #4.</p>
+                <p>Aguarde as próximas atualizações para ter acesso a este exame!</p>
+                <a href='simulador_provas.php' class='btn'>Voltar ao Simulador</a>
+            </div>
+        </body>
+        </html>";
+        exit;
+    }
+
+    // Se há poucas questões, mostrar aviso mas continuar
+    if (count($questoes_simuladas) < $prova['questoes_total']) {
+        $questoes_disponiveis = count($questoes_simuladas);
+        echo "<script>
+            alert('Atenção: Este exame tem apenas $questoes_disponiveis questões disponíveis de {$prova['questoes_total']} esperadas.\\n\\nO teste continuará com as questões disponíveis.');
+        </script>";
+
+        // Ajustar o total de questões para o disponível
+        $prova['questoes_total'] = $questoes_disponiveis;
     }
     
     include 'interface_teste.php';

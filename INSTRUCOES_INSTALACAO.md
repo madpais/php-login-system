@@ -70,7 +70,7 @@ define('DB_CHARSET', 'utf8mb4');
 #### 2.2 Configurar URLs (se necessário)
 ```php
 // URL Configuration
-define('SITE_URL', 'http://seu-dominio.com'); // ou http://localhost:8000
+define('SITE_URL', 'http://seu-dominio.com'); // ou http://localhost:8080
 ```
 
 ### 3. Configurar Permissões
@@ -99,13 +99,13 @@ O arquivo `.htaccess` já está configurado para:
 #### 4.1 Iniciar o Servidor
 ```bash
 # Servidor PHP built-in (desenvolvimento)
-php -S localhost:8000
+php -S localhost:8080
 
 # Ou configure no Apache/Nginx
 ```
 
 #### 4.2 Acessar o Sistema
-1. Abra o navegador em `http://localhost:8000`
+1. Abra o navegador em `http://localhost:8080`
 2. Faça login com as credenciais padrão:
    - **Usuário:** `admin`
    - **Senha:** `admin123`
@@ -270,7 +270,7 @@ Solução:
 Para suporte adicional:
 - 📧 Email: admin@daydreamming.com
 - 📱 Telefone: +55 11 99999-9999
-- 🌐 Site: http://localhost:8000
+- 🌐 Site: http://localhost:8080
 
 ## 📄 Licença
 

@@ -87,11 +87,7 @@
             border-color: #4CAF50;
         }
         
-        .btn-questao.marcada {
-            background: #FF9800;
-            color: white;
-            border-color: #FF9800;
-        }
+
         
         .legenda {
             margin-top: 20px;
@@ -125,12 +121,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
-        
+
         .questao-numero {
             font-size: 1.2rem;
             font-weight: bold;
             color: <?php echo $prova['cor']; ?>;
+            flex: 0 0 auto;
+        }
+
+        .questao-assunto {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            font-weight: 600;
+            color: #555;
+            background: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid <?php echo $prova['cor']; ?>;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 300px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .questao-acoes {
@@ -138,14 +155,24 @@
             gap: 10px;
         }
         
-        .btn-marcar {
+        .btn-voltar {
             padding: 8px 16px;
-            background: #FF9800;
+            background: #6c757d;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-voltar:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
         }
         
         .questao-conteudo {
@@ -164,7 +191,7 @@
         .alternativas {
             margin-bottom: 30px;
         }
-        
+
         .alternativa {
             display: flex;
             align-items: flex-start;
@@ -175,27 +202,125 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .alternativa:hover {
             border-color: <?php echo $prova['cor']; ?>;
             background: #f8f9ff;
         }
-        
+
         .alternativa.selecionada {
             border-color: <?php echo $prova['cor']; ?>;
             background: #e3f2fd;
         }
-        
+
         .alternativa input[type="radio"] {
             margin-right: 12px;
             margin-top: 2px;
         }
-        
+
         .letra-alternativa {
             font-weight: bold;
             color: <?php echo $prova['cor']; ?>;
             margin-right: 8px;
             min-width: 20px;
+        }
+
+        /* Estilos para questões dissertativas */
+        .resposta-dissertativa {
+            margin-bottom: 30px;
+        }
+
+        .resposta-dissertativa label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .resposta-dissertativa textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        .resposta-dissertativa textarea:focus {
+            outline: none;
+            border-color: <?php echo $prova['cor']; ?>;
+            box-shadow: 0 0 0 3px <?php echo $prova['cor']; ?>20;
+        }
+
+        .resposta-dissertativa .dica {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .tipo-questao-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .tipo-multipla-escolha {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tipo-dissertativa {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        /* Responsividade para o header */
+        @media (max-width: 768px) {
+            .questao-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .questao-assunto {
+                position: static;
+                transform: none;
+                max-width: 100%;
+                order: 2;
+            }
+
+            .questao-numero {
+                order: 1;
+            }
+
+            .questao-acoes {
+                order: 3;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .questao-assunto {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+
+            .questao-acoes {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-voltar, .btn-finalizar {
+                width: 100%;
+                margin-bottom: 5px;
+            }
         }
         
         .navegacao-questao {
@@ -286,6 +411,8 @@
     </style>
 </head>
 <body>
+    <?php include 'header_status.php'; ?>
+
     <div class="teste-interface">
         <!-- Sidebar com navegação -->
         <div class="sidebar">
@@ -317,10 +444,7 @@
                         <div class="legenda-cor" style="background: #4CAF50;"></div>
                         <span>Respondida</span>
                     </div>
-                    <div class="legenda-item">
-                        <div class="legenda-cor" style="background: #FF9800;"></div>
-                        <span>Marcada</span>
-                    </div>
+
                     <div class="legenda-item">
                         <div class="legenda-cor" style="background: white; border: 2px solid #ddd;"></div>
                         <span>Não respondida</span>
@@ -333,8 +457,11 @@
         <div class="area-questao">
             <div class="questao-header">
                 <div class="questao-numero">Questão <span id="numero-questao-atual">1</span></div>
+                <div class="questao-assunto" id="assunto-questao">
+                    <!-- Assunto será carregado via JavaScript -->
+                </div>
                 <div class="questao-acoes">
-                    <button class="btn-marcar" onclick="marcarQuestao()">📌 Marcar</button>
+                    <a href="simulador_provas.php" class="btn-voltar">🔙 Voltar para Exames</a>
                     <button class="btn-finalizar" onclick="confirmarFinalizacao()">🏁 Finalizar Teste</button>
                 </div>
             </div>
@@ -377,7 +504,6 @@
         
         let questaoAtual = 1;
         let respostas = {};
-        let questoesMarcadas = new Set();
         let cronometroInterval;
         
         // Inicializar teste
@@ -422,35 +548,89 @@
         
         function carregarQuestao(numero) {
             const questao = questoes[numero - 1];
-            
+
             document.getElementById('numero-questao-atual').textContent = numero;
             document.getElementById('questao-atual').textContent = numero;
-            document.getElementById('enunciado-questao').textContent = questao.enunciado;
-            
-            // Carregar alternativas
+            document.getElementById('enunciado-questao').innerHTML = questao.enunciado;
+
+            // Atualizar assunto da questão
+            const assuntoElement = document.getElementById('assunto-questao');
+            if (questao.assunto) {
+                assuntoElement.textContent = questao.assunto;
+                assuntoElement.style.display = 'block';
+            } else if (questao.materia) {
+                assuntoElement.textContent = questao.materia;
+                assuntoElement.style.display = 'block';
+            } else {
+                assuntoElement.textContent = 'Questão Geral';
+                assuntoElement.style.display = 'block';
+            }
+
+            // Carregar alternativas ou campo dissertativo
             const alternativasContainer = document.getElementById('alternativas-questao');
             alternativasContainer.innerHTML = '';
-            
-            Object.entries(questao.alternativas).forEach(([letra, texto]) => {
-                const div = document.createElement('div');
-                div.className = 'alternativa';
-                if (respostas[numero] === letra) {
-                    div.classList.add('selecionada');
-                }
-                
-                div.innerHTML = `
-                    <input type="radio" name="resposta" value="${letra}" ${respostas[numero] === letra ? 'checked' : ''}>
-                    <span class="letra-alternativa">${letra.toUpperCase()})</span>
-                    <span>${texto}</span>
+
+            // Adicionar badge do tipo de questão
+            const tipoBadge = document.createElement('div');
+            tipoBadge.className = `tipo-questao-badge ${questao.tipo_questao === 'dissertativa' ? 'tipo-dissertativa' : 'tipo-multipla-escolha'}`;
+            tipoBadge.textContent = questao.tipo_questao === 'dissertativa' ? '✏️ Questão Dissertativa' : '🔘 Múltipla Escolha';
+            alternativasContainer.appendChild(tipoBadge);
+
+            if (questao.tipo_questao === 'dissertativa') {
+                // Criar campo de resposta dissertativa
+                const respostaDiv = document.createElement('div');
+                respostaDiv.className = 'resposta-dissertativa';
+
+                respostaDiv.innerHTML = `
+                    <label for="resposta-texto-${numero}">Digite sua resposta:</label>
+                    <textarea
+                        id="resposta-texto-${numero}"
+                        name="resposta-texto"
+                        placeholder="Digite sua resposta aqui..."
+                        maxlength="1000"
+                    >${respostas[numero] || ''}</textarea>
+                    <div class="dica">💡 Dica: Seja claro e objetivo em sua resposta. Máximo de 1000 caracteres.</div>
                 `;
-                
-                div.addEventListener('click', function() {
-                    selecionarAlternativa(numero, letra, div);
+
+                alternativasContainer.appendChild(respostaDiv);
+
+                // Adicionar evento de mudança no textarea
+                const textarea = respostaDiv.querySelector('textarea');
+                textarea.addEventListener('input', function() {
+                    const resposta = this.value.trim();
+                    if (resposta) {
+                        respostas[numero] = resposta;
+                        atualizarStatusQuestao(numero);
+                        salvarResposta(numero, resposta, 'dissertativa');
+                    } else {
+                        delete respostas[numero];
+                        atualizarStatusQuestao(numero);
+                    }
                 });
-                
-                alternativasContainer.appendChild(div);
-            });
-            
+
+            } else {
+                // Questão de múltipla escolha (comportamento original)
+                Object.entries(questao.alternativas).forEach(([letra, texto]) => {
+                    const div = document.createElement('div');
+                    div.className = 'alternativa';
+                    if (respostas[numero] === letra) {
+                        div.classList.add('selecionada');
+                    }
+
+                    div.innerHTML = `
+                        <input type="radio" name="resposta" value="${letra}" ${respostas[numero] === letra ? 'checked' : ''}>
+                        <span class="letra-alternativa">${letra.toUpperCase()})</span>
+                        <span>${texto}</span>
+                    `;
+
+                    div.addEventListener('click', function() {
+                        selecionarAlternativa(numero, letra, div);
+                    });
+
+                    alternativasContainer.appendChild(div);
+                });
+            }
+
             // Atualizar navegação
             atualizarNavegacao();
             atualizarProgresso();
@@ -461,29 +641,27 @@
             document.querySelectorAll('.alternativa').forEach(alt => {
                 alt.classList.remove('selecionada');
             });
-            
+
             // Adicionar nova seleção
             elemento.classList.add('selecionada');
             elemento.querySelector('input').checked = true;
-            
+
             // Salvar resposta
             respostas[numeroQuestao] = letra;
-            
+
             // Atualizar status da questão
             atualizarStatusQuestao(numeroQuestao);
-            
-            // Salvar no servidor (simulado)
-            salvarResposta(numeroQuestao, letra);
+
+            // Salvar no servidor
+            salvarResposta(numeroQuestao, letra, 'multipla_escolha');
         }
         
         function atualizarStatusQuestao(numero) {
             const btn = document.getElementById(`btn-questao-${numero}`);
-            btn.classList.remove('atual', 'respondida', 'marcada');
-            
+            btn.classList.remove('atual', 'respondida');
+
             if (numero === questaoAtual) {
                 btn.classList.add('atual');
-            } else if (questoesMarcadas.has(numero)) {
-                btn.classList.add('marcada');
             } else if (respostas[numero]) {
                 btn.classList.add('respondida');
             }
@@ -516,14 +694,7 @@
             }
         }
         
-        function marcarQuestao() {
-            if (questoesMarcadas.has(questaoAtual)) {
-                questoesMarcadas.delete(questaoAtual);
-            } else {
-                questoesMarcadas.add(questaoAtual);
-            }
-            atualizarStatusQuestao(questaoAtual);
-        }
+
         
         function atualizarNavegacao() {
             document.getElementById('btn-anterior').disabled = questaoAtual === 1;
@@ -535,9 +706,27 @@
             document.getElementById('barra-progresso').style.width = progresso + '%';
         }
         
-        function salvarResposta(questao, resposta) {
-            // Simular salvamento no servidor
-            console.log(`Salvando resposta: Questão ${questao} = ${resposta}`);
+        function salvarResposta(questao, resposta, tipo = 'multipla_escolha') {
+            // Salvar resposta no servidor via AJAX
+            const formData = new FormData();
+            formData.append('sessao_id', sessaoId);
+            formData.append('questao_numero', questao);
+            formData.append('resposta', resposta);
+            formData.append('tipo_resposta', tipo);
+
+            fetch('salvar_resposta.php', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(`✅ Resposta salva: Questão ${questao} = ${resposta} (${tipo})`);
+                } else {
+                    console.error('❌ Erro ao salvar resposta:', data.error);
+                }
+            }).catch(error => {
+                console.error('❌ Erro de conexão:', error);
+            });
         }
         
         function confirmarFinalizacao() {
@@ -557,25 +746,55 @@
         
         function finalizarTeste() {
             clearInterval(cronometroInterval);
-            
+
+            // Mostrar loading
+            const loadingMsg = document.createElement('div');
+            loadingMsg.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 10000; text-align: center; font-size: 1.2rem;
+            `;
+            loadingMsg.innerHTML = '⏳ Finalizando teste...<br><small>Aguarde, estamos processando suas respostas</small>';
+            document.body.appendChild(loadingMsg);
+
             // Enviar respostas para o servidor
             const formData = new FormData();
             formData.append('sessao_id', sessaoId);
             formData.append('respostas', JSON.stringify(respostas));
             formData.append('finalizar', '1');
-            
+
             fetch('processar_teste.php', {
                 method: 'POST',
                 body: formData
             }).then(response => {
+                document.body.removeChild(loadingMsg);
+
                 if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Erro HTTP: ' + response.status);
+                }
+            }).then(data => {
+                if (data.sucesso) {
+                    // Mostrar resumo rápido antes de redirecionar
+                    const resumo = `✅ Teste finalizado com sucesso!
+
+📊 Resumo:
+• Questões respondidas: ${data.questoes_respondidas}
+• Acertos: ${data.acertos}
+• Pontuação: ${data.pontuacao.toFixed(1)}%
+
+Redirecionando para os resultados...`;
+
+                    alert(resumo);
                     window.location.href = `resultado_teste.php?sessao=${sessaoId}`;
                 } else {
-                    alert('Erro ao finalizar teste. Tente novamente.');
+                    alert('❌ Erro: ' + (data.erro || 'Erro desconhecido'));
                 }
             }).catch(error => {
+                document.body.removeChild(loadingMsg);
                 console.error('Erro:', error);
-                alert('Erro de conexão. Tente novamente.');
+                alert('❌ Erro de conexão. Verifique sua internet e tente novamente.');
             });
         }
         

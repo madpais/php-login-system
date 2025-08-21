@@ -1,7 +1,6 @@
 <?php
 require_once 'config.php';
 require_once 'verificar_auth.php';
-require_once 'badges_manager.php';
 
 // Verificar se o usuário está logado
 verificarLogin();
@@ -29,7 +28,7 @@ $respostas = json_decode($_POST['respostas'] ?? '{}', true);
 try {
     // Verificar se a sessão existe e pertence ao usuário
     $stmt = $pdo->prepare("SELECT * FROM sessoes_teste WHERE id = ? AND usuario_id = ? AND status = 'ativo'");
-    $stmt->execute([$sessao_id, $_SESSION['user_id']]);
+    $stmt->execute([$sessao_id, $_SESSION['usuario_id']]);
     $sessao = $stmt->fetch();
     
     if (!$sessao) {
@@ -38,62 +37,85 @@ try {
         exit;
     }
     
-    // Configurações das provas
-    $config_provas = [
-        'toefl' => ['questoes_total' => 80],
-    'ielts' => ['questoes_total' => 40],
-    'sat' => ['questoes_total' => 154],
-    'dele' => ['questoes_total' => 50],
-    'delf' => ['questoes_total' => 45],
-    'testdaf' => ['questoes_total' => 35],
-    'jlpt' => ['questoes_total' => 60],
-    'hsk' => ['questoes_total' => 100]
-    ];
-    
-    $tipo_prova = $sessao['tipo_prova'];
-    $questoes_total = $config_provas[$tipo_prova]['questoes_total'];
-    
-    // Calcular pontuação (simulada - as respostas corretas virão do JSON/XML)
-    $acertos = 0;
+    // Calcular estatísticas
     $questoes_respondidas = count($respostas);
+    $acertos = 0;
+    $tipo_prova = $sessao['tipo_prova'];
     
-    // Simular respostas corretas (será substituído pelo sistema real)
-    $respostas_corretas = [];
-    $alternativas = ['a', 'b', 'c', 'd', 'e'];
-    for ($i = 1; $i <= $questoes_total; $i++) {
-        $respostas_corretas[$i] = $alternativas[rand(0, 4)];
+    // Buscar respostas corretas
+    $stmt = $pdo->prepare("SELECT id, numero_questao, resposta_correta, tipo_questao, resposta_dissertativa FROM questoes WHERE tipo_prova = ?");
+    $stmt->execute([$tipo_prova]);
+    $questoes_corretas = $stmt->fetchAll();
+
+    // Organizar questões por número
+    $questoes_map = [];
+    foreach ($questoes_corretas as $questao) {
+        $questoes_map[$questao['numero_questao']] = $questao;
     }
-    
-    // Calcular acertos
-    foreach ($respostas as $questao => $resposta) {
-        if (isset($respostas_corretas[$questao]) && $respostas_corretas[$questao] === $resposta) {
-            $acertos++;
+
+    // Calcular acertos e salvar respostas
+    foreach ($respostas as $questao_num => $resposta_usuario) {
+        if (isset($questoes_map[$questao_num])) {
+            $questao = $questoes_map[$questao_num];
+
+            // Determinar resposta correta baseada no tipo
+            if ($questao['tipo_questao'] === 'dissertativa') {
+                $resposta_correta = $questao['resposta_dissertativa'] ?: $questao['resposta_correta'];
+            } else {
+                $resposta_correta = $questao['resposta_correta'];
+            }
+
+            // Comparar respostas
+            $esta_correta = strtolower(trim($resposta_usuario)) === strtolower(trim($resposta_correta));
+            if ($esta_correta) {
+                $acertos++;
+            }
+
+            // Salvar resposta do usuário
+            $stmt_resposta = $pdo->prepare("
+                INSERT INTO respostas_usuario
+                (sessao_id, questao_id, questao_numero, resposta_usuario, resposta_dissertativa_usuario, resposta_correta, esta_correta, data_resposta)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                ON DUPLICATE KEY UPDATE
+                resposta_usuario = VALUES(resposta_usuario),
+                resposta_dissertativa_usuario = VALUES(resposta_dissertativa_usuario),
+                esta_correta = VALUES(esta_correta),
+                data_resposta = NOW()
+            ");
+
+            if ($questao['tipo_questao'] === 'dissertativa') {
+                $stmt_resposta->execute([
+                    $sessao_id, $questao['id'], $questao_num,
+                    null, $resposta_usuario, $resposta_correta, $esta_correta
+                ]);
+            } else {
+                $stmt_resposta->execute([
+                    $sessao_id, $questao['id'], $questao_num,
+                    $resposta_usuario, null, $resposta_correta, $esta_correta
+                ]);
+            }
         }
     }
     
-    $pontuacao = ($acertos / $questoes_total) * 100;
-    $tempo_gasto = time() - strtotime($sessao['inicio']);
+    // Calcular pontuação
+    $total_questoes = 120; // SAT padrão
+    $pontuacao = $questoes_respondidas > 0 ? ($acertos / $questoes_respondidas) * 100 : 0;
+    
+    // Calcular tempo gasto
+    $inicio = new DateTime($sessao['inicio']);
+    $fim = new DateTime();
+    $tempo_gasto = $fim->getTimestamp() - $inicio->getTimestamp();
     
     // Iniciar transação
     $pdo->beginTransaction();
     
     // Atualizar sessão
-    $stmt = $pdo->prepare("UPDATE sessoes_teste SET status = 'finalizado', fim = NOW(), pontuacao = ?, acertos = ?, questoes_respondidas = ?, tempo_gasto = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE sessoes_teste SET status = 'finalizado', fim = NOW(), pontuacao_final = ?, acertos = ?, questoes_respondidas = ?, tempo_gasto = ? WHERE id = ?");
     $stmt->execute([$pontuacao, $acertos, $questoes_respondidas, $tempo_gasto, $sessao_id]);
     
     // Salvar resultado detalhado
     $stmt = $pdo->prepare("INSERT INTO resultados_testes (usuario_id, sessao_id, tipo_prova, pontuacao, acertos, total_questoes, questoes_respondidas, tempo_gasto, data_realizacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->execute([$_SESSION['user_id'], $sessao_id, $tipo_prova, $pontuacao, $acertos, $questoes_total, $questoes_respondidas, $tempo_gasto]);
-    
-    // Salvar respostas individuais
-    foreach ($respostas as $questao => $resposta) {
-        $correta = isset($respostas_corretas[$questao]) && $respostas_corretas[$questao] === $resposta;
-        $stmt = $pdo->prepare("INSERT INTO respostas_usuario (sessao_id, questao_numero, resposta_usuario, resposta_correta, acertou) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$sessao_id, $questao, $resposta, $respostas_corretas[$questao] ?? null, $correta]);
-    }
-    
-    // Verificar e conceder badges
-    concederBadges($_SESSION['user_id'], $pontuacao, $tipo_prova, $pdo);
+    $stmt->execute([$_SESSION['usuario_id'], $sessao_id, $tipo_prova, $pontuacao, $acertos, $total_questoes, $questoes_respondidas, $tempo_gasto]);
     
     // Confirmar transação
     $pdo->commit();
@@ -102,72 +124,16 @@ try {
         'sucesso' => true,
         'pontuacao' => $pontuacao,
         'acertos' => $acertos,
-        'total' => $questoes_total,
-        'sessao_id' => $sessao_id
+        'questoes_respondidas' => $questoes_respondidas,
+        'tempo_gasto' => $tempo_gasto
     ]);
     
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollback();
+    }
     error_log("Erro ao processar teste: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['erro' => 'Erro interno do servidor']);
-}
-
-function concederBadges($usuario_id, $pontuacao, $tipo_prova, $pdo) {
-    $badges_para_conceder = [];
-    
-    // Badges baseadas na pontuação
-    if ($pontuacao >= 90) {
-        $badges_para_conceder[] = 'excelencia';
-    } elseif ($pontuacao >= 80) {
-        $badges_para_conceder[] = 'muito_bom';
-    } elseif ($pontuacao >= 70) {
-        $badges_para_conceder[] = 'bom';
-    } elseif ($pontuacao >= 60) {
-        $badges_para_conceder[] = 'satisfatorio';
-    }
-    
-    // Badge de primeiro teste
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM resultados_testes WHERE usuario_id = ?");
-    $stmt->execute([$usuario_id]);
-    if ($stmt->fetchColumn() == 1) { // Primeiro teste
-        $badges_para_conceder[] = 'primeiro_teste';
-    }
-    
-    // Badge específica do tipo de prova
-    $badges_para_conceder[] = 'especialista_' . $tipo_prova;
-    
-    // Verificar badges de sequência
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM resultados_testes WHERE usuario_id = ? AND pontuacao >= 70");
-    $stmt->execute([$usuario_id]);
-    $testes_bons = $stmt->fetchColumn();
-    
-    if ($testes_bons >= 5) {
-        $badges_para_conceder[] = 'consistente';
-    }
-    
-    if ($testes_bons >= 10) {
-        $badges_para_conceder[] = 'dedicado';
-    }
-    
-    // Conceder badges que ainda não foram concedidas
-    foreach ($badges_para_conceder as $badge_codigo) {
-        // Verificar se a badge existe
-        $stmt = $pdo->prepare("SELECT id FROM badges WHERE codigo = ?");
-        $stmt->execute([$badge_codigo]);
-        $badge = $stmt->fetch();
-        
-        if ($badge) {
-            // Verificar se o usuário já tem esta badge
-            $stmt = $pdo->prepare("SELECT id FROM usuario_badges WHERE usuario_id = ? AND badge_id = ?");
-            $stmt->execute([$usuario_id, $badge['id']]);
-            
-            if (!$stmt->fetch()) {
-                // Conceder a badge
-                $stmt = $pdo->prepare("INSERT INTO usuario_badges (usuario_id, badge_id, data_conquista) VALUES (?, ?, NOW())");
-                $stmt->execute([$usuario_id, $badge['id']]);
-            }
-        }
-    }
 }
 ?>

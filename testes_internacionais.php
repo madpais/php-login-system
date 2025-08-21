@@ -1283,7 +1283,7 @@ $usuario_logado = isset($_SESSION['usuario_id']);
                 }
                 return false;
             <?php else: ?>
-                window.location.href = 'http://localhost:8000/simulador_provas.php';
+                window.location.href = 'simulador_provas.php';
                 return true;
             <?php endif; ?>
         }

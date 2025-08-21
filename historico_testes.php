@@ -522,11 +522,8 @@ function obterNivelDesempenho($pontuacao) {
         </div>
         
         <div style="text-align: center; margin-top: 30px;">
-            <a href="simulador_provas.php" class="btn btn-primary" style="margin-right: 15px;">
+            <a href="simulador_provas.php" class="btn btn-primary">
                 🎯 Fazer Novo Teste
-            </a>
-            <a href="dashboard.php" class="btn btn-secondary">
-                🏠 Voltar ao Dashboard
             </a>
         </div>
     </div>

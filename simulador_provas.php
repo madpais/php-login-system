@@ -21,7 +21,19 @@ if (!isset($_SESSION['csrf_token'])) {
 }
 
 // Buscar estatísticas do usuário
-$stmt = $pdo->prepare("SELECT COUNT(*) as total_testes, AVG(pontuacao) as media_pontuacao FROM resultados_testes WHERE usuario_id = ?");
+$stmt = $pdo->prepare("
+    SELECT
+        COUNT(*) as total_testes,
+        AVG(CASE
+            WHEN st.tipo_prova = 'sat' THEN (st.acertos / 120) * 100
+            WHEN st.tipo_prova = 'toefl' THEN (st.acertos / 100) * 100
+            WHEN st.tipo_prova = 'ielts' THEN (st.acertos / 40) * 100
+            WHEN st.tipo_prova = 'gre' THEN (st.acertos / 80) * 100
+            ELSE (st.acertos / 120) * 100
+        END) as media_pontuacao
+    FROM sessoes_teste st
+    WHERE st.usuario_id = ? AND st.status = 'finalizado'
+");
 $stmt->execute([$_SESSION['usuario_id']]);
 $estatisticas = $stmt->fetch();
 
@@ -38,7 +50,7 @@ $tipos_provas = [
         'icone' => '🇺🇸',
         'cor' => '#4CAF50',
         'duracao' => '3h00min',
-        'questoes' => 80
+        'questoes' => 100
     ],
     'ielts' => [
         'nome' => 'IELTS',
@@ -54,7 +66,15 @@ $tipos_provas = [
         'icone' => '🎓',
         'cor' => '#FF9800',
         'duracao' => '3h00min',
-        'questoes' => 154
+        'questoes' => 120
+    ],
+    'gre' => [
+        'nome' => 'GRE',
+        'descricao' => 'Graduate Record Examinations',
+        'icone' => '🎯',
+        'cor' => '#9C27B0',
+        'duracao' => '3h45min',
+        'questoes' => 80
     ],
     'dele' => [
         'nome' => 'DELE',

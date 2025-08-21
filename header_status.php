@@ -1,6 +1,6 @@
 <?php
 // Componente de header para mostrar status de login
-if (session_status() == PHP_SESSION_NONE) {
+if (session_status() == PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
 
@@ -39,6 +39,20 @@ if ($usuario_logado) {
         <?php else: ?>
             <span style="font-weight: 500;">❌ Você não está logado</span>
         <?php endif; ?>
+
+        <a href="index.php" style="
+            background: rgba(255,255,255,0.15);
+            color: white;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 18px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.25);
+        " onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+            🏠 Página Inicial
+        </a>
     </div>
     
     <div style="display: flex; align-items: center; gap: 10px;">
@@ -93,6 +107,12 @@ if ($usuario_logado) {
         flex-direction: column;
         gap: 10px;
         width: 100%;
+    }
+
+    #login-status-header > div:first-child {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     #login-status-header span {
