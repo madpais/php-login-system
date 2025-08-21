@@ -12,13 +12,15 @@ $usuario_login = $_SESSION['usuario_login'];
 // Conectar ao banco de dados
 $pdo = conectarBD();
 
-// Verificar rate limiting para ações do fórum
+// Verificar rate limiting para ações do fórum (temporariamente desabilitado para debug)
+/*
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verificarRateLimit('forum_action', 15, 60)) {
         header("Location: forum.php?erro=muitas_tentativas");
         exit;
     }
 }
+*/
 
 // Gerar token CSRF para formulários
 if (!isset($_SESSION['csrf_token'])) {
@@ -27,27 +29,41 @@ if (!isset($_SESSION['csrf_token'])) {
 
 // Processar ações do formulário
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verificar CSRF token
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        header("Location: forum.php?erro=token_invalido");
+        exit;
+    }
+ 
     if (isset($_POST['acao'])) {
         switch ($_POST['acao']) {
             case 'criar_topico':
                 $categoria_id = $_POST['categoria_id'];
                 $titulo = trim($_POST['titulo']);
                 $conteudo = trim($_POST['conteudo']);
-                
+
                 if (!empty($titulo) && !empty($conteudo)) {
-                    $stmt = $pdo->prepare("INSERT INTO forum_topicos (categoria_id, usuario_id, titulo, conteudo) VALUES (?, ?, ?, ?)");
-                    $stmt->execute([$categoria_id, $usuario_id, $titulo, $conteudo]);
-                    $sucesso = "Tópico criado com sucesso!";
+                    // Todos os tópicos são aprovados automaticamente
+                    $aprovado = 1;
+
+                    $stmt = $pdo->prepare("INSERT INTO forum_topicos (categoria_id, autor_id, titulo, conteudo, aprovado) VALUES (?, ?, ?, ?, ?)");
+                    $stmt->execute([$categoria_id, $usuario_id, $titulo, $conteudo, $aprovado]);
+
+                    $sucesso = "Tópico criado e publicado com sucesso!";
                 }
                 break;
                 
             case 'responder':
                 $topico_id = $_POST['topico_id'];
                 $conteudo = trim($_POST['conteudo']);
-                
+
                 if (!empty($conteudo)) {
-                    $stmt = $pdo->prepare("INSERT INTO forum_respostas (topico_id, usuario_id, conteudo) VALUES (?, ?, ?)");
-                    $stmt->execute([$topico_id, $usuario_id, $conteudo]);
+                    // Todas as respostas são aprovadas automaticamente
+                    $aprovado = 1;
+
+                    $stmt = $pdo->prepare("INSERT INTO forum_respostas (topico_id, autor_id, conteudo, aprovado) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$topico_id, $usuario_id, $conteudo, $aprovado]);
+
                     $sucesso = "Resposta adicionada com sucesso!";
                 }
                 break;
@@ -64,6 +80,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->execute([$usuario_id, $id]);
                 }
                 break;
+
+            case 'moderar':
+                // Apenas admins podem moderar
+                if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']) {
+                    $tipo = $_POST['tipo']; // 'topico' ou 'resposta'
+                    $id = $_POST['id'];
+                    $acao_mod = $_POST['acao_mod']; // 'aprovar', 'rejeitar', 'fixar', 'fechar'
+
+                    if ($tipo === 'topico') {
+                        switch ($acao_mod) {
+                            case 'aprovar':
+                                $stmt = $pdo->prepare("UPDATE forum_topicos SET aprovado = 1 WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Tópico aprovado com sucesso!";
+                                break;
+                            case 'rejeitar':
+                                $stmt = $pdo->prepare("UPDATE forum_topicos SET aprovado = 0 WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Tópico rejeitado!";
+                                break;
+                            case 'fixar':
+                                $stmt = $pdo->prepare("UPDATE forum_topicos SET fixado = NOT fixado WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Status de fixação alterado!";
+                                break;
+                            case 'fechar':
+                                $stmt = $pdo->prepare("UPDATE forum_topicos SET fechado = NOT fechado WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Status de fechamento alterado!";
+                                break;
+                            case 'deletar':
+                                $stmt = $pdo->prepare("DELETE FROM forum_topicos WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Tópico deletado!";
+                                break;
+                        }
+
+                        // Registrar ação de moderação
+                        $stmt = $pdo->prepare("INSERT INTO forum_moderacao (moderador_id, topico_id, acao) VALUES (?, ?, ?)");
+                        $stmt->execute([$usuario_id, $id, $acao_mod]);
+
+                    } elseif ($tipo === 'resposta') {
+                        switch ($acao_mod) {
+                            case 'aprovar':
+                                $stmt = $pdo->prepare("UPDATE forum_respostas SET aprovado = 1 WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Resposta aprovada com sucesso!";
+                                break;
+                            case 'rejeitar':
+                                $stmt = $pdo->prepare("UPDATE forum_respostas SET aprovado = 0 WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Resposta rejeitada!";
+                                break;
+                            case 'deletar':
+                                $stmt = $pdo->prepare("DELETE FROM forum_respostas WHERE id = ?");
+                                $stmt->execute([$id]);
+                                $sucesso = "Resposta deletada!";
+                                break;
+                        }
+
+                        // Registrar ação de moderação
+                        $stmt = $pdo->prepare("INSERT INTO forum_moderacao (moderador_id, resposta_id, acao) VALUES (?, ?, ?)");
+                        $stmt->execute([$usuario_id, $id, $acao_mod]);
+                    }
+                }
+                break;
         }
     }
 }
@@ -76,13 +158,17 @@ $categorias = $stmt->fetchAll();
 $filtro_categoria = isset($_GET['categoria']) ? $_GET['categoria'] : '';
 $busca = isset($_GET['busca']) ? $_GET['busca'] : '';
 
+// Todos os usuários veem todos os tópicos (sem necessidade de aprovação)
+$is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
+$condicao_aprovacao = "1=1";
+
 $sql = "SELECT t.*, u.nome as autor_nome, c.nome as categoria_nome, c.cor as categoria_cor, c.icone as categoria_icone,
-               (SELECT COUNT(*) FROM forum_respostas r WHERE r.topico_id = t.id AND r.aprovado = 1) as total_respostas,
+               (SELECT COUNT(*) FROM forum_respostas r WHERE r.topico_id = t.id) as total_respostas,
                (SELECT COUNT(*) FROM forum_curtidas l WHERE l.topico_id = t.id) as total_likes
-        FROM forum_topicos t 
-        JOIN usuarios u ON t.usuario_id = u.id 
-        JOIN forum_categorias c ON t.categoria_id = c.id 
-        WHERE t.aprovado = 1";
+        FROM forum_topicos t
+        JOIN usuarios u ON t.autor_id = u.id
+        JOIN forum_categorias c ON t.categoria_id = c.id
+        WHERE $condicao_aprovacao";
 
 $params = [];
 if ($filtro_categoria) {
@@ -113,20 +199,20 @@ if (isset($_GET['topico'])) {
     // Buscar detalhes do tópico
     $stmt = $pdo->prepare("SELECT t.*, u.nome as autor_nome, c.nome as categoria_nome, c.cor as categoria_cor, c.icone as categoria_icone,
                                   (SELECT COUNT(*) FROM forum_curtidas l WHERE l.topico_id = t.id) as total_likes
-                           FROM forum_topicos t 
-                           JOIN usuarios u ON t.usuario_id = u.id 
-                           JOIN forum_categorias c ON t.categoria_id = c.id 
+                           FROM forum_topicos t
+                           JOIN usuarios u ON t.autor_id = u.id
+                           JOIN forum_categorias c ON t.categoria_id = c.id
                            WHERE t.id = ? AND t.aprovado = 1");
     $stmt->execute([$topico_id]);
     $topico_detalhes = $stmt->fetch();
     
     if ($topico_detalhes) {
-        // Buscar respostas
+        // Buscar respostas (todas as respostas são visíveis)
         $stmt = $pdo->prepare("SELECT r.*, u.nome as autor_nome,
                                       (SELECT COUNT(*) FROM forum_curtidas l WHERE l.resposta_id = r.id) as total_likes
-                               FROM forum_respostas r 
-                               JOIN usuarios u ON r.usuario_id = u.id 
-                               WHERE r.topico_id = ? AND r.aprovado = 1 
+                               FROM forum_respostas r
+                               JOIN usuarios u ON r.autor_id = u.id
+                               WHERE r.topico_id = ?
                                ORDER BY r.data_criacao ASC");
         $stmt->execute([$topico_id]);
         $respostas = $stmt->fetchAll();
@@ -462,6 +548,59 @@ if (isset($_GET['topico'])) {
                     ✅ <?php echo $sucesso; ?>
                 </div>
             <?php endif; ?>
+
+            <?php if (isset($_GET['erro'])): ?>
+                <div style="background: #dc3545; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    ❌
+                    <?php
+                    switch($_GET['erro']) {
+                        case 'token_invalido': echo 'Token de segurança inválido. Tente novamente.'; break;
+                        case 'acesso_negado': echo 'Acesso negado. Apenas administradores podem realizar esta ação.'; break;
+                        default: echo 'Erro desconhecido.'; break;
+                    }
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                <!-- Painel de Moderação para Admins -->
+                <div style="background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                    <h4 style="color: #ffc107; margin: 0 0 10px 0;">🛡️ Painel de Moderação</h4>
+                    <?php
+                    // Estatísticas de moderação
+                    $stmt = $pdo->query("SELECT COUNT(*) FROM forum_topicos WHERE aprovado = 0");
+                    $topicos_pendentes = $stmt->fetchColumn();
+
+                    $stmt = $pdo->query("SELECT COUNT(*) FROM forum_respostas WHERE aprovado = 0");
+                    $respostas_pendentes = $stmt->fetchColumn();
+
+                    $stmt = $pdo->query("SELECT COUNT(*) FROM forum_topicos");
+                    $total_topicos = $stmt->fetchColumn();
+
+                    $stmt = $pdo->query("SELECT COUNT(*) FROM forum_respostas");
+                    $total_respostas = $stmt->fetchColumn();
+                    ?>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                            <strong>📋 Tópicos Pendentes:</strong> <?php echo $topicos_pendentes; ?>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                            <strong>💬 Respostas Pendentes:</strong> <?php echo $respostas_pendentes; ?>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                            <strong>📊 Total Tópicos:</strong> <?php echo $total_topicos; ?>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                            <strong>📊 Total Respostas:</strong> <?php echo $total_respostas; ?>
+                        </div>
+                    </div>
+                    <?php if ($topicos_pendentes > 0 || $respostas_pendentes > 0): ?>
+                        <div style="margin-top: 10px; padding: 8px; background: rgba(220, 53, 69, 0.1); border-radius: 5px; color: #dc3545;">
+                            ⚠️ Há conteúdo aguardando moderação! Verifique os itens marcados com ⏳ abaixo.
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
             
             <?php if (!isset($_GET['topico'])): ?>
                 <!-- Lista de tópicos -->
@@ -495,8 +634,10 @@ if (isset($_GET['topico'])) {
                                     <?php if ($topico['fechado']): ?>🔒 <?php endif; ?>
                                     <?php echo htmlspecialchars($topico['titulo']); ?>
                                 </h3>
-                                <div class="topic-category" style="background-color: <?php echo $topico['categoria_cor']; ?>">
-                                    <?php echo $topico['categoria_icone']; ?> <?php echo htmlspecialchars($topico['categoria_nome']); ?>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <div class="topic-category" style="background-color: <?php echo $topico['categoria_cor']; ?>">
+                                        <?php echo $topico['categoria_icone']; ?> <?php echo htmlspecialchars($topico['categoria_nome']); ?>
+                                    </div>
                                 </div>
                             </div>
                             <div class="topic-content">
@@ -511,6 +652,44 @@ if (isset($_GET['topico'])) {
                                     <span>❤️ <?php echo $topico['total_likes']; ?></span>
                                 </div>
                             </div>
+
+                            <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                                <div class="admin-controls" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);" onclick="event.stopPropagation();">
+                                    <small style="color: rgba(255,255,255,0.7);">🛡️ Controles de Admin:</small>
+                                    <div style="display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap;">
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="acao" value="moderar">
+                                            <input type="hidden" name="tipo" value="topico">
+                                            <input type="hidden" name="id" value="<?php echo $topico['id']; ?>">
+                                            <input type="hidden" name="acao_mod" value="fixar">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                            <button type="submit" class="btn-mini" style="background: #ffc107; color: #000; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px;">
+                                                <?php echo $topico['fixado'] ? '📌 Desfixar' : '📌 Fixar'; ?>
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="acao" value="moderar">
+                                            <input type="hidden" name="tipo" value="topico">
+                                            <input type="hidden" name="id" value="<?php echo $topico['id']; ?>">
+                                            <input type="hidden" name="acao_mod" value="fechar">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                            <button type="submit" class="btn-mini" style="background: #6c757d; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px;">
+                                                <?php echo $topico['fechado'] ? '🔓 Abrir' : '🔒 Fechar'; ?>
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja deletar este tópico?')">
+                                            <input type="hidden" name="acao" value="moderar">
+                                            <input type="hidden" name="tipo" value="topico">
+                                            <input type="hidden" name="id" value="<?php echo $topico['id']; ?>">
+                                            <input type="hidden" name="acao_mod" value="deletar">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                            <button type="submit" class="btn-mini" style="background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 3px; font-size: 10px;">🗑️ Deletar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                     

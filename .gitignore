@@ -55,6 +55,15 @@ testar_*.php
 # Manter arquivos de verificação para colaboradores
 # verificar_instalacao.php
 # verificar_tabelas_completas.php
+# verificar_sistema_colaborador.php
+# README_COLABORADORES.md
+# config.exemplo.php
+
+# Arquivos específicos para colaboradores (não ignorar)
+!setup_database.php
+!verificar_sistema_colaborador.php
+!README_COLABORADORES.md
+!config.exemplo.php
 
 # Arquivos específicos do Windows
 ehthumbs.db

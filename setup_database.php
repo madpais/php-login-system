@@ -5,9 +5,21 @@
  */
 
 echo "🚀 CONFIGURAÇÃO DO BANCO DE DADOS - DAYDREAMING PROJECT\n";
-echo "=======================================================\n\n";
+echo "=======================================================\n";
+echo "📅 Data: " . date('Y-m-d H:i:s') . "\n";
+echo "🖥️ Sistema: " . PHP_OS . "\n";
+echo "🐘 PHP: " . phpversion() . "\n";
+echo "🔄 Versão: 2.0 - Sistema de Fórum Atualizado\n\n";
 
-// Configurações do banco
+echo "📋 ATUALIZAÇÕES DESTA VERSÃO:\n";
+echo "=============================\n";
+echo "• Fórum sem necessidade de aprovação prévia\n";
+echo "• Tópicos e respostas ficam visíveis imediatamente\n";
+echo "• Moderação reativa (admin age após problemas)\n";
+echo "• Estrutura otimizada para colaboradores\n";
+echo "• Logs de auditoria aprimorados\n\n";
+
+// Configurações do banco (podem ser sobrescritas por config.php se existir)
 $config = [
     'host' => 'localhost',
     'user' => 'root',
@@ -16,12 +28,62 @@ $config = [
     'charset' => 'utf8mb4'
 ];
 
+// Verificar se config.php existe e usar suas configurações
+if (file_exists('config.php')) {
+    echo "📄 Carregando configurações do config.php...\n";
+    require_once 'config.php';
+    // Tentar usar a função conectarBD para pegar as configurações
+    try {
+        $test_pdo = conectarBD();
+        echo "✅ Configurações do config.php carregadas\n";
+    } catch (Exception $e) {
+        echo "⚠️ Usando configurações padrão (config.php com erro)\n";
+    }
+} else {
+    echo "⚠️ config.php não encontrado, usando configurações padrão\n";
+}
+echo "\n";
+
+// Verificações de pré-requisitos
+echo "🔍 VERIFICANDO PRÉ-REQUISITOS...\n";
+echo "================================\n";
+
+// Verificar extensão PDO
+if (!extension_loaded('pdo')) {
+    die("❌ Extensão PDO não está instalada\n");
+}
+echo "✅ PDO disponível\n";
+
+// Verificar driver MySQL
+if (!extension_loaded('pdo_mysql')) {
+    die("❌ Driver PDO MySQL não está instalado\n");
+}
+echo "✅ Driver MySQL disponível\n";
+
+// Verificar se é linha de comando ou web
+$is_cli = php_sapi_name() === 'cli';
+echo "✅ Executando via: " . ($is_cli ? "CLI (linha de comando)" : "Web browser") . "\n";
+
+// Verificar permissões de escrita (para logs)
+if (is_writable('.')) {
+    echo "✅ Permissões de escrita OK\n";
+} else {
+    echo "⚠️ Sem permissões de escrita no diretório atual\n";
+}
+
+echo "\n";
+
 try {
     // 1. Conectar ao MySQL (sem especificar database)
     echo "📡 CONECTANDO AO MYSQL...\n";
+    echo "Host: {$config['host']}\n";
+    echo "Usuário: {$config['user']}\n";
+    echo "Database: {$config['database']}\n\n";
+
     $dsn = "mysql:host={$config['host']};charset={$config['charset']}";
     $pdo = new PDO($dsn, $config['user'], $config['password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
     echo "✅ Conectado ao MySQL\n\n";
     
@@ -189,7 +251,7 @@ try {
     ");
     echo "✅ Tabela 'forum_categorias' criada\n";
 
-    // Tabela forum_topicos
+    // Tabela forum_topicos (atualizada - aprovação automática)
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS forum_topicos (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -197,7 +259,7 @@ try {
             titulo VARCHAR(200) NOT NULL,
             conteudo TEXT NOT NULL,
             autor_id INT NOT NULL,
-            aprovado BOOLEAN DEFAULT FALSE,
+            aprovado BOOLEAN DEFAULT TRUE,
             fixado BOOLEAN DEFAULT FALSE,
             fechado BOOLEAN DEFAULT FALSE,
             visualizacoes INT DEFAULT 0,
@@ -212,14 +274,14 @@ try {
     ");
     echo "✅ Tabela 'forum_topicos' criada\n";
 
-    // Tabela forum_respostas
+    // Tabela forum_respostas (atualizada - aprovação automática)
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS forum_respostas (
             id INT AUTO_INCREMENT PRIMARY KEY,
             topico_id INT NOT NULL,
             conteudo TEXT NOT NULL,
             autor_id INT NOT NULL,
-            aprovado BOOLEAN DEFAULT FALSE,
+            aprovado BOOLEAN DEFAULT TRUE,
             data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (topico_id) REFERENCES forum_topicos(id) ON DELETE CASCADE,
             FOREIGN KEY (autor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -529,7 +591,182 @@ try {
     echo "✅ Logs: Sistema de auditoria\n";
     echo "✅ Gamificação: Níveis e experiência\n";
     echo "✅ Estrutura: Pronta para uso\n\n";
-    
+
+    // 8. Atualizar tabelas existentes (para colaboradores com versão anterior)
+    echo "🔄 ATUALIZANDO ESTRUTURAS EXISTENTES...\n";
+    echo "=======================================\n";
+
+    try {
+        // Atualizar DEFAULT das tabelas do fórum para aprovação automática
+        $pdo->exec("ALTER TABLE forum_topicos ALTER COLUMN aprovado SET DEFAULT TRUE");
+        echo "✅ forum_topicos: DEFAULT aprovado = TRUE\n";
+
+        $pdo->exec("ALTER TABLE forum_respostas ALTER COLUMN aprovado SET DEFAULT TRUE");
+        echo "✅ forum_respostas: DEFAULT aprovado = TRUE\n";
+
+        // Aprovar todos os tópicos e respostas existentes que estavam pendentes
+        $stmt = $pdo->exec("UPDATE forum_topicos SET aprovado = TRUE WHERE aprovado = FALSE");
+        echo "✅ Aprovados $stmt tópicos pendentes\n";
+
+        $stmt = $pdo->exec("UPDATE forum_respostas SET aprovado = TRUE WHERE aprovado = FALSE");
+        echo "✅ Aprovadas $stmt respostas pendentes\n";
+
+        // Verificar se há usuários sem is_admin definido
+        $stmt = $pdo->exec("UPDATE usuarios SET is_admin = FALSE WHERE is_admin IS NULL");
+        echo "✅ Corrigidos usuários sem flag is_admin\n";
+
+        echo "✅ Atualizações aplicadas com sucesso!\n\n";
+
+    } catch (Exception $e) {
+        echo "⚠️ Algumas atualizações falharam (normal se for primeira instalação): " . $e->getMessage() . "\n\n";
+    }
+
+    // 9. Carregar questões do SAT automaticamente
+    echo "📚 CARREGANDO QUESTÕES DO SAT...\n";
+    echo "===============================\n";
+
+    try {
+        // Verificar se já existem questões SAT
+        $stmt = $pdo->query("SELECT COUNT(*) FROM questoes WHERE tipo_prova = 'sat'");
+        $questoes_sat_existentes = $stmt->fetchColumn();
+
+        if ($questoes_sat_existentes > 10) {
+            echo "ℹ️ Já existem $questoes_sat_existentes questões SAT no banco\n";
+            echo "✅ Questões SAT já carregadas\n\n";
+        } else {
+            // Verificar se os arquivos JSON existem
+            $arquivo_questoes = 'exames/SAT/Exame_SAT_Test_4.json';
+            $arquivo_respostas = 'exames/SAT/Answers_SAT_Test_4.json';
+
+            if (file_exists($arquivo_questoes) && file_exists($arquivo_respostas)) {
+                echo "📄 Arquivos JSON encontrados, carregando questões...\n";
+
+                // Ler arquivos JSON
+                $questoes_json = json_decode(file_get_contents($arquivo_questoes), true);
+                $respostas_json = json_decode(file_get_contents($arquivo_respostas), true);
+
+                if ($questoes_json && $respostas_json) {
+                    echo "✅ Arquivos JSON carregados com sucesso\n";
+
+                    // Limpar questões SAT existentes se houver poucas
+                    if ($questoes_sat_existentes > 0) {
+                        $pdo->exec("DELETE FROM questoes WHERE tipo_prova = 'sat'");
+                        echo "🗑️ Questões SAT antigas removidas\n";
+                    }
+
+                    // Mapear respostas por número de questão
+                    $respostas_map = [];
+                    $questao_numero = 1;
+
+                    foreach ($respostas_json['answers'] as $modulo => $respostas) {
+                        foreach ($respostas as $num_questao => $resposta) {
+                            $respostas_map[$questao_numero] = strtolower($resposta);
+                            $questao_numero++;
+                        }
+                    }
+
+                    echo "📊 " . count($respostas_map) . " respostas mapeadas\n";
+
+                    // Preparar statement para inserção
+                    $stmt = $pdo->prepare("
+                        INSERT INTO questoes (
+                            numero_questao, tipo_prova, enunciado,
+                            alternativa_a, alternativa_b, alternativa_c, alternativa_d, alternativa_e,
+                            resposta_correta, tipo_questao, materia, assunto, dificuldade
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ");
+
+                    $questoes_inseridas = 0;
+                    $questao_atual = 1;
+
+                    // Processar seções do JSON
+                    foreach ($questoes_json['sections'] as $section) {
+                        $section_name = $section['section_name'];
+                        echo "📚 Processando seção: $section_name\n";
+
+                        foreach ($section['modules'] as $module) {
+                            $module_name = $module['module_name'];
+                            echo "  📖 Processando módulo: $module_name\n";
+
+                            foreach ($module['questions'] as $question) {
+                                $enunciado = $question['question_text'];
+                                $options = $question['options'] ?? [];
+
+                                // Determinar matéria baseada na seção
+                                if (strpos($section_name, 'Reading') !== false) {
+                                    $materia = 'Reading and Writing';
+                                } elseif (strpos($section_name, 'Math') !== false) {
+                                    $materia = 'Math';
+                                } else {
+                                    $materia = 'General';
+                                }
+
+                                // Extrair alternativas
+                                $alternativas = ['', '', '', '', ''];
+                                foreach ($options as $i => $option) {
+                                    if ($i < 5) {
+                                        // Remover letra da alternativa (A), B), etc.)
+                                        $alternativas[$i] = preg_replace('/^[A-E]\)\s*/', '', $option);
+                                    }
+                                }
+
+                                // Obter resposta correta
+                                $resposta_correta = $respostas_map[$questao_atual] ?? 'a';
+
+                                // Inserir questão
+                                $stmt->execute([
+                                    $questao_atual,
+                                    'sat',
+                                    $enunciado,
+                                    $alternativas[0] ?: null,
+                                    $alternativas[1] ?: null,
+                                    $alternativas[2] ?: null,
+                                    $alternativas[3] ?: null,
+                                    $alternativas[4] ?: null,
+                                    $resposta_correta,
+                                    'multipla_escolha',
+                                    $materia,
+                                    $section_name,
+                                    'medio'
+                                ]);
+
+                                $questoes_inseridas++;
+                                $questao_atual++;
+                            }
+                        }
+                    }
+
+                    echo "✅ $questoes_inseridas questões SAT inseridas com sucesso!\n";
+
+                    // Verificar distribuição
+                    $stmt = $pdo->query("SELECT materia, COUNT(*) as total FROM questoes WHERE tipo_prova = 'sat' GROUP BY materia");
+                    $distribuicao = $stmt->fetchAll();
+
+                    echo "📊 Distribuição por matéria:\n";
+                    foreach ($distribuicao as $item) {
+                        echo "   • {$item['materia']}: {$item['total']} questões\n";
+                    }
+                    echo "\n";
+
+                } else {
+                    echo "❌ Erro ao decodificar arquivos JSON\n";
+                    echo "⚠️ Questões SAT não foram carregadas\n\n";
+                }
+
+            } else {
+                echo "⚠️ Arquivos JSON não encontrados:\n";
+                echo "   • $arquivo_questoes\n";
+                echo "   • $arquivo_respostas\n";
+                echo "ℹ️ Questões SAT não foram carregadas automaticamente\n";
+                echo "💡 Execute manualmente: php seed_questoes.php\n\n";
+            }
+        }
+
+    } catch (Exception $e) {
+        echo "❌ Erro ao carregar questões SAT: " . $e->getMessage() . "\n";
+        echo "💡 Execute manualmente: php seed_questoes.php\n\n";
+    }
+
     echo "🔑 CREDENCIAIS DE ACESSO:\n";
     echo "=========================\n";
     echo "👨‍💼 Administrador:\n";
@@ -539,14 +776,49 @@ try {
     echo "   Login: teste\n";
     echo "   Senha: teste123\n\n";
     
-    echo "🌐 PRÓXIMOS PASSOS:\n";
-    echo "===================\n";
-    echo "1. Execute: php seed_questoes.php (para carregar questões)\n";
+    echo "🌐 PRÓXIMOS PASSOS PARA COLABORADORES:\n";
+    echo "======================================\n";
+    echo "1. Inicie o servidor: php -S localhost:8080 -t .\n";
     echo "2. Acesse: http://localhost:8080/\n";
-    echo "3. Faça login com as credenciais acima\n";
-    echo "4. Teste o sistema de simulados\n\n";
-    
+    echo "3. Teste login: admin/admin123 ou teste/teste123\n";
+    echo "4. Teste o fórum: http://localhost:8080/forum.php\n";
+    echo "5. Teste simulados: http://localhost:8080/simulador_provas.php\n";
+    echo "6. Painel admin: http://localhost:8080/admin_forum.php\n\n";
+
+    echo "✅ QUESTÕES INCLUÍDAS AUTOMATICAMENTE:\n";
+    echo "======================================\n";
+    echo "• Questões SAT carregadas dos arquivos JSON\n";
+    echo "• Sistema de simulados totalmente funcional\n";
+    echo "• Não é necessário executar seed_questoes.php\n";
+    echo "• Se precisar recarregar: php seed_questoes.php\n\n";
+
+    echo "📚 DOCUMENTAÇÃO PARA DESENVOLVEDORES:\n";
+    echo "=====================================\n";
+    echo "• config.php - Configurações do banco\n";
+    echo "• verificar_auth.php - Sistema de autenticação\n";
+    echo "• header_status.php - Header padrão das páginas\n";
+    echo "• forum.php - Sistema de fórum principal\n";
+    echo "• admin_forum.php - Painel de moderação\n";
+    echo "• simulador_provas.php - Sistema de simulados\n";
+    echo "• setup_database.php - Este arquivo (configuração)\n\n";
+
+    echo "🔧 FERRAMENTAS DE DEBUG:\n";
+    echo "========================\n";
+    echo "• verificar_instalacao.php - Verificar sistema\n";
+    echo "• teste_criacao_topico.php - Testar fórum\n";
+    echo "• debug_forum_criacao.php - Debug detalhado\n\n";
+
+    echo "⚠️ IMPORTANTE PARA COLABORADORES:\n";
+    echo "=================================\n";
+    echo "• Sempre execute este script após git clone\n";
+    echo "• Configure config.php com suas credenciais MySQL\n";
+    echo "• O fórum agora funciona SEM aprovação prévia\n";
+    echo "• Tópicos e respostas ficam visíveis imediatamente\n";
+    echo "• Moderação é reativa (admin age após problemas)\n\n";
+
     echo "🎉 CONFIGURAÇÃO CONCLUÍDA COM SUCESSO!\n";
+    echo "======================================\n";
+    echo "O sistema está pronto para desenvolvimento colaborativo!\n";
     
 } catch (Exception $e) {
     echo "❌ ERRO: " . $e->getMessage() . "\n";

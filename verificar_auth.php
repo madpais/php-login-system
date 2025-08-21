@@ -116,9 +116,10 @@ function registrarAcessoNaoAutorizado($pagina, $ip = null) {
     try {
         $pdo = conectarBD();
         
-        $stmt = $pdo->prepare("INSERT INTO logs_acesso (usuario_id, ip, pagina, sucesso, data_acesso) VALUES (?, ?, ?, FALSE, NOW())");
+        $stmt = $pdo->prepare("INSERT INTO logs_acesso (usuario_id, tipo_evento, sucesso, ip_address, user_agent) VALUES (?, 'tentativa_login', FALSE, ?, ?)");
         $usuario_id = $_SESSION['usuario_id'] ?? null;
-        $stmt->execute([$usuario_id, $ip, $pagina]);
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $stmt->execute([$usuario_id, $ip, $user_agent]);
         
     } catch (Exception $e) {
         // Falha silenciosa no log - não deve interromper o fluxo
