@@ -59,6 +59,14 @@ define('DEFAULT_LANGUAGE', 'pt-BR');
 define('DEFAULT_TIMEZONE', 'America/Sao_Paulo');
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
+// Configurar locale para português brasileiro
+$locales_pt = ['Portuguese_Brazil.1252', 'pt_BR.UTF-8', 'pt_BR', 'Portuguese_Brazil', 'Portuguese'];
+foreach ($locales_pt as $locale) {
+    if (setlocale(LC_ALL, $locale)) {
+        break;
+    }
+}
+
 // Error Reporting
 if (ENVIRONMENT === 'development') {
     error_reporting(E_ALL);
