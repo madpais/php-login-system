@@ -1,0 +1,1156 @@
+<?php
+session_start();
+
+// Verificar se o usuário está logado (opcional - pode ser acessado sem login)
+$usuario_logado = isset($_SESSION['usuario_id']);
+$usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa por País - DayDreaming</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="imagens/logo_50px_sem_bgd.png">
+    <link rel="shortcut icon" type="image/png" href="imagens/logo_50px_sem_bgd.png">
+    <link rel="apple-touch-icon" href="imagens/logo_50px_sem_bgd.png">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar-custom {
+            background: linear-gradient(135deg, #03254c 0%, #2a9df4 100%);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            max-height: 60px;
+            width: auto;
+        }
+        
+        .nav-button {
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-button:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        
+        .title1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #03254c;
+            text-align: center;
+            margin: 40px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .countries-container {
+            padding: 20px 0;
+        }
+        
+        .country-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 280px;
+        }
+
+        .country-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(3, 37, 76, 0.85) 0%, rgba(42, 157, 244, 0.75) 100%);
+            opacity: 0.9;
+            transition: all 0.4s ease;
+            z-index: 1;
+        }
+
+        .country-card:hover::before {
+            opacity: 0.7;
+            background: linear-gradient(135deg, rgba(3, 37, 76, 0.7) 0%, rgba(42, 157, 244, 0.6) 100%);
+        }
+
+        .country-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(42, 157, 244, 0.3);
+            border-color: #2a9df4;
+        }
+
+        .country-card .card-body {
+            position: relative;
+            z-index: 2;
+            padding: 25px 20px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .country-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .country-flag-icon {
+            width: 32px;
+            height: 24px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+
+        .country-card h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .country-card:hover h2 {
+            transform: scale(1.05);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .country-description {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .country-card:hover .country-description {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .login-required-badge {
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.9);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .country-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .country-card a:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .back-button {
+            background: linear-gradient(135deg, #2a9df4 0%, #187bcd 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(42, 157, 244, 0.3);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .title1 {
+                font-size: 2rem;
+                margin: 20px 0;
+            }
+
+            .country-card {
+                margin: 10px 5px;
+                min-height: 220px;
+            }
+
+            .country-card h2 {
+                font-size: 1.3rem;
+            }
+
+            .country-flag-icon {
+                width: 28px;
+                height: 20px;
+            }
+
+            .country-card .card-body {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .country-card {
+                min-height: 200px;
+            }
+
+            .country-card h2 {
+                font-size: 1.2rem;
+            }
+
+            .country-flag-icon {
+                width: 24px;
+                height: 18px;
+            }
+        }
+        
+        /* Barra de pesquisa */
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 15px 20px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-input:focus {
+            border-color: #2a9df4;
+            box-shadow: 0 0 0 0.2rem rgba(42, 157, 244, 0.25);
+            outline: none;
+        }
+
+        .search-icon {
+            background: linear-gradient(135deg, #2a9df4 0%, #187bcd 100%);
+            border: none;
+            color: white;
+            border-radius: 25px 0 0 25px;
+            padding: 15px 20px;
+        }
+
+        .search-clear-btn {
+            background: #dc3545;
+            border: none;
+            color: white;
+            border-radius: 0 25px 25px 0;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-clear-btn:hover {
+            background: #c82333;
+            color: white;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-result-item:hover {
+            background: #f8f9fa;
+            color: #2a9df4;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-flag {
+            width: 30px;
+            height: 20px;
+            object-fit: cover;
+            border-radius: 3px;
+            margin-right: 15px;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .country-card.hidden {
+            display: none !important;
+        }
+
+        .search-highlight {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2a9df4;
+        }
+
+        @media (max-width: 576px) {
+            .nav-button {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+
+            .title1 {
+                font-size: 1.8rem;
+            }
+
+            .search-input {
+                font-size: 14px;
+                padding: 12px 15px;
+            }
+
+            .search-icon, .search-clear-btn {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <?php include 'header_status.php'; ?>
+    
+    <!-- Navbar -->
+    <div class="navbar-custom">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-lg-3 col-md-3 col-6">
+                    <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="DayDreaming Logo" class="logo">
+                </div>
+                <div class="col-lg-2 col-md-2 d-none d-md-block">
+                    <a href="#" class="nav-button" onclick="alert('Funcionalidade em desenvolvimento!')">
+                        <i class="fas fa-user-check me-2"></i>Testes de Perfil
+                    </a>
+                </div>
+                <div class="col-lg-2 col-md-2 d-none d-md-block">
+                    <a href="pesquisa_por_pais.php" class="nav-button" style="background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-globe me-2"></i>Guia por Países
+                    </a>
+                </div>
+                <div class="col-lg-2 col-md-2 d-none d-md-block">
+                    <a href="<?php echo $usuario_logado ? 'simulador_provas.php' : 'login.php'; ?>" class="nav-button">
+                        <i class="fas fa-graduation-cap me-2"></i>Simuladores
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-3 col-6 text-right">
+                    <?php if ($usuario_logado): ?>
+                        <a href="pagina_usuario.php" class="nav-button me-2">
+                            <i class="fas fa-user me-2"></i>Perfil
+                        </a>
+                        <a href="index_new.php" class="nav-button">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                    <?php else: ?>
+                        <a href="login.php" class="nav-button">
+                            <i class="fas fa-sign-in-alt me-2"></i>Entrar
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="btn back-button" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Título -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="title1">
+                    <i class="fas fa-globe-americas me-3" style="color: #2a9df4;"></i>
+                    Eu quero visitar...
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Pesquisa -->
+    <div class="container-fluid mb-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+                <div class="search-container">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text search-icon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </div>
+                        <input type="text"
+                               class="form-control search-input"
+                               id="searchCountry"
+                               placeholder="Digite o nome do país que você deseja encontrar..."
+                               autocomplete="off">
+                        <div class="input-group-append">
+                            <button class="btn search-clear-btn" type="button" id="clearSearch">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de Países -->
+    <div class="container-fluid countries-container">
+        <div class="row">
+            <!-- Austrália -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/australia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/australia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/au.png" alt="Bandeira da Austrália" class="country-flag-icon">
+                            <h2>Austrália</h2>
+                        </div>
+                        <p class="country-description">Terra dos cangurus com educação de qualidade mundial</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bélgica -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/belgica_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/belgica.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/be.png" alt="Bandeira da Bélgica" class="country-flag-icon">
+                            <h2>Bélgica</h2>
+                        </div>
+                        <p class="country-description">Coração da Europa com chocolate e educação de excelência</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canadá -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/canada_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/canada.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/ca.png" alt="Bandeira do Canadá" class="country-flag-icon">
+                            <h2>Canadá</h2>
+                        </div>
+                        <p class="country-description">Terra das folhas de bordo com educação multicultural</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- China -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/china_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/china.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/cn.png" alt="Bandeira da China" class="country-flag-icon">
+                            <h2>China</h2>
+                        </div>
+                        <p class="country-description">Império do meio com tradição milenar e tecnologia</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dinamarca -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/dinamarca_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/dinamarca.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/dk.png" alt="Bandeira da Dinamarca" class="country-flag-icon">
+                            <h2>Dinamarca</h2>
+                        </div>
+                        <p class="country-description">Reino nórdico com hygge e educação inovadora</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finlândia -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/finlandia__background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/finlandia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/fi.png" alt="Bandeira da Finlândia" class="country-flag-icon">
+                            <h2>Finlândia</h2>
+                        </div>
+                        <p class="country-description">Terra das mil lagos com educação de excelência</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- França -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/franca_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/franca.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/fr.png" alt="Bandeira da França" class="country-flag-icon">
+                            <h2>França</h2>
+                        </div>
+                        <p class="country-description">Berço da arte e cultura com educação de prestígio</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alemanha -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/alemanha_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/alemanha.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/de.png" alt="Bandeira da Alemanha" class="country-flag-icon">
+                            <h2>Alemanha</h2>
+                        </div>
+                        <p class="country-description">Potência europeia com educação gratuita de qualidade</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Holanda -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/holanda_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/holanda.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/nl.png" alt="Bandeira da Holanda" class="country-flag-icon">
+                            <h2>Holanda</h2>
+                        </div>
+                        <p class="country-description">Terra das tulipas com educação inovadora</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hungria -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/hungria_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/hungria.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/hu.png" alt="Bandeira da Hungria" class="country-flag-icon">
+                            <h2>Hungria</h2>
+                        </div>
+                        <p class="country-description">Coração da Europa Central com história rica</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Índia -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/india_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/india.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/in.png" alt="Bandeira da Índia" class="country-flag-icon">
+                            <h2>Índia</h2>
+                        </div>
+                        <p class="country-description">Terra das especiarias com diversidade cultural única</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indonésia -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/indonesia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/indonesia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/id.png" alt="Bandeira da Indonésia" class="country-flag-icon">
+                            <h2>Indonésia</h2>
+                        </div>
+                        <p class="country-description">Arquipélago tropical com milhares de ilhas</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Irlanda -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/irlanda_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/irlanda.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/ie.png" alt="Bandeira da Irlanda" class="country-flag-icon">
+                            <h2>Irlanda</h2>
+                        </div>
+                        <p class="country-description">Ilha esmeralda com educação em inglês e cultura celta</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itália -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/italia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/italia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/it.png" alt="Bandeira da Itália" class="country-flag-icon">
+                            <h2>Itália</h2>
+                        </div>
+                        <p class="country-description">Berço da arte renascentista com educação histórica</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Japão -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/japao_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/japao.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/jp.png" alt="Bandeira do Japão" class="country-flag-icon">
+                            <h2>Japão</h2>
+                        </div>
+                        <p class="country-description">Terra do sol nascente com tecnologia e tradição</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Malásia -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/malasia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/malasia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/my.png" alt="Bandeira da Malásia" class="country-flag-icon">
+                            <h2>Malásia</h2>
+                        </div>
+                        <p class="country-description">Truly Asia com diversidade cultural única</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Noruega -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/noruega_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/noruega.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/no.png" alt="Bandeira da Noruega" class="country-flag-icon">
+                            <h2>Noruega</h2>
+                        </div>
+                        <p class="country-description">Terra dos fiordes com educação gratuita e qualidade</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portugal -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/portugal_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/portugal.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/pt.png" alt="Bandeira de Portugal" class="country-flag-icon">
+                            <h2>Portugal</h2>
+                        </div>
+                        <p class="country-description">Terra irmã com idioma comum e educação europeia</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arábia Saudita -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/arabia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/arabia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/sa.png" alt="Bandeira da Arábia Saudita" class="country-flag-icon">
+                            <h2>Arábia Saudita</h2>
+                        </div>
+                        <p class="country-description">Reino do deserto com visão futurista 2030</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Singapura -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/singapura_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/singapura.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/sg.png" alt="Bandeira de Singapura" class="country-flag-icon">
+                            <h2>Singapura</h2>
+                        </div>
+                        <p class="country-description">Cidade-estado moderna com educação de excelência</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- África do Sul -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/africasul_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/africa.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/za.png" alt="Bandeira da África do Sul" class="country-flag-icon">
+                            <h2>África do Sul</h2>
+                        </div>
+                        <p class="country-description">Nação arco-íris com educação acessível e diversa</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coreia do Sul -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/coreiasul_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/coreia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/kr.png" alt="Bandeira da Coreia do Sul" class="country-flag-icon">
+                            <h2>Coreia do Sul</h2>
+                        </div>
+                        <p class="country-description">Terra do K-pop com tecnologia e tradição</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Espanha -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/espanha_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/espanha.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/es.png" alt="Bandeira da Espanha" class="country-flag-icon">
+                            <h2>Espanha</h2>
+                        </div>
+                        <p class="country-description">Terra da paixão com flamenco e educação europeia</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suécia -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/suecia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/suecia.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/se.png" alt="Bandeira da Suécia" class="country-flag-icon">
+                            <h2>Suécia</h2>
+                        </div>
+                        <p class="country-description">Reino nórdico com sustentabilidade e inovação</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suíça -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/suica_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/suica.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/ch.png" alt="Bandeira da Suíça" class="country-flag-icon">
+                            <h2>Suíça</h2>
+                        </div>
+                        <p class="country-description">Terra dos Alpes com precisão e qualidade suíça</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emirados Árabes Unidos -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/emirados_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/emirados.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/ae.png" alt="Bandeira dos Emirados Árabes Unidos" class="country-flag-icon">
+                            <h2>Emirados Árabes</h2>
+                        </div>
+                        <p class="country-description">Oásis moderno com luxo e educação internacional</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reino Unido -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/reinounido_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/reinounido.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/gb.png" alt="Bandeira do Reino Unido" class="country-flag-icon">
+                            <h2>Reino Unido</h2>
+                        </div>
+                        <p class="country-description">Tradição acadêmica com Oxford e Cambridge</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estados Unidos -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div class="card country-card" style="background-image: url('imagens/estadosunidos_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/eua.php'" : "location.href='login.php'"; ?>">
+                    <div class="card-body">
+                        <div class="country-title-container">
+                            <img src="https://flagcdn.com/w40/us.png" alt="Bandeira dos Estados Unidos" class="country-flag-icon">
+                            <h2>Estados Unidos</h2>
+                        </div>
+                        <p class="country-description">Terra das oportunidades com as melhores universidades</p>
+                        <?php if (!$usuario_logado): ?>
+                            <div class="login-required-badge"><i class="fas fa-lock me-1"></i>Login necessário</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="container-fluid text-center" style="background-color: #03254c; color: white; padding: 40px 0; margin-top: 60px;">
+        <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" class="img-fluid" style="max-width: 200px;">
+        <p class="mt-3">© 2024 DayDreaming - Sua jornada para educação internacional começa aqui!</p>
+        <p>Todos os direitos reservados</p>
+
+        <?php if ($usuario_logado): ?>
+            <div class="mt-3">
+                <small>Logado como: <?php echo htmlspecialchars($usuario_nome); ?> | <a href="logout.php" style="color: #2a9df4;">Sair</a></small>
+            </div>
+        <?php endif; ?>
+    </footer>
+
+    <script>
+        // Lista de países para busca
+        const countries = [
+            { name: 'Austrália', element: null },
+            { name: 'Bélgica', element: null },
+            { name: 'Canadá', element: null },
+            { name: 'China', element: null },
+            { name: 'Dinamarca', element: null },
+            { name: 'Finlândia', element: null },
+            { name: 'França', element: null },
+            { name: 'Alemanha', element: null },
+            { name: 'Holanda', element: null },
+            { name: 'Hungria', element: null },
+            { name: 'Índia', element: null },
+            { name: 'Indonésia', element: null },
+            { name: 'Irlanda', element: null },
+            { name: 'Itália', element: null },
+            { name: 'Japão', element: null },
+            { name: 'Malásia', element: null },
+            { name: 'Noruega', element: null },
+            { name: 'Portugal', element: null },
+            { name: 'Arábia Saudita', element: null },
+            { name: 'Singapura', element: null },
+            { name: 'África do Sul', element: null },
+            { name: 'Coreia do Sul', element: null },
+            { name: 'Espanha', element: null },
+            { name: 'Suécia', element: null },
+            { name: 'Suíça', element: null },
+            { name: 'Emirados Árabes', element: null },
+            { name: 'Reino Unido', element: null },
+            { name: 'Estados Unidos', element: null }
+        ];
+
+        // Elementos DOM
+        const searchInput = document.getElementById('searchCountry');
+        const searchResults = document.getElementById('searchResults');
+        const clearButton = document.getElementById('clearSearch');
+        const countryCards = document.querySelectorAll('.country-card');
+
+        // Mapear elementos dos países
+        countries.forEach(country => {
+            const card = Array.from(countryCards).find(card =>
+                card.querySelector('h2').textContent.trim() === country.name
+            );
+            country.element = card;
+        });
+
+        // Função de busca
+        function searchCountries(query) {
+            const filteredCountries = countries.filter(country =>
+                country.name.toLowerCase().includes(query.toLowerCase())
+            );
+
+            // Mostrar/ocultar cards
+            countries.forEach(country => {
+                if (country.element) {
+                    const shouldShow = filteredCountries.includes(country);
+                    country.element.style.display = shouldShow ? 'block' : 'none';
+                }
+            });
+
+            // Mostrar resultados na dropdown
+            if (query.length > 0) {
+                showSearchResults(filteredCountries, query);
+            } else {
+                hideSearchResults();
+                showAllCountries();
+            }
+
+            // Mostrar mensagem se nenhum resultado
+            updateSearchHighlight(query, filteredCountries.length);
+        }
+
+        // Mostrar resultados na dropdown
+        function showSearchResults(results, query) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">Nenhum país encontrado</div>';
+            } else {
+                results.forEach(country => {
+                    const item = document.createElement('div');
+                    item.className = 'search-result-item';
+
+                    const flag = country.element ? country.element.querySelector('img') : null;
+                    const flagSrc = flag ? flag.src : '';
+
+                    item.innerHTML = `
+                        <img src="${flagSrc}" alt="${country.name}" class="search-result-flag">
+                        <span>${highlightMatch(country.name, query)}</span>
+                    `;
+
+                    item.addEventListener('click', () => {
+                        selectCountry(country);
+                    });
+
+                    searchResults.appendChild(item);
+                });
+            }
+
+            searchResults.style.display = 'block';
+        }
+
+        // Ocultar resultados
+        function hideSearchResults() {
+            searchResults.style.display = 'none';
+        }
+
+        // Destacar texto correspondente
+        function highlightMatch(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<strong style="color: #2a9df4;">$1</strong>');
+        }
+
+        // Selecionar país
+        function selectCountry(country) {
+            searchInput.value = country.name;
+            hideSearchResults();
+
+            // Mostrar apenas o país selecionado
+            countries.forEach(c => {
+                if (c.element) {
+                    c.element.style.display = c === country ? 'block' : 'none';
+                }
+            });
+
+            // Scroll para o país
+            if (country.element) {
+                country.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                country.element.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    country.element.style.transform = 'scale(1)';
+                }, 300);
+            }
+
+            updateSearchHighlight(country.name, 1);
+        }
+
+        // Mostrar todos os países
+        function showAllCountries() {
+            countries.forEach(country => {
+                if (country.element) {
+                    country.element.style.display = 'block';
+                }
+            });
+        }
+
+        // Atualizar destaque de busca
+        function updateSearchHighlight(query, resultCount) {
+            let existingHighlight = document.querySelector('.search-highlight');
+            if (existingHighlight) {
+                existingHighlight.remove();
+            }
+
+            if (query.length > 0) {
+                const highlight = document.createElement('div');
+                highlight.className = 'search-highlight';
+
+                if (resultCount === 0) {
+                    highlight.innerHTML = `
+                        <i class="fas fa-search me-2"></i>
+                        <strong>Nenhum resultado encontrado para "${query}"</strong>
+                        <br><small>Tente pesquisar por outro nome de país</small>
+                    `;
+                } else if (resultCount === 1) {
+                    highlight.innerHTML = `
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <strong>Mostrando resultado para "${query}"</strong>
+                        <br><small>1 país encontrado</small>
+                    `;
+                } else {
+                    highlight.innerHTML = `
+                        <i class="fas fa-globe me-2"></i>
+                        <strong>Resultados para "${query}"</strong>
+                        <br><small>${resultCount} países encontrados</small>
+                    `;
+                }
+
+                const container = document.querySelector('.countries-container');
+                container.parentNode.insertBefore(highlight, container);
+            }
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', (e) => {
+            searchCountries(e.target.value);
+        });
+
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value.length > 0) {
+                const filteredCountries = countries.filter(country =>
+                    country.name.toLowerCase().includes(searchInput.value.toLowerCase())
+                );
+                showSearchResults(filteredCountries, searchInput.value);
+            }
+        });
+
+        clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+            hideSearchResults();
+            showAllCountries();
+            updateSearchHighlight('', countries.length);
+            searchInput.focus();
+        });
+
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                hideSearchResults();
+            }
+        });
+
+        // Atalhos de teclado
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                hideSearchResults();
+                showAllCountries();
+                updateSearchHighlight('', countries.length);
+            }
+        });
+    </script>
+</body>
+</html>
