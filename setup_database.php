@@ -1,298 +1,120 @@
 <?php
 /**
- * Script de configuração completa do banco de dados
- * Execute este arquivo após fazer git clone do projeto
+ * Script de Instalação Completa do Sistema DayDreamming
+ * 
+ * Este script cria todas as 22 tabelas necessárias para o sistema
+ * e insere todos os dados iniciais necessários para funcionamento
+ * 
+ * Versão: 3.0.0
+ * Data: 2025-08-28
+ * Autor: Sistema DayDreamming
  */
 
-echo "🚀 CONFIGURAÇÃO DO BANCO DE DADOS - DAYDREAMING PROJECT\n";
-echo "=======================================================\n";
-echo "📅 Data: " . date('Y-m-d H:i:s') . "\n";
-echo "🖥️ Sistema: " . PHP_OS . "\n";
-echo "🐘 PHP: " . phpversion() . "\n";
-echo "🔄 Versão: 2.0 - Sistema de Fórum Atualizado\n\n";
+echo "🌍 INSTALAÇÃO COMPLETA DO SISTEMA DAYDREAMMING\n";
+echo "==============================================\n\n";
 
-echo "📋 ATUALIZAÇÕES DESTA VERSÃO:\n";
-echo "=============================\n";
-echo "• Fórum sem necessidade de aprovação prévia\n";
-echo "• Tópicos e respostas ficam visíveis imediatamente\n";
-echo "• Moderação reativa (admin age após problemas)\n";
-echo "• Estrutura otimizada para colaboradores\n";
-echo "• Logs de auditoria aprimorados\n\n";
-
-// Configurações do banco (podem ser sobrescritas por config.php se existir)
-$config = [
-    'host' => 'localhost',
-    'user' => 'root',
-    'password' => '',
-    'database' => 'db_daydreamming_project',
-    'charset' => 'utf8mb4'
-];
-
-// Verificar se config.php existe e usar suas configurações
-if (file_exists('config.php')) {
-    echo "📄 Carregando configurações do config.php...\n";
-    require_once 'config.php';
-    // Tentar usar a função conectarBD para pegar as configurações
-    try {
-        $test_pdo = conectarBD();
-        echo "✅ Configurações do config.php carregadas\n";
-    } catch (Exception $e) {
-        echo "⚠️ Usando configurações padrão (config.php com erro)\n";
-    }
-} else {
-    echo "⚠️ config.php não encontrado, usando configurações padrão\n";
-}
-echo "\n";
-
-// Verificações de pré-requisitos
-echo "🔍 VERIFICANDO PRÉ-REQUISITOS...\n";
-echo "================================\n";
-
-// Verificar extensão PDO
-if (!extension_loaded('pdo')) {
-    die("❌ Extensão PDO não está instalada\n");
-}
-echo "✅ PDO disponível\n";
-
-// Verificar driver MySQL
-if (!extension_loaded('pdo_mysql')) {
-    die("❌ Driver PDO MySQL não está instalado\n");
-}
-echo "✅ Driver MySQL disponível\n";
-
-// Verificar se é linha de comando ou web
-$is_cli = php_sapi_name() === 'cli';
-echo "✅ Executando via: " . ($is_cli ? "CLI (linha de comando)" : "Web browser") . "\n";
-
-// Verificar permissões de escrita (para logs)
-if (is_writable('.')) {
-    echo "✅ Permissões de escrita OK\n";
-} else {
-    echo "⚠️ Sem permissões de escrita no diretório atual\n";
-}
-
-echo "\n";
+// Configurações do banco de dados
+$host = 'localhost';
+$dbname = 'daydreamming_db';
+$username = 'root';
+$password = '';
 
 try {
-    // 1. Conectar ao MySQL (sem especificar database)
-    echo "📡 CONECTANDO AO MYSQL...\n";
-    echo "Host: {$config['host']}\n";
-    echo "Usuário: {$config['user']}\n";
-    echo "Database: {$config['database']}\n\n";
-
-    $dsn = "mysql:host={$config['host']};charset={$config['charset']}";
-    $pdo = new PDO($dsn, $config['user'], $config['password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-    echo "✅ Conectado ao MySQL\n\n";
+    // Conectar ao MySQL (sem especificar o banco)
+    $pdo = new PDO("mysql:host=$host", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // 2. Criar database se não existir
-    echo "🗄️ CRIANDO DATABASE...\n";
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS {$config['database']} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    echo "✅ Database '{$config['database']}' criado/verificado\n\n";
+    echo "✅ Conectado ao MySQL\n";
     
-    // 3. Conectar ao database específico
-    $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset={$config['charset']}";
-    $pdo = new PDO($dsn, $config['user'], $config['password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
+    // Criar banco de dados se não existir
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS $dbname CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+    echo "✅ Banco de dados '$dbname' criado/verificado\n";
     
-    // 4. Criar tabelas
-    echo "📋 CRIANDO TABELAS...\n";
+    // Conectar ao banco específico
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Tabela usuarios
+    echo "✅ Conectado ao banco '$dbname'\n\n";
+    
+    echo "📋 CRIANDO TABELAS PRINCIPAIS...\n";
+    echo "=================================\n";
+    
+    // 1. Tabela de usuários (base do sistema)
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS usuarios (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
-            usuario VARCHAR(50) UNIQUE NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
+            usuario VARCHAR(50) NOT NULL UNIQUE,
+            email VARCHAR(100) NOT NULL UNIQUE,
             senha VARCHAR(255) NOT NULL,
-            is_admin BOOLEAN DEFAULT FALSE,
-            ativo BOOLEAN DEFAULT TRUE,
+            is_admin TINYINT(1) DEFAULT 0,
+            ativo TINYINT(1) DEFAULT 1,
             data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             ultimo_acesso TIMESTAMP NULL,
-            ultimo_logout TIMESTAMP NULL,
-            INDEX idx_usuario (usuario),
-            INDEX idx_ativo (ativo)
-        )
+            ultimo_logout TIMESTAMP NULL
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'usuarios' criada\n";
     
-    // Tabela questoes
+    // 2. Tabela de perfil do usuário
     $pdo->exec("
-        CREATE TABLE IF NOT EXISTS questoes (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            numero_questao INT NOT NULL,
-            tipo_prova VARCHAR(20) NOT NULL,
-            enunciado TEXT NOT NULL,
-            alternativa_a TEXT,
-            alternativa_b TEXT,
-            alternativa_c TEXT,
-            alternativa_d TEXT,
-            alternativa_e TEXT,
-            resposta_correta VARCHAR(10),
-            tipo_questao ENUM('multipla_escolha', 'dissertativa') DEFAULT 'multipla_escolha',
-            resposta_dissertativa TEXT,
-            materia VARCHAR(50),
-            assunto VARCHAR(100),
-            dificuldade ENUM('facil', 'medio', 'dificil') DEFAULT 'medio',
-            explicacao TEXT,
-            ativa BOOLEAN DEFAULT TRUE,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_tipo_prova (tipo_prova),
-            INDEX idx_numero_questao (numero_questao),
-            INDEX idx_ativa (ativa)
-        )
-    ");
-    echo "✅ Tabela 'questoes' criada\n";
-    
-    // Tabela sessoes_teste
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS sessoes_teste (
+        CREATE TABLE IF NOT EXISTS perfil_usuario (
             id INT AUTO_INCREMENT PRIMARY KEY,
             usuario_id INT NOT NULL,
-            tipo_prova VARCHAR(20) NOT NULL,
-            inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            fim TIMESTAMP NULL,
-            duracao_minutos INT DEFAULT 180,
-            status ENUM('ativo', 'finalizado', 'cancelado') DEFAULT 'ativo',
-            pontuacao_final DECIMAL(5,2) DEFAULT 0.00,
-            acertos INT DEFAULT 0,
-            questoes_respondidas INT DEFAULT 0,
-            tempo_gasto INT DEFAULT 0,
+            escola VARCHAR(200),
+            serie_ano VARCHAR(100),
+            cidade_estado VARCHAR(200),
+            gpa DECIMAL(3,2),
+            idiomas TEXT,
+            exames_realizados TEXT,
+            avatar_tipo ENUM('foto','personagem') DEFAULT 'personagem',
+            avatar_foto VARCHAR(255),
+            avatar_personagem LONGTEXT,
+            pais_interesse VARCHAR(100),
+            meta_intercambio ENUM('graduacao','pos_graduacao','mestrado','doutorado','curso_idioma','trabalho'),
+            meta_prazo ENUM('6_meses','1_ano','2_anos','3_anos','mais_3_anos'),
+            background_tipo ENUM('padrao','personalizado') DEFAULT 'padrao',
+            background_imagem VARCHAR(255),
+            background_cor VARCHAR(7) DEFAULT '#4CAF50',
+            biografia TEXT,
+            data_nascimento DATE,
+            telefone VARCHAR(20),
+            linkedin VARCHAR(255),
+            instagram VARCHAR(255),
+            perfil_publico TINYINT(1) DEFAULT 1,
+            mostrar_progresso TINYINT(1) DEFAULT 1,
+            mostrar_badges TINYINT(1) DEFAULT 1,
+            mostrar_historico TINYINT(1) DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            INDEX idx_usuario_status (usuario_id, status)
-        )
+            UNIQUE KEY unique_usuario (usuario_id),
+            INDEX idx_pais_interesse (pais_interesse),
+            INDEX idx_meta_intercambio (meta_intercambio)
+        ) ENGINE=InnoDB
     ");
-    echo "✅ Tabela 'sessoes_teste' criada\n";
+    echo "✅ Tabela 'perfil_usuario' criada\n";
     
-    // Tabela respostas_usuario
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS respostas_usuario (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            sessao_id INT NOT NULL,
-            questao_id INT NOT NULL,
-            questao_numero INT NOT NULL,
-            resposta_usuario VARCHAR(10),
-            resposta_dissertativa_usuario TEXT,
-            resposta_correta VARCHAR(10),
-            esta_correta BOOLEAN DEFAULT FALSE,
-            data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (sessao_id) REFERENCES sessoes_teste(id) ON DELETE CASCADE,
-            FOREIGN KEY (questao_id) REFERENCES questoes(id) ON DELETE CASCADE,
-            UNIQUE KEY unique_sessao_questao (sessao_id, questao_id)
-        )
-    ");
-    echo "✅ Tabela 'respostas_usuario' criada\n";
-    
-    // Tabela resultados_testes
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS resultados_testes (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            usuario_id INT NOT NULL,
-            sessao_id INT NOT NULL,
-            tipo_prova VARCHAR(20) NOT NULL,
-            pontuacao DECIMAL(5,2) DEFAULT 0.00,
-            acertos INT DEFAULT 0,
-            total_questoes INT DEFAULT 0,
-            questoes_respondidas INT DEFAULT 0,
-            tempo_gasto INT DEFAULT 0,
-            data_realizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            FOREIGN KEY (sessao_id) REFERENCES sessoes_teste(id) ON DELETE CASCADE
-        )
-    ");
-    echo "✅ Tabela 'resultados_testes' criada\n";
-    
-    // Tabela badges (se necessário)
+    // 3. Tabela de badges
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS badges (
             id INT AUTO_INCREMENT PRIMARY KEY,
+            codigo VARCHAR(50) NOT NULL UNIQUE,
             nome VARCHAR(100) NOT NULL,
-            descricao TEXT,
-            icone VARCHAR(50),
-            condicao_tipo VARCHAR(50),
+            descricao TEXT NOT NULL,
+            icone VARCHAR(10) NOT NULL,
+            tipo ENUM('pontuacao','frequencia','especial','tempo','social') NOT NULL,
+            categoria ENUM('teste','forum','geral','social') DEFAULT 'teste',
             condicao_valor INT,
+            raridade ENUM('comum','raro','epico','lendario') DEFAULT 'comum',
+            experiencia_bonus INT DEFAULT 50,
+            ativa TINYINT(1) DEFAULT 1,
             data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'badges' criada\n";
     
-    // Tabela usuario_badges
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS usuario_badges (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            usuario_id INT NOT NULL,
-            badge_id INT NOT NULL,
-            data_conquista TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE,
-            UNIQUE KEY unique_usuario_badge (usuario_id, badge_id)
-        )
-    ");
-    echo "✅ Tabela 'usuario_badges' criada\n";
-    
-    // Tabela forum_categorias
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS forum_categorias (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            nome VARCHAR(100) NOT NULL,
-            descricao TEXT,
-            cor VARCHAR(7) DEFAULT '#007bff',
-            icone VARCHAR(10) DEFAULT '📝',
-            ativo BOOLEAN DEFAULT TRUE,
-            ordem INT DEFAULT 0,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_ativo (ativo),
-            INDEX idx_ordem (ordem)
-        )
-    ");
-    echo "✅ Tabela 'forum_categorias' criada\n";
-
-    // Tabela forum_topicos (atualizada - aprovação automática)
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS forum_topicos (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            categoria_id INT NOT NULL,
-            titulo VARCHAR(200) NOT NULL,
-            conteudo TEXT NOT NULL,
-            autor_id INT NOT NULL,
-            aprovado BOOLEAN DEFAULT TRUE,
-            fixado BOOLEAN DEFAULT FALSE,
-            fechado BOOLEAN DEFAULT FALSE,
-            visualizacoes INT DEFAULT 0,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (categoria_id) REFERENCES forum_categorias(id) ON DELETE CASCADE,
-            FOREIGN KEY (autor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            INDEX idx_categoria (categoria_id),
-            INDEX idx_autor (autor_id),
-            INDEX idx_aprovado (aprovado)
-        )
-    ");
-    echo "✅ Tabela 'forum_topicos' criada\n";
-
-    // Tabela forum_respostas (atualizada - aprovação automática)
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS forum_respostas (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            topico_id INT NOT NULL,
-            conteudo TEXT NOT NULL,
-            autor_id INT NOT NULL,
-            aprovado BOOLEAN DEFAULT TRUE,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (topico_id) REFERENCES forum_topicos(id) ON DELETE CASCADE,
-            FOREIGN KEY (autor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            INDEX idx_topico (topico_id),
-            INDEX idx_autor (autor_id),
-            INDEX idx_aprovado (aprovado)
-        )
-    ");
-    echo "✅ Tabela 'forum_respostas' criada\n";
-
-    // Tabela niveis_usuario
+    // 4. Tabela de níveis do usuário
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS niveis_usuario (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -307,112 +129,351 @@ try {
             data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
             UNIQUE KEY unique_usuario (usuario_id)
-        )
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'niveis_usuario' criada\n";
+    
+    // 5. Tabela de questões
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS questoes (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            tipo_prova ENUM('toefl', 'ielts', 'sat', 'gre', 'gmat', 'dele', 'delf', 'testdaf', 'jlpt', 'hsk') NOT NULL,
+            numero_questao INT NOT NULL,
+            enunciado TEXT NOT NULL,
+            alternativa_a VARCHAR(500) NOT NULL,
+            alternativa_b VARCHAR(500) NOT NULL,
+            alternativa_c VARCHAR(500) NOT NULL,
+            alternativa_d VARCHAR(500) NOT NULL,
+            alternativa_e VARCHAR(500),
+            resposta_correta ENUM('a', 'b', 'c', 'd', 'e') NOT NULL,
+            tipo_questao ENUM('multipla_escolha', 'dissertativa') DEFAULT 'multipla_escolha',
+            resposta_dissertativa TEXT,
+            dificuldade ENUM('facil', 'medio', 'dificil') DEFAULT 'medio',
+            materia VARCHAR(100),
+            assunto VARCHAR(100),
+            explicacao TEXT,
+            ativa TINYINT(1) DEFAULT 1,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            ativo TINYINT(1) DEFAULT 1,
+            UNIQUE KEY unique_tipo_numero (tipo_prova, numero_questao)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'questoes' criada\n";
+    
+    // 6. Tabela de sessões de teste
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS sessoes_teste (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT NOT NULL,
+            tipo_prova ENUM('toefl', 'ielts', 'sat', 'gre', 'gmat', 'dele', 'delf', 'testdaf', 'jlpt', 'hsk') NOT NULL,
+            inicio DATETIME NOT NULL,
+            fim DATETIME,
+            duracao_minutos INT NOT NULL,
+            status ENUM('ativo', 'finalizado', 'expirado', 'cancelado') DEFAULT 'ativo',
+            questoes_total INT NOT NULL,
+            questoes_respondidas INT DEFAULT 0,
+            tempo_gasto INT DEFAULT 0,
+            pontuacao DECIMAL(5,2),
+            acertos INT,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            pontuacao_final DECIMAL(5,2) DEFAULT 0.00,
+            total_questoes INT DEFAULT 20,
+            percentual_acerto DECIMAL(5,2) DEFAULT 0.00,
+            data_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            INDEX (usuario_id)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'sessoes_teste' criada\n";
+    
+    // 7. Tabela de respostas do usuário
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS respostas_usuario (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            sessao_id INT NOT NULL,
+            questao_id INT NOT NULL,
+            questao_numero INT NOT NULL,
+            resposta_usuario ENUM('a', 'b', 'c', 'd', 'e'),
+            resposta_dissertativa_usuario TEXT,
+            resposta_correta ENUM('a', 'b', 'c', 'd', 'e') NOT NULL,
+            esta_correta TINYINT(1) NOT NULL,
+            tempo_resposta INT,
+            tentativas INT DEFAULT 1,
+            marcada_revisao TINYINT(1) DEFAULT 0,
+            data_resposta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            acertou TINYINT(1) DEFAULT 0,
+            FOREIGN KEY (sessao_id) REFERENCES sessoes_teste(id) ON DELETE CASCADE,
+            FOREIGN KEY (questao_id) REFERENCES questoes(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_sessao_questao (sessao_id, questao_numero),
+            INDEX (sessao_id),
+            INDEX (questao_id),
+            INDEX (esta_correta)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'respostas_usuario' criada\n";
+    
+    // 8. Tabela de resultados dos testes
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS resultados_testes (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT NOT NULL,
+            sessao_id INT NOT NULL,
+            tipo_prova ENUM('toefl', 'ielts', 'sat', 'gre', 'gmat', 'dele', 'delf', 'testdaf', 'jlpt', 'hsk') NOT NULL,
+            pontuacao DECIMAL(5,2) NOT NULL,
+            acertos INT NOT NULL,
+            erros INT NOT NULL,
+            nao_respondidas INT NOT NULL,
+            total_questoes INT NOT NULL,
+            tempo_gasto INT NOT NULL,
+            data_realizacao DATETIME NOT NULL,
+            questoes_respondidas INT DEFAULT 0,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            FOREIGN KEY (sessao_id) REFERENCES sessoes_teste(id) ON DELETE CASCADE,
+            INDEX (usuario_id),
+            INDEX (sessao_id)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'resultados_testes' criada\n";
+    
+    echo "\n📋 CRIANDO TABELAS DO SISTEMA...\n";
+    echo "=================================\n";
 
-    // Tabela configuracoes_sistema
+    // 9. Tabela de configurações do sistema
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS configuracoes_sistema (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            chave VARCHAR(100) UNIQUE NOT NULL,
+            chave VARCHAR(100) NOT NULL UNIQUE,
             valor TEXT NOT NULL,
-            tipo ENUM('string', 'integer', 'boolean', 'json') DEFAULT 'string',
+            tipo ENUM('string','integer','boolean','json') DEFAULT 'string',
             categoria VARCHAR(50) DEFAULT 'geral',
             descricao TEXT,
-            editavel BOOLEAN DEFAULT TRUE,
+            editavel TINYINT(1) DEFAULT 1,
             data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             INDEX idx_chave (chave),
             INDEX idx_categoria (categoria)
-        )
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'configuracoes_sistema' criada\n";
 
-    // Tabela logs_sistema
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS logs_sistema (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            usuario_id INT NULL,
-            acao VARCHAR(100) NOT NULL,
-            detalhes TEXT,
-            ip_address VARCHAR(45),
-            user_agent TEXT,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
-            INDEX idx_usuario (usuario_id),
-            INDEX idx_acao (acao),
-            INDEX idx_data (data_criacao)
-        )
-    ");
-    echo "✅ Tabela 'logs_sistema' criada\n";
-
-    // Tabela logs_acesso
+    // 10. Tabela de logs de acesso
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS logs_acesso (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            usuario_id INT NULL,
-            tipo_evento ENUM('login', 'logout', 'tentativa_login') NOT NULL,
-            sucesso BOOLEAN DEFAULT TRUE,
-            ip_address VARCHAR(45),
-            user_agent TEXT,
-            data_evento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            usuario_id INT,
+            ip VARCHAR(45) NOT NULL,
+            sucesso TINYINT(1) NOT NULL,
+            data_tentativa TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
-            INDEX idx_usuario (usuario_id),
-            INDEX idx_tipo (tipo_evento),
-            INDEX idx_data (data_evento)
-        )
+            INDEX (usuario_id)
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'logs_acesso' criada\n";
 
-    // Tabela notificacoes
+    // 11. Tabela de logs do sistema
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS logs_sistema (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT,
+            acao VARCHAR(100) NOT NULL,
+            tabela_afetada VARCHAR(50),
+            registro_id INT,
+            detalhes TEXT,
+            ip VARCHAR(45),
+            data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+            INDEX idx_usuario_id (usuario_id),
+            INDEX idx_acao (acao),
+            INDEX idx_data_hora (data_hora)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'logs_sistema' criada\n";
+
+    // 12. Tabela de notificações
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS notificacoes (
             id INT AUTO_INCREMENT PRIMARY KEY,
             usuario_id INT NOT NULL,
+            tipo ENUM('badge_conquistada','nivel_subiu','novo_teste','resposta_forum','sistema') NOT NULL,
             titulo VARCHAR(200) NOT NULL,
             mensagem TEXT NOT NULL,
-            tipo ENUM('info', 'sucesso', 'aviso', 'erro') DEFAULT 'info',
-            lida BOOLEAN DEFAULT FALSE,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            icone VARCHAR(10),
+            url VARCHAR(255),
+            lida TINYINT(1) DEFAULT 0,
             data_leitura TIMESTAMP NULL,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            data_expiracao TIMESTAMP NULL,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            INDEX idx_usuario (usuario_id),
+            INDEX idx_usuario_id (usuario_id),
+            INDEX idx_tipo (tipo),
             INDEX idx_lida (lida),
-            INDEX idx_tipo (tipo)
-        )
+            INDEX idx_data_criacao (data_criacao)
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'notificacoes' criada\n";
 
-    // Tabela historico_experiencia
+    // 13. Tabela de notificações do usuário
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS notificacoes_usuario (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT NOT NULL,
+            tipo ENUM('forum_resposta','forum_mencao','badge_conquistada','nivel_subiu','sistema') NOT NULL,
+            titulo VARCHAR(200) NOT NULL,
+            mensagem TEXT NOT NULL,
+            link VARCHAR(255),
+            lida TINYINT(1) DEFAULT 0,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            INDEX idx_usuario_lida (usuario_id, lida),
+            INDEX idx_data (data_criacao)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'notificacoes_usuario' criada\n";
+
+    // 14. Tabela de histórico de atividades
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS historico_atividades (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT NOT NULL,
+            tipo_atividade ENUM('teste_realizado','badge_conquistada','nivel_subiu','topico_criado','resposta_forum','login','perfil_atualizado') NOT NULL,
+            descricao VARCHAR(255) NOT NULL,
+            detalhes LONGTEXT,
+            pontos_ganhos INT DEFAULT 0,
+            data_atividade TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            INDEX idx_usuario_data (usuario_id, data_atividade),
+            INDEX idx_tipo (tipo_atividade),
+            INDEX idx_data (data_atividade)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'historico_atividades' criada\n";
+
+    // 15. Tabela de histórico de experiência
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS historico_experiencia (
             id INT AUTO_INCREMENT PRIMARY KEY,
             usuario_id INT NOT NULL,
-            acao VARCHAR(100) NOT NULL,
-            xp_ganho INT NOT NULL,
-            xp_total_anterior INT NOT NULL,
-            xp_total_novo INT NOT NULL,
+            tipo_acao ENUM('teste_completado','badge_conquistada','primeiro_teste','bonus_velocidade','bonus_pontuacao','participacao_forum','login_diario') NOT NULL,
+            experiencia_ganha INT NOT NULL,
+            contexto VARCHAR(100),
             nivel_anterior INT NOT NULL,
-            nivel_novo INT NOT NULL,
-            detalhes TEXT,
-            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            nivel_posterior INT NOT NULL,
+            detalhes LONGTEXT,
+            data_acao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-            INDEX idx_usuario (usuario_id),
-            INDEX idx_acao (acao),
-            INDEX idx_data (data_criacao)
-        )
+            INDEX idx_usuario_id (usuario_id),
+            INDEX idx_tipo_acao (tipo_acao),
+            INDEX idx_data_acao (data_acao)
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'historico_experiencia' criada\n";
 
-    // Tabela forum_curtidas
+    // 16. Tabela de países visitados
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS paises_visitados (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT NOT NULL,
+            pais_codigo VARCHAR(50) NOT NULL,
+            pais_nome VARCHAR(100) NOT NULL,
+            data_primeira_visita TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            total_visitas INT DEFAULT 1,
+            ultima_visita TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_usuario_pais (usuario_id, pais_codigo),
+            INDEX idx_usuario (usuario_id),
+            INDEX idx_pais (pais_codigo),
+            INDEX idx_data_visita (data_primeira_visita)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'paises_visitados' criada\n";
+
+    // 17. Tabela de badges do usuário
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS usuario_badges (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            usuario_id INT NOT NULL,
+            badge_id INT NOT NULL,
+            data_conquista DATETIME NOT NULL,
+            contexto VARCHAR(100),
+            notificado TINYINT(1) DEFAULT 0,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_usuario_badge (usuario_id, badge_id),
+            INDEX (badge_id)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'usuario_badges' criada\n";
+
+    echo "\n📋 CRIANDO TABELAS DO FÓRUM...\n";
+    echo "===============================\n";
+
+    // 18. Tabela de categorias do fórum
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS forum_categorias (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(100) NOT NULL,
+            descricao TEXT,
+            cor VARCHAR(7) DEFAULT '#007bff',
+            icone VARCHAR(10) DEFAULT '💬',
+            ativo TINYINT(1) DEFAULT 1,
+            ordem INT DEFAULT 0,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_ativo (ativo),
+            INDEX idx_ordem (ordem)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'forum_categorias' criada\n";
+
+    // 19. Tabela de tópicos do fórum
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS forum_topicos (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            categoria_id INT NOT NULL,
+            titulo VARCHAR(200) NOT NULL,
+            conteudo TEXT NOT NULL,
+            autor_id INT NOT NULL,
+            aprovado TINYINT(1) DEFAULT 1,
+            fixado TINYINT(1) DEFAULT 0,
+            fechado TINYINT(1) DEFAULT 0,
+            visualizacoes INT DEFAULT 0,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (categoria_id) REFERENCES forum_categorias(id) ON DELETE CASCADE,
+            FOREIGN KEY (autor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            INDEX idx_categoria (categoria_id),
+            INDEX idx_autor (autor_id),
+            INDEX idx_aprovado (aprovado)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'forum_topicos' criada\n";
+
+    // 20. Tabela de respostas do fórum
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS forum_respostas (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            topico_id INT NOT NULL,
+            conteudo TEXT NOT NULL,
+            autor_id INT NOT NULL,
+            aprovado TINYINT(1) DEFAULT 1,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (topico_id) REFERENCES forum_topicos(id) ON DELETE CASCADE,
+            FOREIGN KEY (autor_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            INDEX idx_topico (topico_id),
+            INDEX idx_autor (autor_id),
+            INDEX idx_aprovado (aprovado)
+        ) ENGINE=InnoDB
+    ");
+    echo "✅ Tabela 'forum_respostas' criada\n";
+
+    // 21. Tabela de curtidas do fórum
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS forum_curtidas (
             id INT AUTO_INCREMENT PRIMARY KEY,
             usuario_id INT NOT NULL,
-            topico_id INT NULL,
-            resposta_id INT NULL,
-            tipo_curtida ENUM('like', 'dislike') DEFAULT 'like',
+            topico_id INT,
+            resposta_id INT,
+            tipo_curtida ENUM('like','dislike') DEFAULT 'like',
             data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
             FOREIGN KEY (topico_id) REFERENCES forum_topicos(id) ON DELETE CASCADE,
@@ -422,18 +483,18 @@ try {
             INDEX idx_usuario (usuario_id),
             INDEX idx_topico (topico_id),
             INDEX idx_resposta (resposta_id)
-        )
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'forum_curtidas' criada\n";
 
-    // Tabela forum_moderacao
+    // 22. Tabela de moderação do fórum
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS forum_moderacao (
             id INT AUTO_INCREMENT PRIMARY KEY,
             moderador_id INT NOT NULL,
-            topico_id INT NULL,
-            resposta_id INT NULL,
-            acao ENUM('aprovar', 'rejeitar', 'editar', 'deletar', 'fixar', 'fechar') NOT NULL,
+            topico_id INT,
+            resposta_id INT,
+            acao ENUM('aprovar','rejeitar','editar','deletar','fixar','fechar') NOT NULL,
             motivo TEXT,
             data_acao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (moderador_id) REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -441,395 +502,134 @@ try {
             FOREIGN KEY (resposta_id) REFERENCES forum_respostas(id) ON DELETE CASCADE,
             INDEX idx_moderador (moderador_id),
             INDEX idx_topico (topico_id),
+            INDEX resposta_id (resposta_id),
             INDEX idx_acao (acao)
-        )
+        ) ENGINE=InnoDB
     ");
     echo "✅ Tabela 'forum_moderacao' criada\n";
 
-    echo "\n🎉 TODAS AS TABELAS CRIADAS COM SUCESSO!\n\n";
-    
-    // 5. Inserir dados iniciais
-    echo "📝 INSERINDO DADOS INICIAIS...\n";
-    
-    // Verificar se já existem usuários
-    $stmt = $pdo->query("SELECT COUNT(*) FROM usuarios");
-    $usuarios_existentes = $stmt->fetchColumn();
-    
-    if ($usuarios_existentes == 0) {
-        echo "👤 Criando usuário administrador...\n";
-        
-        // Criar usuário admin padrão
-        $senha_admin = password_hash('admin123', PASSWORD_DEFAULT);
-        $pdo->exec("
-            INSERT INTO usuarios (nome, login, senha, email, is_admin) 
-            VALUES ('Administrador', 'admin', '$senha_admin', 'admin@daydreaming.com', TRUE)
-        ");
-        
-        // Criar usuário de teste
-        $senha_teste = password_hash('teste123', PASSWORD_DEFAULT);
-        $pdo->exec("
-            INSERT INTO usuarios (nome, login, senha, email, is_admin) 
-            VALUES ('Usuário Teste', 'teste', '$senha_teste', 'teste@daydreaming.com', FALSE)
-        ");
-        
-        echo "✅ Usuários criados:\n";
-        echo "   👨‍💼 Admin: login='admin', senha='admin123'\n";
-        echo "   👤 Teste: login='teste', senha='teste123'\n";
-    } else {
-        echo "ℹ️ Usuários já existem no banco\n";
-    }
-    
-    // Verificar se já existem badges
-    $stmt = $pdo->query("SELECT COUNT(*) FROM badges");
-    $badges_existentes = $stmt->fetchColumn();
-    
-    if ($badges_existentes == 0) {
-        echo "\n🏆 Criando badges padrão...\n";
-        
-        $badges = [
-            ['Primeiro Teste', 'Complete seu primeiro teste', '🎯', 'testes_realizados', 1],
-            ['Estudioso', 'Complete 5 testes', '📚', 'testes_realizados', 5],
-            ['Dedicado', 'Complete 10 testes', '🎓', 'testes_realizados', 10],
-            ['Expert SAT', 'Obtenha 80% ou mais no SAT', '🏆', 'pontuacao_sat', 80],
-            ['Expert TOEFL', 'Obtenha 80% ou mais no TOEFL', '🇺🇸', 'pontuacao_toefl', 80],
-            ['Expert IELTS', 'Obtenha 80% ou mais no IELTS', '🇬🇧', 'pontuacao_ielts', 80],
-            ['Expert GRE', 'Obtenha 80% ou mais no GRE', '🎯', 'pontuacao_gre', 80]
-        ];
-        
-        foreach ($badges as $badge) {
-            $pdo->prepare("INSERT INTO badges (nome, descricao, icone, condicao_tipo, condicao_valor) VALUES (?, ?, ?, ?, ?)")
-                ->execute($badge);
-        }
-        
-        echo "✅ " . count($badges) . " badges criadas\n";
-    } else {
-        echo "ℹ️ Badges já existem no banco\n";
-    }
-
-    // Verificar se já existem categorias do fórum
-    $stmt = $pdo->query("SELECT COUNT(*) FROM forum_categorias");
-    $categorias_existentes = $stmt->fetchColumn();
-
-    if ($categorias_existentes == 0) {
-        echo "\n💬 Criando categorias do fórum...\n";
-
-        $categorias = [
-            ['Geral', 'Discussões gerais sobre estudar no exterior', '#007bff', '💬', TRUE, 1],
-            ['Testes Internacionais', 'Dúvidas e dicas sobre TOEFL, IELTS, SAT, etc.', '#28a745', '📝', TRUE, 2],
-            ['Universidades', 'Informações sobre universidades no exterior', '#17a2b8', '🎓', TRUE, 3],
-            ['Bolsas de Estudo', 'Oportunidades de bolsas e financiamento', '#ffc107', '💰', TRUE, 4],
-            ['Experiências', 'Relatos de quem já estudou fora', '#6f42c1', '✈️', TRUE, 5],
-            ['Dúvidas Técnicas', 'Problemas com o sistema e suporte', '#dc3545', '🔧', TRUE, 6]
-        ];
-
-        foreach ($categorias as $categoria) {
-            $pdo->prepare("INSERT INTO forum_categorias (nome, descricao, cor, icone, ativo, ordem) VALUES (?, ?, ?, ?, ?, ?)")
-                ->execute($categoria);
-        }
-
-        echo "✅ " . count($categorias) . " categorias do fórum criadas\n";
-    } else {
-        echo "ℹ️ Categorias do fórum já existem no banco\n";
-    }
-
-    // Verificar se já existem configurações do sistema
-    $stmt = $pdo->query("SELECT COUNT(*) FROM configuracoes_sistema");
-    $configs_existentes = $stmt->fetchColumn();
-
-    if ($configs_existentes == 0) {
-        echo "\n⚙️ Inserindo configurações do sistema...\n";
-
-        $configuracoes = [
-            ['sistema_nome', 'DayDreaming - Sistema de Simulados', 'string', 'geral', 'Nome do sistema'],
-            ['sistema_versao', '2.0.0', 'string', 'geral', 'Versão atual do sistema'],
-            ['manutencao_ativa', 'false', 'boolean', 'sistema', 'Se o sistema está em manutenção'],
-            ['registro_aberto', 'true', 'boolean', 'usuarios', 'Se novos registros estão permitidos'],
-            ['max_tentativas_login', '5', 'integer', 'seguranca', 'Máximo de tentativas de login'],
-            ['tempo_bloqueio_minutos', '30', 'integer', 'seguranca', 'Tempo de bloqueio em minutos'],
-            ['duracao_sessao_horas', '8', 'integer', 'seguranca', 'Duração da sessão em horas'],
-            ['xp_base_teste', '20', 'integer', 'gamificacao', 'XP base por completar um teste'],
-            ['xp_bonus_badge', '50', 'integer', 'gamificacao', 'XP bônus por conquistar uma badge'],
-            ['forum_moderacao_ativa', 'true', 'boolean', 'forum', 'Se a moderação do fórum está ativa']
-        ];
-
-        foreach ($configuracoes as $config) {
-            $pdo->prepare("INSERT INTO configuracoes_sistema (chave, valor, tipo, categoria, descricao) VALUES (?, ?, ?, ?, ?)")
-                ->execute($config);
-        }
-
-        echo "✅ " . count($configuracoes) . " configurações do sistema inseridas\n";
-    } else {
-        echo "ℹ️ Configurações do sistema já existem no banco\n";
-    }
-    
-    echo "\n📊 RESUMO DA CONFIGURAÇÃO:\n";
-    echo "==========================\n";
-    echo "✅ Database: {$config['database']}\n";
-    echo "✅ Tabelas: 18 tabelas criadas\n";
-    echo "   • usuarios (sistema de login)\n";
-    echo "   • questoes (banco de questões)\n";
-    echo "   • sessoes_teste (controle de testes)\n";
-    echo "   • respostas_usuario (respostas detalhadas)\n";
-    echo "   • resultados_testes (resultados finais)\n";
-    echo "   • badges (sistema de conquistas)\n";
-    echo "   • usuario_badges (badges conquistadas)\n";
-    echo "   • forum_categorias (categorias do fórum)\n";
-    echo "   • forum_topicos (tópicos do fórum)\n";
-    echo "   • forum_respostas (respostas do fórum)\n";
-    echo "   • forum_curtidas (curtidas do fórum)\n";
-    echo "   • forum_moderacao (moderação do fórum)\n";
-    echo "   • niveis_usuario (sistema de níveis)\n";
-    echo "   • configuracoes_sistema (configurações)\n";
-    echo "   • logs_sistema (logs de ações)\n";
-    echo "   • logs_acesso (logs de login/logout)\n";
-    echo "   • notificacoes (sistema de notificações)\n";
-    echo "   • historico_experiencia (histórico de XP)\n";
-    echo "✅ Usuários: Admin e Teste\n";
-    echo "✅ Badges: Sistema de conquistas\n";
-    echo "✅ Fórum: Categorias padrão\n";
-    echo "✅ Configurações: Sistema configurado\n";
-    echo "✅ Logs: Sistema de auditoria\n";
-    echo "✅ Gamificação: Níveis e experiência\n";
-    echo "✅ Estrutura: Pronta para uso\n\n";
-
-    // 8. Atualizar tabelas existentes (para colaboradores com versão anterior)
-    echo "🔄 ATUALIZANDO ESTRUTURAS EXISTENTES...\n";
-    echo "=======================================\n";
-
-    try {
-        // Atualizar DEFAULT das tabelas do fórum para aprovação automática
-        $pdo->exec("ALTER TABLE forum_topicos ALTER COLUMN aprovado SET DEFAULT TRUE");
-        echo "✅ forum_topicos: DEFAULT aprovado = TRUE\n";
-
-        $pdo->exec("ALTER TABLE forum_respostas ALTER COLUMN aprovado SET DEFAULT TRUE");
-        echo "✅ forum_respostas: DEFAULT aprovado = TRUE\n";
-
-        // Aprovar todos os tópicos e respostas existentes que estavam pendentes
-        $stmt = $pdo->exec("UPDATE forum_topicos SET aprovado = TRUE WHERE aprovado = FALSE");
-        echo "✅ Aprovados $stmt tópicos pendentes\n";
-
-        $stmt = $pdo->exec("UPDATE forum_respostas SET aprovado = TRUE WHERE aprovado = FALSE");
-        echo "✅ Aprovadas $stmt respostas pendentes\n";
-
-        // Verificar se há usuários sem is_admin definido
-        $stmt = $pdo->exec("UPDATE usuarios SET is_admin = FALSE WHERE is_admin IS NULL");
-        echo "✅ Corrigidos usuários sem flag is_admin\n";
-
-        echo "✅ Atualizações aplicadas com sucesso!\n\n";
-
-    } catch (Exception $e) {
-        echo "⚠️ Algumas atualizações falharam (normal se for primeira instalação): " . $e->getMessage() . "\n\n";
-    }
-
-    // 9. Carregar questões do SAT automaticamente
-    echo "📚 CARREGANDO QUESTÕES DO SAT...\n";
+    echo "\n📊 INSERINDO DADOS INICIAIS...\n";
     echo "===============================\n";
 
-    try {
-        // Verificar se já existem questões SAT
-        $stmt = $pdo->query("SELECT COUNT(*) FROM questoes WHERE tipo_prova = 'sat'");
-        $questoes_sat_existentes = $stmt->fetchColumn();
+    // Inserir usuário administrador padrão
+    $senha_admin = password_hash('admin123', PASSWORD_DEFAULT);
+    $pdo->exec("
+        INSERT IGNORE INTO usuarios (nome, usuario, email, senha, is_admin, ativo)
+        VALUES ('Administrador', 'admin', 'admin@daydreamming.com', '$senha_admin', 1, 1)
+    ");
+    echo "✅ Usuário administrador criado (admin/admin123)\n";
 
-        if ($questoes_sat_existentes > 10) {
-            echo "ℹ️ Já existem $questoes_sat_existentes questões SAT no banco\n";
-            echo "✅ Questões SAT já carregadas\n\n";
-        } else {
-            // Verificar se os arquivos JSON existem
-            $arquivo_questoes = 'exames/SAT/Exame_SAT_Test_4.json';
-            $arquivo_respostas = 'exames/SAT/Answers_SAT_Test_4.json';
+    // Inserir usuário de teste
+    $senha_teste = password_hash('teste123', PASSWORD_DEFAULT);
+    $pdo->exec("
+        INSERT IGNORE INTO usuarios (nome, usuario, email, senha, is_admin, ativo)
+        VALUES ('Usuário Teste', 'teste', 'teste@daydreamming.com', '$senha_teste', 0, 1)
+    ");
+    echo "✅ Usuário de teste criado (teste/teste123)\n";
 
-            if (file_exists($arquivo_questoes) && file_exists($arquivo_respostas)) {
-                echo "📄 Arquivos JSON encontrados, carregando questões...\n";
+    // Inserir configurações do sistema
+    $configuracoes = [
+        ['site_nome', 'DayDreamming', 'string', 'geral', 'Nome do site'],
+        ['site_descricao', 'Plataforma de preparação para intercâmbio', 'string', 'geral', 'Descrição do site'],
+        ['manutencao_ativa', '0', 'boolean', 'sistema', 'Modo manutenção ativo'],
+        ['registro_aberto', '1', 'boolean', 'usuarios', 'Permitir novos registros'],
+        ['forum_ativo', '1', 'boolean', 'forum', 'Fórum ativo'],
+        ['moderacao_automatica', '0', 'boolean', 'forum', 'Moderação automática do fórum'],
+        ['max_tentativas_login', '5', 'integer', 'seguranca', 'Máximo de tentativas de login'],
+        ['tempo_bloqueio_login', '15', 'integer', 'seguranca', 'Tempo de bloqueio em minutos'],
+        ['duracao_teste_padrao', '60', 'integer', 'testes', 'Duração padrão dos testes em minutos'],
+        ['questoes_por_teste', '20', 'integer', 'testes', 'Número de questões por teste']
+    ];
 
-                // Ler arquivos JSON
-                $questoes_json = json_decode(file_get_contents($arquivo_questoes), true);
-                $respostas_json = json_decode(file_get_contents($arquivo_respostas), true);
+    foreach ($configuracoes as $config) {
+        $pdo->prepare("
+            INSERT IGNORE INTO configuracoes_sistema (chave, valor, tipo, categoria, descricao)
+            VALUES (?, ?, ?, ?, ?)
+        ")->execute($config);
+    }
+    echo "✅ Configurações do sistema inseridas\n";
 
-                if ($questoes_json && $respostas_json) {
-                    echo "✅ Arquivos JSON carregados com sucesso\n";
+    // Inserir badges padrão
+    $badges = [
+        ['primeiro_teste', 'Primeiro Teste', 'Complete seu primeiro teste', '🎯', 'especial', 'teste', 1, 'comum', 100],
+        ['dez_testes', '10 Testes', 'Complete 10 testes', '🔟', 'frequencia', 'teste', 10, 'comum', 200],
+        ['cem_testes', '100 Testes', 'Complete 100 testes', '💯', 'frequencia', 'teste', 100, 'raro', 500],
+        ['pontuacao_alta', 'Pontuação Alta', 'Obtenha mais de 90% em um teste', '⭐', 'pontuacao', 'teste', 90, 'raro', 300],
+        ['pontuacao_perfeita', 'Pontuação Perfeita', 'Obtenha 100% em um teste', '🏆', 'pontuacao', 'teste', 100, 'epico', 1000],
+        ['participante_forum', 'Participante do Fórum', 'Crie seu primeiro tópico no fórum', '💬', 'social', 'forum', 1, 'comum', 150],
+        ['colaborador', 'Colaborador', 'Responda 10 tópicos no fórum', '🤝', 'social', 'forum', 10, 'raro', 400],
+        ['veterano', 'Veterano', 'Use o sistema por 30 dias', '🎖️', 'tempo', 'geral', 30, 'epico', 800],
+        ['explorador', 'Explorador', 'Visite 10 países diferentes', '🌍', 'especial', 'geral', 10, 'raro', 350],
+        ['globetrotter', 'Globetrotter', 'Visite todos os países disponíveis', '✈️', 'especial', 'geral', 28, 'lendario', 2000]
+    ];
 
-                    // Limpar questões SAT existentes se houver poucas
-                    if ($questoes_sat_existentes > 0) {
-                        $pdo->exec("DELETE FROM questoes WHERE tipo_prova = 'sat'");
-                        echo "🗑️ Questões SAT antigas removidas\n";
-                    }
+    foreach ($badges as $badge) {
+        $pdo->prepare("
+            INSERT IGNORE INTO badges (codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ")->execute($badge);
+    }
+    echo "✅ Badges padrão inseridas\n";
 
-                    // Mapear respostas por número de questão
-                    $respostas_map = [];
-                    $questao_numero = 1;
+    // Inserir categorias do fórum
+    $categorias_forum = [
+        ['Geral', 'Discussões gerais sobre intercâmbio', '#007bff', '💬', 1, 1],
+        ['Testes e Preparação', 'Dicas e discussões sobre testes', '#28a745', '📚', 1, 2],
+        ['Países e Destinos', 'Informações sobre países e destinos', '#17a2b8', '🌍', 1, 3],
+        ['Experiências', 'Compartilhe suas experiências', '#ffc107', '✨', 1, 4],
+        ['Dúvidas e Suporte', 'Tire suas dúvidas aqui', '#dc3545', '❓', 1, 5]
+    ];
 
-                    foreach ($respostas_json['answers'] as $modulo => $respostas) {
-                        foreach ($respostas as $num_questao => $resposta) {
-                            $respostas_map[$questao_numero] = strtolower($resposta);
-                            $questao_numero++;
-                        }
-                    }
+    foreach ($categorias_forum as $categoria) {
+        $pdo->prepare("
+            INSERT IGNORE INTO forum_categorias (nome, descricao, cor, icone, ativo, ordem)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ")->execute($categoria);
+    }
+    echo "✅ Categorias do fórum inseridas\n";
 
-                    echo "📊 " . count($respostas_map) . " respostas mapeadas\n";
+    echo "\n🎉 INSTALAÇÃO CONCLUÍDA COM SUCESSO!\n";
+    echo "====================================\n";
+    echo "✅ 22 tabelas criadas\n";
+    echo "✅ Dados iniciais inseridos\n";
+    echo "✅ Sistema pronto para uso\n\n";
 
-                    // Preparar statement para inserção
-                    $stmt = $pdo->prepare("
-                        INSERT INTO questoes (
-                            numero_questao, tipo_prova, enunciado,
-                            alternativa_a, alternativa_b, alternativa_c, alternativa_d, alternativa_e,
-                            resposta_correta, tipo_questao, materia, assunto, dificuldade
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ");
+    echo "👤 USUÁRIOS CRIADOS:\n";
+    echo "====================\n";
+    echo "🔑 Admin: admin / admin123\n";
+    echo "🧪 Teste: teste / teste123\n\n";
 
-                    $questoes_inseridas = 0;
-                    $questao_atual = 1;
+    echo "📊 ESTATÍSTICAS:\n";
+    echo "================\n";
 
-                    // Processar seções do JSON
-                    foreach ($questoes_json['sections'] as $section) {
-                        $section_name = $section['section_name'];
-                        echo "📚 Processando seção: $section_name\n";
+    // Contar registros em cada tabela
+    $tabelas = [
+        'usuarios', 'perfil_usuario', 'badges', 'niveis_usuario', 'questoes',
+        'sessoes_teste', 'respostas_usuario', 'resultados_testes', 'configuracoes_sistema',
+        'logs_acesso', 'logs_sistema', 'notificacoes', 'notificacoes_usuario',
+        'historico_atividades', 'historico_experiencia', 'paises_visitados',
+        'usuario_badges', 'forum_categorias', 'forum_topicos', 'forum_respostas',
+        'forum_curtidas', 'forum_moderacao'
+    ];
 
-                        foreach ($section['modules'] as $module) {
-                            $module_name = $module['module_name'];
-                            echo "  📖 Processando módulo: $module_name\n";
-
-                            foreach ($module['questions'] as $question) {
-                                $enunciado = $question['question_text'];
-                                $options = $question['options'] ?? [];
-
-                                // Determinar matéria baseada na seção
-                                if (strpos($section_name, 'Reading') !== false) {
-                                    $materia = 'Reading and Writing';
-                                } elseif (strpos($section_name, 'Math') !== false) {
-                                    $materia = 'Math';
-                                } else {
-                                    $materia = 'General';
-                                }
-
-                                // Extrair alternativas
-                                $alternativas = ['', '', '', '', ''];
-                                foreach ($options as $i => $option) {
-                                    if ($i < 5) {
-                                        // Remover letra da alternativa (A), B), etc.)
-                                        $alternativas[$i] = preg_replace('/^[A-E]\)\s*/', '', $option);
-                                    }
-                                }
-
-                                // Obter resposta correta
-                                $resposta_correta = $respostas_map[$questao_atual] ?? 'a';
-
-                                // Inserir questão
-                                $stmt->execute([
-                                    $questao_atual,
-                                    'sat',
-                                    $enunciado,
-                                    $alternativas[0] ?: null,
-                                    $alternativas[1] ?: null,
-                                    $alternativas[2] ?: null,
-                                    $alternativas[3] ?: null,
-                                    $alternativas[4] ?: null,
-                                    $resposta_correta,
-                                    'multipla_escolha',
-                                    $materia,
-                                    $section_name,
-                                    'medio'
-                                ]);
-
-                                $questoes_inseridas++;
-                                $questao_atual++;
-                            }
-                        }
-                    }
-
-                    echo "✅ $questoes_inseridas questões SAT inseridas com sucesso!\n";
-
-                    // Verificar distribuição
-                    $stmt = $pdo->query("SELECT materia, COUNT(*) as total FROM questoes WHERE tipo_prova = 'sat' GROUP BY materia");
-                    $distribuicao = $stmt->fetchAll();
-
-                    echo "📊 Distribuição por matéria:\n";
-                    foreach ($distribuicao as $item) {
-                        echo "   • {$item['materia']}: {$item['total']} questões\n";
-                    }
-                    echo "\n";
-
-                } else {
-                    echo "❌ Erro ao decodificar arquivos JSON\n";
-                    echo "⚠️ Questões SAT não foram carregadas\n\n";
-                }
-
-            } else {
-                echo "⚠️ Arquivos JSON não encontrados:\n";
-                echo "   • $arquivo_questoes\n";
-                echo "   • $arquivo_respostas\n";
-                echo "ℹ️ Questões SAT não foram carregadas automaticamente\n";
-                echo "💡 Execute manualmente: php seed_questoes.php\n\n";
-            }
-        }
-
-    } catch (Exception $e) {
-        echo "❌ Erro ao carregar questões SAT: " . $e->getMessage() . "\n";
-        echo "💡 Execute manualmente: php seed_questoes.php\n\n";
+    foreach ($tabelas as $tabela) {
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM $tabela");
+        $total = $stmt->fetch();
+        echo "📋 $tabela: {$total['total']} registros\n";
     }
 
-    echo "🔑 CREDENCIAIS DE ACESSO:\n";
-    echo "=========================\n";
-    echo "👨‍💼 Administrador:\n";
-    echo "   Login: admin\n";
-    echo "   Senha: admin123\n\n";
-    echo "👤 Usuário Teste:\n";
-    echo "   Login: teste\n";
-    echo "   Senha: teste123\n\n";
-    
-    echo "🌐 PRÓXIMOS PASSOS PARA COLABORADORES:\n";
-    echo "======================================\n";
-    echo "1. Inicie o servidor: php -S localhost:8080 -t .\n";
-    echo "2. Acesse: http://localhost:8080/\n";
-    echo "3. Teste login: admin/admin123 ou teste/teste123\n";
-    echo "4. Teste o fórum: http://localhost:8080/forum.php\n";
-    echo "5. Teste simulados: http://localhost:8080/simulador_provas.php\n";
-    echo "6. Painel admin: http://localhost:8080/admin_forum.php\n\n";
+    echo "\n🌐 PRÓXIMOS PASSOS:\n";
+    echo "===================\n";
+    echo "1. Configure o arquivo config.php com suas credenciais\n";
+    echo "2. Acesse o sistema via navegador\n";
+    echo "3. Faça login com admin/admin123\n";
+    echo "4. Configure as questões dos testes\n";
+    echo "5. Personalize as configurações do sistema\n\n";
 
-    echo "✅ QUESTÕES INCLUÍDAS AUTOMATICAMENTE:\n";
-    echo "======================================\n";
-    echo "• Questões SAT carregadas dos arquivos JSON\n";
-    echo "• Sistema de simulados totalmente funcional\n";
-    echo "• Não é necessário executar seed_questoes.php\n";
-    echo "• Se precisar recarregar: php seed_questoes.php\n\n";
+    echo "🚀 Sistema DayDreamming instalado e pronto para uso!\n";
 
-    echo "📚 DOCUMENTAÇÃO PARA DESENVOLVEDORES:\n";
-    echo "=====================================\n";
-    echo "• config.php - Configurações do banco\n";
-    echo "• verificar_auth.php - Sistema de autenticação\n";
-    echo "• header_status.php - Header padrão das páginas\n";
-    echo "• forum.php - Sistema de fórum principal\n";
-    echo "• admin_forum.php - Painel de moderação\n";
-    echo "• simulador_provas.php - Sistema de simulados\n";
-    echo "• setup_database.php - Este arquivo (configuração)\n\n";
-
-    echo "🔧 FERRAMENTAS DE DEBUG:\n";
-    echo "========================\n";
-    echo "• verificar_instalacao.php - Verificar sistema\n";
-    echo "• teste_criacao_topico.php - Testar fórum\n";
-    echo "• debug_forum_criacao.php - Debug detalhado\n\n";
-
-    echo "⚠️ IMPORTANTE PARA COLABORADORES:\n";
-    echo "=================================\n";
-    echo "• Sempre execute este script após git clone\n";
-    echo "• Configure config.php com suas credenciais MySQL\n";
-    echo "• O fórum agora funciona SEM aprovação prévia\n";
-    echo "• Tópicos e respostas ficam visíveis imediatamente\n";
-    echo "• Moderação é reativa (admin age após problemas)\n\n";
-
-    echo "🎉 CONFIGURAÇÃO CONCLUÍDA COM SUCESSO!\n";
-    echo "======================================\n";
-    echo "O sistema está pronto para desenvolvimento colaborativo!\n";
-    
-} catch (Exception $e) {
-    echo "❌ ERRO: " . $e->getMessage() . "\n";
-    echo "Arquivo: " . $e->getFile() . "\n";
-    echo "Linha: " . $e->getLine() . "\n\n";
-    
-    echo "🔧 POSSÍVEIS SOLUÇÕES:\n";
-    echo "======================\n";
-    echo "1. Verifique se o MySQL está rodando\n";
-    echo "2. Confirme as credenciais no arquivo config.php\n";
-    echo "3. Verifique se o usuário tem permissões para criar databases\n";
-    echo "4. Execute: GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';\n";
+} catch(PDOException $e) {
+    echo "❌ Erro: " . $e->getMessage() . "\n";
+    exit(1);
 }
 ?>
