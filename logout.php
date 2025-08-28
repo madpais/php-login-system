@@ -1,6 +1,8 @@
 <?php
-session_start();
 require_once 'config.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Registrar logout no banco de dados se o usuário estiver logado
 if (isset($_SESSION['usuario_id'])) {

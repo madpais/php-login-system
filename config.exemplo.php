@@ -1,14 +1,8 @@
 <?php
 /**
- * Arquivo de configuração de exemplo para colaboradores
- * 
- * INSTRUÇÕES:
- * 1. Copie este arquivo para config.php
- * 2. Altere as configurações abaixo conforme seu ambiente
- * 3. Execute: php setup_database.php
+ * Arquivo de configuração do sistema DayDreaming
+ * Configurado automaticamente para desenvolvimento local
  */
-
-// ⚠️ IMPORTANTE: Renomeie este arquivo para config.php
 
 // Configurações do banco de dados
 define('DB_HOST', 'localhost');          // Host do MySQL

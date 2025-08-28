@@ -1,6 +1,6 @@
 <?php
 /**
- * Teste final do index_new.php com header_status.php incluído
+ * Teste final do index.php com header_status.php incluído
  */
 
 echo "🎯 TESTE FINAL - INDEX_NEW.PHP COM HEADER\n";
@@ -24,7 +24,7 @@ try {
     
     // Testar carregamento da página
     ob_start();
-    include 'index_new.php';
+    include 'index.php';
     $output = ob_get_contents();
     ob_end_clean();
     
@@ -146,7 +146,7 @@ try {
     session_start();
     
     ob_start();
-    include 'index_new.php';
+    include 'index.php';
     $output_visitante = ob_get_contents();
     ob_end_clean();
     
@@ -205,7 +205,7 @@ try {
         
         echo "🌐 TESTE NO NAVEGADOR:\n";
         echo "======================\n";
-        echo "http://localhost:8080/index_new.php\n\n";
+        echo "http://localhost:8080/index.php\n\n";
         
         echo "✅ VERIFICAÇÕES VISUAIS:\n";
         echo "• Header azul no topo da página\n";
@@ -242,7 +242,7 @@ try {
     
     echo "📞 ARQUIVOS FINAIS:\n";
     echo "===================\n";
-    echo "• index_new.php - Página principal convertida ✅\n";
+    echo "• index.php - Página principal convertida ✅\n";
     echo "• header_status.php - Header de status ✅\n";
     echo "• index_new.html - Arquivo original (referência)\n";
     echo "• simulador_provas.php - Sistema de simulados\n";

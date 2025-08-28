@@ -66,8 +66,8 @@ foreach ($arquivos_essenciais as $arquivo => $descricao) {
 // 4. Verificar pasta de exames
 echo "\n📚 VERIFICANDO ARQUIVOS DE EXAMES...\n";
 $arquivos_exames = [
-    'exames/SAT/SAT_Test_4.json' => 'Questões SAT',
-    'exames/SAT/Answers_SAT_Test_4.json' => 'Respostas SAT'
+    'Exames/SAT/Exame_SAT_Test_4.json' => 'Questões SAT',
+    'Exames/SAT/Answers_SAT_Test_4.json' => 'Respostas SAT'
 ];
 
 foreach ($arquivos_exames as $arquivo => $descricao) {

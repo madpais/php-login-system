@@ -1,5 +1,8 @@
 <?php
-session_start();
+require_once '../config.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Verificar se o usuário está logado - OBRIGATÓRIO para acessar informações dos países
 $usuario_logado = isset($_SESSION['usuario_id']);
@@ -13,6 +16,17 @@ if (!$usuario_logado) {
 }
 
 $usuario_nome = $_SESSION['usuario_nome'] ?? '';
+
+// Registrar visita ao país
+require_once '../tracking_paises.php';
+$resultado_visita = registrarVisitaPais($_SESSION['usuario_id'], 'eua');
+
+// Verificar se é primeira visita para mostrar notificação
+$primeira_visita = false;
+if ($resultado_visita && $resultado_visita['primeira_visita']) {
+    $primeira_visita = true;
+    $_SESSION['primeira_visita_pais'] = $resultado_visita['pais_nome'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -440,7 +454,7 @@ $usuario_nome = $_SESSION['usuario_nome'] ?? '';
                     <!-- Navegação Breadcrumb -->
                     <div class="col-lg-6 col-md-6 col-12 text-center text-md-end">
                         <nav class="breadcrumb-nav d-inline-block">
-                            <a href="../index_new.php">
+                            <a href="../index.php">
                                 <i class="fas fa-home me-1"></i>Início
                             </a>
                             <span class="separator">›</span>
@@ -457,6 +471,28 @@ $usuario_nome = $_SESSION['usuario_nome'] ?? '';
             </div>
         </div>
     </div>
+
+    <!-- Notificação de Primeira Visita -->
+    <?php if ($primeira_visita): ?>
+        <div class="container mt-3">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                border: none;
+                border-radius: 15px;
+                color: white;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            ">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-flag-usa fa-2x me-3"></i>
+                    <div>
+                        <h5 class="mb-1"><i class="fas fa-check-circle me-2"></i>Primeira visita aos Estados Unidos!</h5>
+                        <p class="mb-0">Parabéns! Você acabou de explorar seu primeiro país. Continue descobrindo mais destinos!</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <!-- Navegação -->
     <div class="container-fluid">

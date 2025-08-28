@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once 'config.php';
 require_once 'verificar_auth.php';
 require_once 'sistema_notificacoes.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Verificar se o usuário está logado
 verificarLogin();
@@ -45,7 +47,6 @@ $total_nao_lidas = $sistema_notificacoes->contarNotificacoesNaoLidas($usuario_id
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding-top: 80px;
         }
         
         .navbar-custom {

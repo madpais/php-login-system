@@ -1,19 +1,52 @@
 <?php
 // Componente de header para mostrar status de login
-if (session_status() == PHP_SESSION_NONE && !headers_sent()) {
-    session_start();
-}
-
 require_once 'config.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
+
+// Headers anti-cache
+if (!headers_sent()) {
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+}
 
 // Verificar se o usuário está logado
 $usuario_logado = isset($_SESSION['usuario_id']);
 $usuario_nome = '';
 $usuario_login = '';
+$is_admin = false;
 
 if ($usuario_logado) {
-    $usuario_nome = $_SESSION['usuario_nome'] ?? '';
-    $usuario_login = $_SESSION['usuario_login'] ?? '';
+    // SEMPRE buscar dados atualizados do banco para evitar inconsistências
+    try {
+        $pdo = conectarBD();
+        $stmt = $pdo->prepare("SELECT nome, usuario, is_admin, ativo FROM usuarios WHERE id = ?");
+        $stmt->execute([$_SESSION['usuario_id']]);
+        $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user_data && $user_data['ativo']) {
+            // Usar dados do banco (sempre atualizados)
+            $usuario_nome = $user_data['nome'];
+            $usuario_login = $user_data['usuario'];
+            $is_admin = (bool)$user_data['is_admin'];
+
+            // Atualizar sessão com dados corretos do banco
+            $_SESSION['usuario_nome'] = $usuario_nome;
+            $_SESSION['usuario_login'] = $usuario_login;
+            $_SESSION['is_admin'] = $is_admin;
+        } else {
+            // Usuário não encontrado ou inativo - limpar sessão
+            $_SESSION = array();
+            $usuario_logado = false;
+        }
+    } catch (Exception $e) {
+        // Em caso de erro, usar dados da sessão como fallback
+        $usuario_nome = $_SESSION['usuario_nome'] ?? '';
+        $usuario_login = $_SESSION['usuario_login'] ?? '';
+        $is_admin = $_SESSION['is_admin'] ?? false;
+    }
 }
 ?>
 
@@ -90,17 +123,7 @@ if ($usuario_logado) {
                         Editar Perfil
                     </a>
 
-                    <a href="editor_avatar.php" style="
-                        display: block;
-                        padding: 12px 16px;
-                        color: #333;
-                        text-decoration: none;
-                        border-bottom: 1px solid #eee;
-                        transition: background 0.2s ease;
-                    " onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
-                        <i class="fas fa-user-edit" style="margin-right: 8px; color: #FF9800;"></i>
-                        Editar Avatar
-                    </a>
+
 
                     <a href="todas_notificacoes.php" style="
                         display: block;
@@ -130,7 +153,7 @@ if ($usuario_logado) {
             <span style="font-weight: 500;">❌ Você não está logado</span>
         <?php endif; ?>
 
-        <a href="index_new.php" style="
+        <a href="index.php" style="
             background: rgba(255,255,255,0.15);
             color: white;
             text-decoration: none;

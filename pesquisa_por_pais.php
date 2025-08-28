@@ -1,9 +1,19 @@
 <?php
-session_start();
+require_once 'config.php';
+require_once 'tracking_paises.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Verificar se o usuário está logado (opcional - pode ser acessado sem login)
 $usuario_logado = isset($_SESSION['usuario_id']);
 $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
+
+// Obter países visitados pelo usuário
+$paises_visitados = [];
+if ($usuario_logado) {
+    $paises_visitados = obterPaisesVisitados($_SESSION['usuario_id']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -140,6 +150,8 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
             object-fit: cover;
             border: 2px solid rgba(255,255,255,0.8);
         }
+
+
 
         .country-card h2 {
             font-size: 1.6rem;
@@ -400,7 +412,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
                         <a href="pagina_usuario.php" class="nav-button me-2">
                             <i class="fas fa-user me-2"></i>Perfil
                         </a>
-                        <a href="index_new.php" class="nav-button">
+                        <a href="index.php" class="nav-button">
                             <i class="fas fa-home me-2"></i>Dashboard
                         </a>
                     <?php else: ?>
@@ -469,8 +481,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
         <div class="row">
             <!-- Austrália -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/australia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/australia.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/australia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/australia.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/au.png" alt="Bandeira da Austrália" class="country-flag-icon">
                             <h2>Austrália</h2>
@@ -501,8 +512,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
 
             <!-- Canadá -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/canada_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/canada.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/canada_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/canada.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/ca.png" alt="Bandeira do Canadá" class="country-flag-icon">
                             <h2>Canadá</h2>
@@ -565,8 +575,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
 
             <!-- França -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/franca_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/franca.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/franca_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/franca.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/fr.png" alt="Bandeira da França" class="country-flag-icon">
                             <h2>França</h2>
@@ -581,8 +590,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
 
             <!-- Alemanha -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/alemanha_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/alemanha.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/alemanha_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/alemanha.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/de.png" alt="Bandeira da Alemanha" class="country-flag-icon">
                             <h2>Alemanha</h2>
@@ -677,8 +685,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
 
             <!-- Itália -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/italia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/italia.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/italia_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/italia.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/it.png" alt="Bandeira da Itália" class="country-flag-icon">
                             <h2>Itália</h2>
@@ -693,8 +700,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
 
             <!-- Japão -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/japao_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/japao.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/japao_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/japao.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/jp.png" alt="Bandeira do Japão" class="country-flag-icon">
                             <h2>Japão</h2>
@@ -901,8 +907,7 @@ $usuario_nome = $usuario_logado ? $_SESSION['usuario_nome'] : '';
 
             <!-- Estados Unidos -->
             <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-                <div class="card country-card" style="background-image: url('imagens/estadosunidos_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/eua.php'" : "location.href='login.php'"; ?>">
-                    <div class="card-body">
+                <div class="card country-card" style="background-image: url('imagens/estadosunidos_background.jpg');" onclick="<?php echo $usuario_logado ? "location.href='paises/eua.php'" : "location.href='login.php'"; ?>"><div class="card-body">
                         <div class="country-title-container">
                             <img src="https://flagcdn.com/w40/us.png" alt="Bandeira dos Estados Unidos" class="country-flag-icon">
                             <h2>Estados Unidos</h2>

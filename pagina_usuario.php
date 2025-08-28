@@ -1,7 +1,9 @@
 <?php
-session_start();
 require_once 'config.php';
 require_once 'verificar_auth.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Verificar se o usuário está logado
 verificarLogin();
@@ -354,7 +356,7 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-8 text-center">
-                        <div class="avatar-container" onclick="openAvatarEditor()">
+                        <div class="avatar-container">
                             <div id="avatar-display">
                                 <!-- Avatar SVG estilo chibi -->
                                 <svg width="120" height="120" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -603,9 +605,7 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        function openAvatarEditor() {
-            window.location.href = 'editor_avatar.php';
-        }
+
 
         function openProfileEditor() {
             window.location.href = 'editar_perfil.php';

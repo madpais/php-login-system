@@ -2,12 +2,10 @@
 // Arquivo de verificação de autenticação centralizada
 // Este arquivo deve ser incluído em páginas que requerem autenticação
 
-// Verificar se a sessão já foi iniciada
-if (session_status() == PHP_SESSION_NONE && !headers_sent()) {
-    session_start();
-}
-
 require_once 'config.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 /**
  * Verifica se o usuário está logado

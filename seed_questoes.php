@@ -35,8 +35,8 @@ try {
     // Carregar questões do arquivo JSON
     echo "📄 CARREGANDO QUESTÕES DO ARQUIVO JSON...\n";
     
-    $arquivo_questoes = 'exames/SAT/SAT_Test_4.json';
-    $arquivo_respostas = 'exames/SAT/Answers_SAT_Test_4.json';
+    $arquivo_questoes = 'Exames/SAT/Exame_SAT_Test_4.json';
+    $arquivo_respostas = 'Exames/SAT/Answers_SAT_Test_4.json';
     
     if (!file_exists($arquivo_questoes)) {
         echo "❌ Arquivo de questões não encontrado: $arquivo_questoes\n";

@@ -4,9 +4,11 @@
  * Processa ações relacionadas às notificações
  */
 
-session_start();
 require_once 'config.php';
 require_once 'sistema_notificacoes.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Verificar se o usuário está logado
 if (!isset($_SESSION['usuario_id'])) {

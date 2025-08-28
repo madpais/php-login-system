@@ -1,6 +1,14 @@
 <?php
-session_start();
 require_once 'config.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
+
+// Verificar se já está logado e redirecionar
+if (isset($_SESSION['usuario_id'])) {
+    header("Location: index.php");
+    exit();
+}
 
 // Verificar se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -67,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 unset($_SESSION['redirect_after_login']); // Limpar a URL salva
                                 header("Location: " . $redirect_url);
                             } else {
-                                header("Location: index_new.php");
+                                header("Location: index.php");
                             }
                         }
                         exit;

@@ -430,9 +430,7 @@ try {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function openAvatarEditor() {
-            window.location.href = 'editor_avatar.php';
-        }
+        // Função removida - Editor de Avatar não está mais disponível
     </script>
 </body>
 </html>

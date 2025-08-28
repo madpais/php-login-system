@@ -1,5 +1,8 @@
 <?php
-session_start();
+require_once '../config.php';
+
+// Iniciar sessão de forma segura
+iniciarSessaoSegura();
 
 // Verificar se o usuário está logado - OBRIGATÓRIO para acessar informações dos países
 $usuario_logado = isset($_SESSION['usuario_id']);
@@ -13,6 +16,17 @@ if (!$usuario_logado) {
 }
 
 $usuario_nome = $_SESSION['usuario_nome'] ?? '';
+
+// Registrar visita ao país
+require_once '../tracking_paises.php';
+$resultado_visita = registrarVisitaPais($_SESSION['usuario_id'], 'australia');
+
+// Verificar se é primeira visita para mostrar notificação
+$primeira_visita = false;
+if ($resultado_visita && $resultado_visita['primeira_visita']) {
+    $primeira_visita = true;
+    $_SESSION['primeira_visita_pais'] = $resultado_visita['pais_nome'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -440,7 +454,7 @@ $usuario_nome = $_SESSION['usuario_nome'] ?? '';
                     <!-- Navegação Breadcrumb -->
                     <div class="col-lg-6 col-md-6 col-12 text-center text-md-end">
                         <nav class="breadcrumb-nav d-inline-block">
-                            <a href="../index_new.php">
+                            <a href="../index.php">
                                 <i class="fas fa-home me-1"></i>Início
                             </a>
                             <span class="separator">›</span>
