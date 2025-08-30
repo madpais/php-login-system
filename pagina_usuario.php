@@ -30,16 +30,14 @@ try {
         exit;
     }
     
+    // Incluir sistema de badges
+    require_once 'sistema_badges.php';
+
+    // Verificar todas as badges do usuário
+    verificarTodasBadges($usuario_id);
+
     // Buscar badges conquistadas
-    $stmt = $pdo->prepare("
-        SELECT b.nome, b.descricao, b.icone, ub.data_conquista
-        FROM usuario_badges ub
-        JOIN badges b ON ub.badge_id = b.id
-        WHERE ub.usuario_id = ?
-        ORDER BY ub.data_conquista DESC
-    ");
-    $stmt->execute([$usuario_id]);
-    $badges = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $badges = obterBadgesUsuario($usuario_id);
     
     // Buscar histórico de atividades recentes
     $stmt = $pdo->prepare("
@@ -54,8 +52,8 @@ try {
     
     // Buscar país de maior interesse baseado nos testes
     $stmt = $pdo->prepare("
-        SELECT 
-            CASE 
+        SELECT
+            CASE
                 WHEN tipo_prova = 'toefl' OR tipo_prova = 'sat' THEN 'Estados Unidos'
                 WHEN tipo_prova = 'ielts' THEN 'Reino Unido'
                 WHEN tipo_prova = 'dele' THEN 'Espanha'
@@ -74,6 +72,15 @@ try {
     ");
     $stmt->execute([$usuario_id]);
     $pais_interesse = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Buscar países visitados únicos
+    require_once 'tracking_paises.php';
+    $paises_visitados = obterPaisesVisitados($usuario_id);
+    $total_paises_unicos = count($paises_visitados);
+    $total_visitas = 0;
+    foreach ($paises_visitados as $pais) {
+        $total_visitas += $pais['total_visitas'];
+    }
     
 } catch (Exception $e) {
     error_log("Erro na página de usuário: " . $e->getMessage());
@@ -108,12 +115,13 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* CSS Version 3.0 - Layout Improvements - TESTE VISUAL */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -212,19 +220,27 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
         .progress-section {
             background: white;
             border-radius: 20px;
-            padding: 1.5rem;
-            margin: 1rem 0;
+            padding: 2.5rem !important;
+            margin-bottom: 2.5rem !important;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .progress-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
         
         .section-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: #333;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f8f9fa;
         }
         
         .progress-bar-custom {
@@ -315,6 +331,142 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
             box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
             color: white;
             background: linear-gradient(135deg, #FF5252, #FF7979);
+        }
+
+        .paises-visitados-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .paises-visitados-section .stat-card {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        }
+
+        .badge.bg-primary {
+            background: linear-gradient(135deg, #2196F3, #42A5F5) !important;
+            border: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, #757575, #9E9E9E) !important;
+        }
+
+        .progress-fill.paises {
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #CDDC39);
+        }
+
+        /* Melhorar espaçamento interno das seções */
+        .progress-section .mb-3 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .progress-section .mb-3:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        .stats-grid {
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            padding: 1.5rem 1rem;
+            min-height: 100px;
+        }
+
+        /* Melhorar espaçamento das badges */
+        .badge.bg-primary, .badge.bg-secondary {
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Espaçamento para atividades */
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* Espaçamento para badges conquistadas */
+        .badge-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .badge-item:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsividade para dispositivos móveis */
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1rem !important;
+            }
+
+            .progress-section {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+                min-height: 80px;
+            }
+
+            .user-name {
+                font-size: 1.8rem;
+            }
+
+            .avatar-container {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .progress-section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .badge.bg-primary, .badge.bg-secondary {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.5rem;
+            }
         }
     </style>
 </head>
@@ -440,10 +592,10 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
     </div>
 
     <!-- Main Content -->
-    <div class="container my-5">
-        <div class="row">
+    <div class="container-fluid px-4 py-5">
+        <div class="row g-4">
             <!-- Left Column -->
-            <div class="col-lg-4">
+            <div class="col-xl-4 col-lg-6 col-md-12">
                 <!-- Informações Pessoais -->
                 <div class="progress-section">
                     <h3 class="section-title">
@@ -490,7 +642,7 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
             </div>
 
             <!-- Middle Column -->
-            <div class="col-lg-4">
+            <div class="col-xl-4 col-lg-6 col-md-12">
                 <!-- Progresso -->
                 <div class="progress-section">
                     <h3 class="section-title">
@@ -519,6 +671,70 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
                     </div>
                 </div>
 
+                <!-- Países Visitados -->
+                <div class="progress-section paises-visitados-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-globe-americas text-success"></i>
+                        Países Visitados
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number"><?= $total_paises_unicos ?></div>
+                            <div>Países Únicos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number"><?= $total_visitas ?></div>
+                            <div>Total de Visitas</div>
+                        </div>
+                    </div>
+
+                    <?php if ($total_paises_unicos > 0): ?>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><strong>Progresso de Exploração:</strong></span>
+                                <span><?= $total_paises_unicos ?>/28 países</span>
+                            </div>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill paises" style="width: <?= ($total_paises_unicos / 28) * 100 ?>%"></div>
+                            </div>
+                            <small class="text-muted">
+                                <?= number_format(($total_paises_unicos / 28) * 100, 1) ?>% do mundo explorado
+                            </small>
+                        </div>
+
+                        <div class="mt-3">
+                            <strong>Países Visitados:</strong>
+                            <div class="mt-2">
+                                <?php
+                                $paises_lista = array_slice($paises_visitados, 0, 6); // Mostrar apenas os primeiros 6
+                                foreach ($paises_lista as $codigo => $dados):
+                                ?>
+                                    <span class="badge bg-primary me-1 mb-1">
+                                        <?= htmlspecialchars($dados['pais_nome']) ?>
+                                        <?php if ($dados['total_visitas'] > 1): ?>
+                                            <small>(<?= $dados['total_visitas'] ?>x)</small>
+                                        <?php endif; ?>
+                                    </span>
+                                <?php endforeach; ?>
+
+                                <?php if (count($paises_visitados) > 6): ?>
+                                    <span class="badge bg-secondary">
+                                        +<?= count($paises_visitados) - 6 ?> mais
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+
+
+                        </div>
+                    <?php else: ?>
+                        <div class="text-center text-muted mt-3">
+                            <i class="fas fa-globe fa-3x mb-3 opacity-50"></i>
+                            <p>Você ainda não visitou nenhum país.<br>
+                            <a href="pesquisa_por_pais.php" class="text-decoration-none">Explore os países disponíveis</a> para começar sua jornada!</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
                 <!-- Metas de Intercâmbio -->
                 <div class="progress-section">
                     <h3 class="section-title">
@@ -543,7 +759,7 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
             </div>
 
             <!-- Right Column -->
-            <div class="col-lg-4">
+            <div class="col-xl-4 col-lg-12 col-md-12">
                 <!-- Badges Conquistadas -->
                 <div class="progress-section">
                     <h3 class="section-title">
@@ -558,11 +774,38 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
                             </div>
                         <?php else: ?>
                             <?php foreach ($badges as $badge): ?>
-                                <div class="col-6">
+                                <div class="col-6 mb-3">
                                     <div class="badge-item">
-                                        <div class="badge-icon"><?= $badge['icone'] ?></div>
-                                        <div class="fw-bold"><?= htmlspecialchars($badge['nome']) ?></div>
-                                        <small><?= date('d/m/Y', strtotime($badge['data_conquista'])) ?></small>
+                                        <?php
+                                        // Determinar imagem da badge baseada no código
+                                        $imagem_badge = 'imagens/badge_' . $badge['codigo'] . '.jpg';
+                                        if (!file_exists($imagem_badge)) {
+                                            // Fallback para imagem padrão se não existir
+                                            $imagem_badge = 'imagens/badge_default.jpg';
+                                        }
+                                        ?>
+                                        <div class="badge-icon mb-2">
+                                            <?php if (file_exists($imagem_badge)): ?>
+                                                <img src="<?= $imagem_badge ?>" alt="<?= htmlspecialchars($badge['nome']) ?>"
+                                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                                            <?php else: ?>
+                                                <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                                                    <?= $badge['icone'] ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="fw-bold text-primary"><?= htmlspecialchars($badge['nome']) ?></div>
+                                        <small class="text-muted d-block"><?= htmlspecialchars($badge['descricao']) ?></small>
+                                        <small class="text-success">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <?= date('d/m/Y', strtotime($badge['data_conquista'])) ?>
+                                        </small>
+                                        <?php if ($badge['contexto']): ?>
+                                            <small class="text-info d-block">
+                                                <i class="fas fa-info-circle"></i>
+                                                <?= htmlspecialchars($badge['contexto']) ?>
+                                            </small>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

@@ -583,7 +583,7 @@ if ($usuario_logado) {
             <div class="col-lg-5 col-md-5 col-sm-12 col-12 mb-4">
                 <p class="title1">Ranking de universidades</p>
                 <p class="text1">Veja a melhor para o seu perfil</p>
-                <button type="button" class="btn btn-primary btn-lg" onclick="alert('Funcionalidade em desenvolvimento!')">Checar rank</button>
+                <a href="ranking.php" class="btn btn-primary btn-lg">Checar rank</a>
             </div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
                 <img src="imagens/image36.png" alt="Ranking de universidades" class="img-fluid">
@@ -617,10 +617,10 @@ if ($usuario_logado) {
                     <div class="image-container mb-3">
                         <img src="Imagens/Rectangle 73.png" alt="Conversor de GPA" class="img-fluid feature-image">
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block feature-btn" onclick="alert('Funcionalidade em desenvolvimento! Em breve você poderá converter suas notas brasileiras para o sistema GPA.')">
+                    <a href="calculadora.php" class="btn btn-primary btn-lg btn-block feature-btn">
                         <i class="fas fa-calculator me-2"></i>
                         Converta suas notas
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Salvar GPA</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Salvamento de GPA</h1>
+        
+        <div class="form-group">
+            <label>Notas (separadas por vírgula):</label>
+            <input type="text" id="notas" value="8.5, 9.0, 7.5, 8.0" placeholder="Ex: 8.5, 9.0, 7.5">
+        </div>
+        
+        <div class="form-group">
+            <button onclick="calcularESalvarGPA()">Calcular e Salvar GPA</button>
+        </div>
+        
+        <div id="resultado" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function calcularESalvarGPA() {
+            const notasInput = document.getElementById('notas').value;
+            const resultado = document.getElementById('resultado');
+            
+            // Limpar resultado anterior
+            resultado.innerHTML = '';
+            resultado.style.display = 'none';
+            
+            try {
+                // Processar notas
+                const notas = notasInput.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+                
+                if (notas.length === 0) {
+                    throw new Error('Nenhuma nota válida encontrada');
+                }
+                
+                // Calcular GPA
+                let soma = 0;
+                notas.forEach(nota => {
+                    soma += (nota / 10) * 4;
+                });
+                const gpa = (soma / notas.length);
+                
+                console.log('Notas:', notas);
+                console.log('GPA calculado:', gpa);
+                
+                // Dados para envio
+                const dadosEnvio = {
+                    gpa: parseFloat(gpa.toFixed(2)),
+                    notas: notas
+                };
+                
+                console.log('Dados a serem enviados:', dadosEnvio);
+                
+                // Mostrar dados que serão enviados
+                resultado.innerHTML = `
+                    <h3>📊 Dados Calculados:</h3>
+                    <p><strong>Notas:</strong> ${notas.join(', ')}</p>
+                    <p><strong>GPA:</strong> ${gpa.toFixed(2)}</p>
+                    <p><strong>JSON:</strong> ${JSON.stringify(dadosEnvio)}</p>
+                    <p>🔄 Enviando para servidor...</p>
+                `;
+                resultado.style.display = 'block';
+                
+                // Enviar para o servidor
+                fetch('salvar_gpa.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosEnvio)
+                })
+                .then(response => {
+                    console.log('Status da resposta:', response.status);
+                    console.log('Headers:', response.headers);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Resposta bruta:', text);
+                    
+                    resultado.innerHTML += `
+                        <hr>
+                        <h3>📥 Resposta do Servidor:</h3>
+                        <p><strong>Resposta bruta:</strong></p>
+                        <pre>${text}</pre>
+                    `;
+                    
+                    try {
+                        const data = JSON.parse(text);
+                        console.log('Dados parseados:', data);
+                        
+                        resultado.innerHTML += `
+                            <p><strong>JSON parseado:</strong></p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        `;
+                        
+                        if (data.success) {
+                            resultado.innerHTML += `<p style="color: green;">✅ <strong>Sucesso!</strong> ${data.message}</p>`;
+                            
+                            if (data.badge_conquistada) {
+                                resultado.innerHTML += `<p style="color: gold;">🏆 <strong>Badge conquistada:</strong> ${data.badge_nome}</p>`;
+                            }
+                        } else {
+                            resultado.innerHTML += `<p style="color: red;">❌ <strong>Erro:</strong> ${data.message}</p>`;
+                        }
+                        
+                    } catch (e) {
+                        console.error('Erro ao parsear JSON:', e);
+                        resultado.innerHTML += `<p style="color: red;">❌ <strong>Erro ao parsear JSON:</strong> ${e.message}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    resultado.innerHTML += `
+                        <hr>
+                        <p style="color: red;">❌ <strong>Erro na requisição:</strong> ${error.message}</p>
+                    `;
+                });
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                resultado.innerHTML = `<p style="color: red;">❌ <strong>Erro:</strong> ${error.message}</p>`;
+                resultado.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

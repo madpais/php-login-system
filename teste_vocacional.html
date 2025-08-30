@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Vocacional</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header-container {
+            background-color: #03254c;
+            padding: 20px 0;
+            color: white;
+        }
+        .logo-container {
+            text-align: center;
+        }
+        .navbutton {
+            color: white;
+            font-size: clamp(10px, 2vw, 20px);
+            text-align: center;
+            width: 100%;
+            padding: 10px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .navbutton:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .title1 {
+            font-size: clamp(18px, 4vw, 32px);
+            font-weight: bold;
+            color: #03254c;
+        }
+        .test-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options-container {
+            margin-left: 20px;
+        }
+        .option-item {
+            margin-bottom: 15px;
+            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .option-item:hover {
+            background-color: #f0f7ff;
+        }
+        .option-selected {
+            background-color: #e6f2ff;
+            border-left: 4px solid #2a9df4;
+        }
+        .option-letter {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #2a9df4;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .btn-custom {
+            padding: 10px 25px;
+            font-weight: 600;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .btn-primary-custom {
+            background-color: #2a9df4;
+            border: none;
+            color: white;
+        }
+        .btn-primary-custom:hover {
+            background-color: #1a7bd9;
+        }
+        .btn-secondary-custom {
+            background-color: #6c757d;
+            border: none;
+            color: white;
+        }
+        .btn-secondary-custom:hover {
+            background-color: #5a6268;
+        }
+        .progress-container {
+            margin-bottom: 20px;
+        }
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        .results-container {
+            text-align: center;
+            padding: 30px;
+        }
+        .results-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #03254c;
+            margin-bottom: 20px;
+        }
+        .career-suggestion {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-left: 4px solid #2a9df4;
+        }
+        .career-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #03254c;
+            margin-bottom: 10px;
+        }
+        .career-description {
+            margin-bottom: 15px;
+        }
+        .career-skills {
+            margin-top: 10px;
+        }
+        .skill-tag {
+            display: inline-block;
+            background-color: #e6f2ff;
+            color: #03254c;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .instruction-box {
+            background-color: #e6f2ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2a9df4;
+        }
+        .instruction-title {
+            font-weight: bold;
+            color: #03254c;
+            margin-bottom: 10px;
+        }
+        .personality-type {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2a9df4;
+            margin: 20px 0;
+        }
+        .personality-description {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        @media (max-width: 768px) {
+            .test-container {
+                padding: 20px;
+            }
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .btn-custom {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid header-container">
+        <div class="row">
+            <div class="col-md-5 col-sm-3 col-2"></div>
+            <div class="col-md-2 col-sm-6 col-8 logo-container">
+                <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="col-md-3 col-sm-1 d-none d-sm-block"></div>
+        </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6" style="background-color: #2a9df4; min-height: 60px; display: flex; justify-content: center; align-items: center;">
+                <p class="navbutton">Quem Somos</p>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6" style="background-color: #2a9df4; min-height: 60px; display: flex; justify-content: center; align-items: center;">
+                <p class="navbutton">Teste Vocacional</p>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6" style="background-color: #2a9df4; min-height: 60px; display: flex; justify-content: center; align-items: center;">
+                <p class="navbutton">Simulador Prático</p>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6" style="background-color: #2a9df4; min-height: 60px; display: flex; justify-content: center; align-items: center;">
+                <p class="navbutton">Comunidade</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center">
+                <h1 class="title1">Teste Vocacional</h1>
+                <p class="lead">Descubra qual carreira combina com você</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="test-container" id="test-container">
+                    <div id="start-screen">
+                        <div class="instruction-box">
+                            <div class="instruction-title">Instruções:</div>
+                            <ul>
+                                <li>Este teste vocacional foi desenvolvido para ajudar você a identificar carreiras que combinam com seu perfil.</li>
+                                <li>Responda a todas as perguntas com honestidade, escolhendo a opção que melhor representa você.</li>
+                                <li>O teste não tem respostas certas ou erradas, apenas diferentes preferências.</li>
+                                <li>Ao final, você receberá sugestões de carreiras baseadas em suas respostas.</li>
+                                <li>O tempo estimado para completar o teste é de 10 a 15 minutos.</li>
+                            </ul>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-primary-custom btn-custom" onclick="startTest()">Iniciar Teste</button>
+                        </div>
+                    </div>
+                    
+                    <div id="question-screen" style="display: none;">
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 0%" id="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="text-center mt-1">
+                                <small>Questão <span id="current-question-number">1</span> de <span id="total-questions-display">15</span></small>
+                            </div>
+                        </div>
+                        
+                        <div class="question-container">
+                            <div class="question-text" id="question-text"></div>
+                            <div class="options-container" id="options-container"></div>
+                        </div>
+                        
+                        <div class="navigation-buttons">
+                            <button class="btn btn-secondary-custom btn-custom" id="prev-button" onclick="previousQuestion()" disabled>Anterior</button>
+                            <button class="btn btn-primary-custom btn-custom" id="next-button" onclick="nextQuestion()">Próximo</button>
+                        </div>
+                    </div>
+                    
+                    <div id="results-screen" style="display: none;">
+                        <div class="results-container">
+                            <h2 class="results-title">Seu Perfil Profissional</h2>
+                            
+                            <div class="personality-type" id="personality-type"></div>
+                            
+                            <div class="personality-description" id="personality-description"></div>
+                            
+                            <h3 class="mt-4 mb-3">Sugestões de Carreiras</h3>
+                            <div id="careers-container"></div>
+                            
+                            <button class="btn btn-primary-custom btn-custom mt-4" onclick="restartTest()">Refazer Teste</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Perguntas do teste vocacional
+        const questions = [
+            {
+                question: "Em qual tipo de ambiente você prefere trabalhar?",
+                options: ["A) Em um escritório estruturado", "B) Ao ar livre ou em campo", "C) Em um estúdio ou ambiente criativo", "D) Em um laboratório ou ambiente de pesquisa"]
+            },
+            {
+                question: "Qual atividade você mais gostaria de fazer no seu tempo livre?",
+                options: ["A) Resolver quebra-cabeças e desafios lógicos", "B) Praticar esportes ou atividades físicas", "C) Pintar, desenhar ou tocar um instrumento", "D) Ler sobre ciência e tecnologia"]
+            },
+            {
+                question: "Como você prefere resolver problemas?",
+                options: ["A) Analisando dados e seguindo um método lógico", "B) Agindo de forma prática e imediata", "C) Buscando soluções criativas e inovadoras", "D) Pesquisando e estudando o assunto profundamente"]
+            },
+            {
+                question: "Qual habilidade você considera seu maior ponto forte?",
+                options: ["A) Capacidade de organização e planejamento", "B) Habilidade manual e coordenação motora", "C) Criatividade e expressão artística", "D) Raciocínio analítico e curiosidade científica"]
+            },
+            {
+                question: "Qual tipo de projeto mais te interessaria?",
+                options: ["A) Desenvolver um plano de negócios", "B) Construir ou reparar algo físico", "C) Criar uma obra de arte ou design", "D) Realizar uma pesquisa científica"]
+            },
+            {
+                question: "Como você se comunica melhor?",
+                options: ["A) Através de relatórios e documentos estruturados", "B) Demonstrando na prática o que quer dizer", "C) Usando recursos visuais e criativos", "D) Explicando com base em fatos e evidências"]
+            },
+            {
+                question: "O que mais te motiva no trabalho?",
+                options: ["A) Alcançar metas e ver resultados mensuráveis", "B) Ver o impacto prático do seu trabalho", "C) Ter liberdade para expressar suas ideias", "D) Descobrir novos conhecimentos e soluções"]
+            },
+            {
+                question: "Qual dessas matérias você mais gostava na escola?",
+                options: ["A) Matemática e Administração", "B) Educação Física e Artesanato", "C) Artes e Literatura", "D) Ciências e Física"]
+            },
+            {
+                question: "Como você lida com regras e procedimentos?",
+                options: ["A) Sigo rigorosamente as regras estabelecidas", "B) Adapto as regras conforme a necessidade prática", "C) Prefiro criar minhas próprias regras", "D) Questiono as regras para entender sua lógica"]
+            },
+            {
+                question: "Qual dessas frases mais te representa?",
+                options: ["A) 'Tudo tem seu lugar e sua função'", "B) 'A prática leva à perfeição'", "C) 'A imaginação é mais importante que o conhecimento'", "D) 'Questionar tudo é o primeiro passo para a sabedoria'"]
+            },
+            {
+                question: "Em qual tipo de equipe você prefere trabalhar?",
+                options: ["A) Em equipes com papéis bem definidos", "B) Em equipes que valorizam a ação e o trabalho em conjunto", "C) Em equipes que incentivam a criatividade e a inovação", "D) Em equipes focadas em pesquisa e desenvolvimento"]
+            },
+            {
+                question: "Como você prefere aprender algo novo?",
+                options: ["A) Através de cursos estruturados e manuais", "B) Aprendendo na prática, fazendo e errando", "C) Explorando livremente e experimentando", "D) Pesquisando e estudando fontes diversas"]
+            },
+            {
+                question: "Qual dessas atividades você acha mais gratificante?",
+                options: ["A) Organizar eventos ou processos", "B) Construir algo com as próprias mãos", "C) Criar algo original e único", "D) Descobrir algo novo através da pesquisa"]
+            },
+            {
+                question: "Qual é o seu maior objetivo profissional?",
+                options: ["A) Alcançar uma posição de liderança", "B) Ser reconhecido pela sua habilidade prática", "C) Expressar sua criatividade e visão de mundo", "D) Contribuir para o avanço do conhecimento"]
+            },
+            {
+                question: "Como você descreveria seu estilo de tomada de decisão?",
+                options: ["A) Baseado em dados e análise cuidadosa", "B) Intuitivo e focado na ação imediata", "C) Criativo e buscando alternativas inovadoras", "D) Cauteloso e baseado em evidências"]
+            }
+        ];
+        
+        // Perfis profissionais
+        const profiles = {
+            "Gestor/Administrativo": {
+                description: "Você tem um perfil organizado, estratégico e gosta de planejar e coordenar atividades. Sua força está na capacidade de tomar decisões baseadas em dados e gerenciar pessoas e recursos de forma eficiente.",
+                careers: [
+                    {
+                        title: "Administração",
+                        description: "Profissionais de administração planejam, coordenam e dirigem atividades em organizações. Eles podem trabalhar em diversos setores como finanças, marketing, recursos humanos ou operações.",
+                        skills: ["Liderança", "Planejamento", "Análise de dados", "Comunicação", "Tomada de decisão"]
+                    },
+                    {
+                        title: "Gestão de Projetos",
+                        description: "Gestores de projetos são responsáveis por planejar, executar e monitorar projetos, garantindo que sejam concluídos dentro do prazo, orçamento e escopo definidos.",
+                        skills: ["Planejamento", "Organização", "Gestão de tempo", "Resolução de problemas", "Comunicação"]
+                    },
+                    {
+                        title: "Consultoria Empresarial",
+                        description: "Consultores empresariais ajudam organizações a melhorar seu desempenho, analisando problemas existentes e desenvolvendo planos para melhorias.",
+                        skills: ["Análise crítica", "Resolução de problemas", "Comunicação", "Pensamento estratégico", "Liderança"]
+                    }
+                ]
+            },
+            "Prático/Operacional": {
+                description: "Você tem um perfil prático, gosta de trabalhar com as mãos e ver resultados tangíveis. Sua força está na capacidade de executar tarefas com precisão e resolver problemas de forma direta e eficiente.",
+                careers: [
+                    {
+                        title: "Engenharia",
+                        description: "Engenheiros aplicam princípios científicos e matemáticos para desenvolver soluções técnicas para problemas práticos. Existem diversas especializações como civil, mecânica, elétrica, entre outras.",
+                        skills: ["Raciocínio lógico", "Resolução de problemas", "Trabalho em equipe", "Criatividade", "Conhecimento técnico"]
+                    },
+                    {
+                        title: "Arquitetura e Urbanismo",
+                        description: "Arquitetos e urbanistas projetam edifícios, espaços públicos e cidades, combinando funcionalidade, estética e sustentabilidade.",
+                        skills: ["Criatividade", "Conhecimento técnico", "Visão espacial", "Gestão de projetos", "Comunicação"]
+                    },
+                    {
+                        title: "Saúde (áreas práticas)",
+                        description: "Profissionais de saúde como enfermeiros, fisioterapeutas e técnicos de saúde trabalham diretamente com pacientes, aplicando conhecimentos práticos para cuidar da saúde e bem-estar.",
+                        skills: ["Empatia", "Conhecimento técnico", "Resolução de problemas", "Comunicação", "Trabalho em equipe"]
+                    }
+                ]
+            },
+            "Criativo/Artístico": {
+                description: "Você tem um perfil criativo, gosta de expressar ideias e emoções através de diversas formas. Sua força está na capacidade de pensar fora da caixa e criar soluções originais e inovadoras.",
+                careers: [
+                    {
+                        title: "Design",
+                        description: "Designers criam soluções visuais e funcionais para produtos, serviços e comunicações. Existem diversas áreas como design gráfico, de produto, de interiores, entre outras.",
+                        skills: ["Criatividade", "Comunicação visual", "Software de design", "Pesquisa", "Trabalho em equipe"]
+                    },
+                    {
+                        title: "Artes e Entretenimento",
+                        description: "Profissionais de artes e entretenimento incluem artistas plásticos, músicos, atores, diretores e outros que criam produções artísticas para entreter e inspirar o público.",
+                        skills: ["Talento artístico", "Expressão criativa", "Disciplina", "Resiliência", "Comunicação"]
+                    },
+                    {
+                        title: "Publicidade e Marketing",
+                        description: "Profissionais de publicidade e marketing criam campanhas para promover produtos, serviços e marcas, combinando criatividade com estratégias de comunicação.",
+                        skills: ["Criatividade", "Comunicação", "Pesquisa de mercado", "Trabalho em equipe", "Pensamento estratégico"]
+                    }
+                ]
+            },
+            "Cientista/Pesquisador": {
+                description: "Você tem um perfil analítico, curioso e gosta de investigar e descobrir novos conhecimentos. Sua força está na capacidade de pensar criticamente, analisar dados e buscar soluções baseadas em evidências.",
+                careers: [
+                    {
+                        title: "Ciências da Saúde",
+                        description: "Profissionais como médicos, biomédicos e farmacêuticos pesquisam e aplicam conhecimentos científicos para diagnosticar, tratar e prevenir doenças.",
+                        skills: ["Raciocínio lógico", "Pesquisa", "Análise de dados", "Ética profissional", "Comunicação"]
+                    },
+                    {
+                        title: "Pesquisa Científica",
+                        description: "Pesquisadores científicos investigam fenômenos naturais e sociais, desenvolvendo teorias e aplicações práticas para diversos campos do conhecimento.",
+                        skills: ["Pensamento crítico", "Metodologia científica", "Análise de dados", "Persistência", "Comunicação acadêmica"]
+                    },
+                    {
+                        title: "Tecnologia da Informação",
+                        description: "Profissionais de TI desenvolvem, implementam e gerenciam sistemas de informação, software e infraestruturas tecnológicas para resolver problemas e otimizar processos.",
+                        skills: ["Lógica de programação", "Resolução de problemas", "Aprendizado contínuo", "Trabalho em equipe", "Pensamento analítico"]
+                    }
+                ]
+            }
+        };
+        
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let userScores = {
+            "Gestor/Administrativo": 0,
+            "Prático/Operacional": 0,
+            "Criativo/Artístico": 0,
+            "Cientista/Pesquisador": 0
+        };
+        
+        function startTest() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('question-screen').style.display = 'block';
+            document.getElementById('total-questions-display').textContent = questions.length;
+            userAnswers = new Array(questions.length).fill(null);
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('current-question-number').textContent = currentQuestionIndex + 1;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option-item';
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionDiv.classList.add('option-selected');
+                }
+                optionDiv.innerHTML = `<span class="option-letter">${option[0]}</span> ${option.substring(3)}`;
+                optionDiv.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Atualizar botões de navegação
+            document.getElementById('prev-button').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-button').textContent = currentQuestionIndex === questions.length - 1 ? 'Finalizar' : 'Próximo';
+            
+            // Atualizar barra de progresso
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+        
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            showQuestion(); // Atualiza a exibição para mostrar a opção selecionada
+        }
+        
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+        
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                finishTest();
+            }
+        }
+        
+        function finishTest() {
+            // Calcular pontuação para cada perfil
+            userScores = {
+                "Gestor/Administrativo": 0,
+                "Prático/Operacional": 0,
+                "Criativo/Artístico": 0,
+                "Cientista/Pesquisador": 0
+            };
+            
+            // Cada resposta (A, B, C, D) corresponde a um perfil
+            userAnswers.forEach((answer, index) => {
+                if (answer !== null) {
+                    switch (answer) {
+                        case 0: // Opção A
+                            userScores["Gestor/Administrativo"]++;
+                            break;
+                        case 1: // Opção B
+                            userScores["Prático/Operacional"]++;
+                            break;
+                        case 2: // Opção C
+                            userScores["Criativo/Artístico"]++;
+                            break;
+                        case 3: // Opção D
+                            userScores["Cientista/Pesquisador"]++;
+                            break;
+                    }
+                }
+            });
+            
+            // Encontrar o perfil com maior pontuação
+            let topProfile = "";
+            let maxScore = 0;
+            
+            for (const profile in userScores) {
+                if (userScores[profile] > maxScore) {
+                    maxScore = userScores[profile];
+                    topProfile = profile;
+                }
+            }
+            
+            // Mostrar tela de resultados
+            document.getElementById('question-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'block';
+            
+            // Exibir o perfil principal
+            document.getElementById('personality-type').textContent = topProfile;
+            document.getElementById('personality-description').textContent = profiles[topProfile].description;
+            
+            // Exibir sugestões de carreiras
+            const careersContainer = document.getElementById('careers-container');
+            careersContainer.innerHTML = '';
+            
+            profiles[topProfile].careers.forEach(career => {
+                const careerDiv = document.createElement('div');
+                careerDiv.className = 'career-suggestion';
+                
+                let skillsHTML = '';
+                career.skills.forEach(skill => {
+                    skillsHTML += `<span class="skill-tag">${skill}</span>`;
+                });
+                
+                careerDiv.innerHTML = `
+                    <div class="career-title">${career.title}</div>
+                    <div class="career-description">${career.description}</div>
+                    <div class="career-skills"><strong>Habilidades necessárias:</strong> ${skillsHTML}</div>
+                `;
+                
+                careersContainer.appendChild(careerDiv);
+            });
+        }
+        
+        function restartTest() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            document.getElementById('results-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

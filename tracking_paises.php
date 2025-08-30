@@ -4,6 +4,7 @@
  */
 
 require_once "config.php";
+require_once "sistema_badges.php";
 
 function registrarVisitaPais($usuario_id, $pais_codigo) {
     if (!$usuario_id || !$pais_codigo) {
@@ -85,6 +86,9 @@ function registrarVisitaPais($usuario_id, $pais_codigo) {
                 "pais_nome" => $pais_nome
             ];
         }
+        
+        // Verificar badges de países após registrar visita
+        verificarBadgesPaises($usuario_id);
         
     } catch (Exception $e) {
         error_log("Erro ao registrar visita: " . $e->getMessage());
