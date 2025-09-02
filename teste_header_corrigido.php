@@ -194,6 +194,7 @@ require_once "header_status.php";
             location.reload();
         }, 10000);
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>';
 

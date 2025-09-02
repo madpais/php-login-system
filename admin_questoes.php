@@ -499,5 +499,6 @@ if (!isset($_SESSION['csrf_token'])) {
             });
         });
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

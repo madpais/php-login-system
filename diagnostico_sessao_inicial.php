@@ -245,6 +245,7 @@ $usuario_logado = isset($_SESSION["usuario_id"]);
             location.reload();
         }, 30000);
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>';
 

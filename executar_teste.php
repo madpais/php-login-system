@@ -208,7 +208,8 @@ if (isset($_GET['executando']) && isset($_GET['sessao'])) {
                 <p>Aguarde as próximas atualizações para ter acesso a este exame!</p>
                 <a href='simulador_provas.php' class='btn'>Voltar ao Simulador</a>
             </div>
-        </body>
+        <?php require_once __DIR__ . '/footer.php'; ?>
+</body>
         </html>";
         exit;
     }
@@ -403,5 +404,6 @@ if (isset($_GET['executando']) && isset($_GET['sessao'])) {
     </div>
     
     <script src="public/js/main.js"></script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

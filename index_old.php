@@ -549,5 +549,6 @@ require_once 'header_status.php';
             observer.observe(statsSection);
         }
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

@@ -331,5 +331,6 @@ $total_nao_lidas = $sistema_notificacoes->contarNotificacoesNaoLidas($usuario_id
             });
         }
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

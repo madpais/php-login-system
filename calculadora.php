@@ -424,5 +424,6 @@ $nome_usuario = $usuario_logado && isset($_SESSION['nome']) ? $_SESSION['nome'] 
             }
         };
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

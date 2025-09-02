@@ -100,6 +100,7 @@ $notificacoes = $sistema_notificacoes->buscarTodasNotificacoes($usuario_id, 100)
                 <a href="index.php" class="btn btn-success">Início</a>
             </div>
         </div>
-    </body>
+    <?php require_once __DIR__ . '/footer.php'; ?>
+</body>
     </html>
     

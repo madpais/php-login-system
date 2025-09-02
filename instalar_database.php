@@ -318,5 +318,6 @@ set_time_limit(300); // 5 minutos para execução
             
         <?php endif; ?>
     </div>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

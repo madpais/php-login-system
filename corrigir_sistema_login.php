@@ -277,6 +277,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["acao"])) {
             }
         }, 1000);
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>';
 

@@ -214,6 +214,7 @@ if (!isset($_SESSION["usuario_id"])) {
         console.log("Editor de Avatar removido do sistema");
         console.log("Funcionalidades disponíveis: Editar Perfil, Visualizar Perfil");
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>';
 

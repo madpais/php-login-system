@@ -3,10 +3,15 @@
  * Script de Instalação Completa do Sistema DayDreamming
  * 
  * Este script cria todas as 22 tabelas necessárias para o sistema
- * e insere todos os dados iniciais necessários para funcionamento
+ * e insere todos os dados existentes no banco de dados para facilitar
+ * a instalação do projeto por novos colaboradores.
  * 
- * Versão: 3.0.0
- * Data: 2025-08-28
+ * Todas as tabelas e dados são preservados exatamente como estão no
+ * banco de dados original, garantindo que todos os colaboradores
+ * tenham o mesmo ambiente de desenvolvimento.
+ * 
+ * Versão: 3.1.0
+ * Data: 2025-09-02
  * Autor: Sistema DayDreamming
  */
 
@@ -511,82 +516,47 @@ try {
     echo "\n📊 INSERINDO DADOS INICIAIS...\n";
     echo "===============================\n";
 
-    // Inserir usuário administrador padrão
-    $senha_admin = password_hash('admin123', PASSWORD_DEFAULT);
-    $pdo->exec("
-        INSERT IGNORE INTO usuarios (nome, usuario, email, senha, is_admin, ativo)
-        VALUES ('Administrador', 'admin', 'admin@daydreamming.com', '$senha_admin', 1, 1)
-    ");
-    echo "✅ Usuário administrador criado (admin/admin123)\n";
-
-    // Inserir usuário de teste
-    $senha_teste = password_hash('teste123', PASSWORD_DEFAULT);
-    $pdo->exec("
-        INSERT IGNORE INTO usuarios (nome, usuario, email, senha, is_admin, ativo)
-        VALUES ('Usuário Teste', 'teste', 'teste@daydreamming.com', '$senha_teste', 0, 1)
-    ");
-    echo "✅ Usuário de teste criado (teste/teste123)\n";
-
-    // Inserir configurações do sistema
-    $configuracoes = [
-        ['site_nome', 'DayDreamming', 'string', 'geral', 'Nome do site'],
-        ['site_descricao', 'Plataforma de preparação para intercâmbio', 'string', 'geral', 'Descrição do site'],
-        ['manutencao_ativa', '0', 'boolean', 'sistema', 'Modo manutenção ativo'],
-        ['registro_aberto', '1', 'boolean', 'usuarios', 'Permitir novos registros'],
-        ['forum_ativo', '1', 'boolean', 'forum', 'Fórum ativo'],
-        ['moderacao_automatica', '0', 'boolean', 'forum', 'Moderação automática do fórum'],
-        ['max_tentativas_login', '5', 'integer', 'seguranca', 'Máximo de tentativas de login'],
-        ['tempo_bloqueio_login', '15', 'integer', 'seguranca', 'Tempo de bloqueio em minutos'],
-        ['duracao_teste_padrao', '60', 'integer', 'testes', 'Duração padrão dos testes em minutos'],
-        ['questoes_por_teste', '20', 'integer', 'testes', 'Número de questões por teste']
-    ];
-
-    foreach ($configuracoes as $config) {
-        $pdo->prepare("
-            INSERT IGNORE INTO configuracoes_sistema (chave, valor, tipo, categoria, descricao)
-            VALUES (?, ?, ?, ?, ?)
-        ")->execute($config);
-    }
+    // Inserir dados na tabela usuarios
+    $pdo->exec("INSERT INTO usuarios (id, nome, usuario, email, senha, is_admin, ativo, data_criacao, ultimo_acesso, ultimo_logout) VALUES (1, 'Administrador', 'admin', 'admin@daydreamming.com', '$2y$10$wj2./v4McroYwA09hlkyQ.n5wKgrGnVy18ulNvf5iqXXdwl7gVahK', 1, 1, '2025-08-28 00:11:13', NULL, NULL)");
+    $pdo->exec("INSERT INTO usuarios (id, nome, usuario, email, senha, is_admin, ativo, data_criacao, ultimo_acesso, ultimo_logout) VALUES (2, 'Usuário Teste', 'teste', 'teste@daydreamming.com', '$2y$10$3e/EL3rga.iI61mBzv1UmexvH3SXPJy/HgryMZ1ABCkDseQ8ZXPf6', 0, 1, '2025-08-28 00:11:13', NULL, NULL)");
+    echo "✅ Usuários inseridos\n";
+    
+    // Inserir dados na tabela badges
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (1, 'primeiro_teste', 'Primeiro Teste', 'Complete seu primeiro teste', '🎯', 'especial', 'teste', 1, 'comum', 100, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (2, 'dez_testes', '10 Testes', 'Complete 10 testes', '🔟', 'frequencia', 'teste', 10, 'comum', 200, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (3, 'cem_testes', '100 Testes', 'Complete 100 testes', '💯', 'frequencia', 'teste', 100, 'raro', 500, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (4, 'pontuacao_alta', 'Pontuação Alta', 'Obtenha mais de 90% em um teste', '⭐', 'pontuacao', 'teste', 90, 'raro', 300, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (5, 'pontuacao_perfeita', 'Pontuação Perfeita', 'Obtenha 100% em um teste', '🏆', 'pontuacao', 'teste', 100, 'epico', 1000, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (6, 'participante_forum', 'Participante do Fórum', 'Crie seu primeiro tópico no fórum', '💬', 'social', 'forum', 1, 'comum', 150, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (7, 'colaborador', 'Colaborador', 'Responda 10 tópicos no fórum', '🤝', 'social', 'forum', 10, 'raro', 400, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (8, 'veterano', 'Veterano', 'Use o sistema por 30 dias', '🎖️', 'tempo', 'geral', 30, 'epico', 800, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (9, 'explorador', 'Explorador', 'Visite 10 países diferentes', '🌍', 'especial', 'geral', 10, 'raro', 350, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO badges (id, codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus, ativa, data_criacao) VALUES (10, 'globetrotter', 'Globetrotter', 'Visite todos os países disponíveis', '✈️', 'especial', 'geral', 28, 'lendario', 2000, 1, '2025-08-28 00:11:13')");
+    echo "✅ Badges inseridas\n";
+    
+    // Inserir dados na tabela configuracoes_sistema
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (1, 'site_nome', 'DayDreamming', 'string', 'geral', 'Nome do site', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (2, 'site_descricao', 'Plataforma de preparação para intercâmbio', 'string', 'geral', 'Descrição do site', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (3, 'manutencao_ativa', 0, 'boolean', 'sistema', 'Modo manutenção ativo', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (4, 'registro_aberto', 1, 'boolean', 'usuarios', 'Permitir novos registros', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (5, 'forum_ativo', 1, 'boolean', 'forum', 'Fórum ativo', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (6, 'moderacao_automatica', 0, 'boolean', 'forum', 'Moderação automática do fórum', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (7, 'max_tentativas_login', 5, 'integer', 'seguranca', 'Máximo de tentativas de login', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (8, 'tempo_bloqueio_login', 15, 'integer', 'seguranca', 'Tempo de bloqueio em minutos', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (9, 'duracao_teste_padrao', 60, 'integer', 'testes', 'Duração padrão dos testes em minutos', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO configuracoes_sistema (id, chave, valor, tipo, categoria, descricao, editavel, data_criacao, data_atualizacao) VALUES (10, 'questoes_por_teste', 20, 'integer', 'testes', 'Número de questões por teste', 1, '2025-08-28 00:11:13', '2025-08-28 00:11:13')");
     echo "✅ Configurações do sistema inseridas\n";
-
-    // Inserir badges padrão
-    $badges = [
-        ['primeiro_teste', 'Primeiro Teste', 'Complete seu primeiro teste', '🎯', 'especial', 'teste', 1, 'comum', 100],
-        ['dez_testes', '10 Testes', 'Complete 10 testes', '🔟', 'frequencia', 'teste', 10, 'comum', 200],
-        ['cem_testes', '100 Testes', 'Complete 100 testes', '💯', 'frequencia', 'teste', 100, 'raro', 500],
-        ['pontuacao_alta', 'Pontuação Alta', 'Obtenha mais de 90% em um teste', '⭐', 'pontuacao', 'teste', 90, 'raro', 300],
-        ['pontuacao_perfeita', 'Pontuação Perfeita', 'Obtenha 100% em um teste', '🏆', 'pontuacao', 'teste', 100, 'epico', 1000],
-        ['participante_forum', 'Participante do Fórum', 'Crie seu primeiro tópico no fórum', '💬', 'social', 'forum', 1, 'comum', 150],
-        ['colaborador', 'Colaborador', 'Responda 10 tópicos no fórum', '🤝', 'social', 'forum', 10, 'raro', 400],
-        ['veterano', 'Veterano', 'Use o sistema por 30 dias', '🎖️', 'tempo', 'geral', 30, 'epico', 800],
-        ['explorador', 'Explorador', 'Visite 10 países diferentes', '🌍', 'especial', 'geral', 10, 'raro', 350],
-        ['globetrotter', 'Globetrotter', 'Visite todos os países disponíveis', '✈️', 'especial', 'geral', 28, 'lendario', 2000]
-    ];
-
-    foreach ($badges as $badge) {
-        $pdo->prepare("
-            INSERT IGNORE INTO badges (codigo, nome, descricao, icone, tipo, categoria, condicao_valor, raridade, experiencia_bonus)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ")->execute($badge);
-    }
-    echo "✅ Badges padrão inseridas\n";
-
-    // Inserir categorias do fórum
-    $categorias_forum = [
-        ['Geral', 'Discussões gerais sobre intercâmbio', '#007bff', '💬', 1, 1],
-        ['Testes e Preparação', 'Dicas e discussões sobre testes', '#28a745', '📚', 1, 2],
-        ['Países e Destinos', 'Informações sobre países e destinos', '#17a2b8', '🌍', 1, 3],
-        ['Experiências', 'Compartilhe suas experiências', '#ffc107', '✨', 1, 4],
-        ['Dúvidas e Suporte', 'Tire suas dúvidas aqui', '#dc3545', '❓', 1, 5]
-    ];
-
-    foreach ($categorias_forum as $categoria) {
-        $pdo->prepare("
-            INSERT IGNORE INTO forum_categorias (nome, descricao, cor, icone, ativo, ordem)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ")->execute($categoria);
-    }
+    
+    // Inserir dados na tabela forum_categorias
+    $pdo->exec("INSERT INTO forum_categorias (id, nome, descricao, cor, icone, ativo, ordem, data_criacao) VALUES (1, 'Geral', 'Discussões gerais sobre intercâmbio', '#007bff', '💬', 1, 1, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO forum_categorias (id, nome, descricao, cor, icone, ativo, ordem, data_criacao) VALUES (2, 'Testes e Preparação', 'Dicas e discussões sobre testes', '#28a745', '📚', 1, 2, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO forum_categorias (id, nome, descricao, cor, icone, ativo, ordem, data_criacao) VALUES (3, 'Países e Destinos', 'Informações sobre países e destinos', '#17a2b8', '🌍', 1, 3, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO forum_categorias (id, nome, descricao, cor, icone, ativo, ordem, data_criacao) VALUES (4, 'Experiências', 'Compartilhe suas experiências', '#ffc107', '✨', 1, 4, '2025-08-28 00:11:13')");
+    $pdo->exec("INSERT INTO forum_categorias (id, nome, descricao, cor, icone, ativo, ordem, data_criacao) VALUES (5, 'Dúvidas e Suporte', 'Tire suas dúvidas aqui', '#dc3545', '❓', 1, 5, '2025-08-28 00:11:13')");
     echo "✅ Categorias do fórum inseridas\n";
+
+    // Já inserimos os dados acima, não precisamos inserir novamente
+
 
     echo "\n🎉 INSTALAÇÃO CONCLUÍDA COM SUCESSO!\n";
     echo "====================================\n";

@@ -866,5 +866,6 @@ $background_cor = $usuario['background_cor'] ?? '#4CAF50';
             });
         });
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

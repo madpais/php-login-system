@@ -422,5 +422,6 @@ $tipos_provas = [
     </div>
     
     <script src="public/js/main.js"></script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

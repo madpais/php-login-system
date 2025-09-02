@@ -255,5 +255,6 @@ $usuario_id = $_SESSION['usuario_id'] ?? null;
         console.log("Usuário:", "<?= $_SESSION['usuario_nome'] ?? 'Não logado' ?>");
         console.log("Total de países visitados:", <?= $estatisticas['total_paises'] ?? 0 ?>);
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

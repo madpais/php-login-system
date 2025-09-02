@@ -1157,5 +1157,6 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
             alert('Funcionalidade em desenvolvimento!');
         }
     </script>
+<?php require_once __DIR__ . '/../footer.php'; ?>
 </body>
 </html>

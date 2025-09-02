@@ -177,5 +177,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="theme-btn-container"></div>
     </section>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

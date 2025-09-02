@@ -462,5 +462,6 @@ $prova = $config_provas[$sessao['tipo_prova']] ?? $config_provas['sat'];
             </button>
         <?php endforeach; ?>
     </div>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

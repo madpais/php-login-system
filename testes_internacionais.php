@@ -1292,5 +1292,6 @@ $usuario_logado = isset($_SESSION['usuario_id']);
             showCountry('all');
         });
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

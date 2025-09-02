@@ -372,6 +372,7 @@ $total_notif = $sistema_notif->contarNotificacoesNaoLidas($usuario_id);
             </div>
         </div>
     </div>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>';
     

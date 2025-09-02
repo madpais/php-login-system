@@ -45,5 +45,6 @@ $usuario_login = $_SESSION["usuario_login"] ?? "";
             location.reload();
         }, 5000);
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

@@ -269,5 +269,6 @@ if ($usuario_logado) {
         console.log("Países visitados:", <?= json_encode($paises_visitados) ?>);
         console.log("Estatísticas:", <?= json_encode($estatisticas ?? []) ?>);
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

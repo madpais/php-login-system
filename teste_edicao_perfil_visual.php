@@ -197,5 +197,6 @@ $usuario_id = $_SESSION["usuario_id"];
             });
         });
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

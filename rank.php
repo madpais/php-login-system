@@ -2894,5 +2894,6 @@ $nome_usuario = $usuario_logado ? $_SESSION['nome'] : null;
             renderUniversityTable();
         });
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

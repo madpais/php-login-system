@@ -229,6 +229,7 @@ $porcentagem = number_format($pontuacao, 1);
             <a href="dashboard.php" class="btn btn-secondary">📊 Dashboard</a>
         </div>
     </div>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>';
     

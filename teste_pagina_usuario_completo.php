@@ -208,7 +208,8 @@ echo "<p><a href=\"pagina_usuario.php\">🎯 Ir para Página de Usuário</a></p>
 echo "<p><a href=\"index.php\">🏠 Voltar ao Início</a></p>";
 echo "<p><a href=\"logout.php\">🚪 Logout</a></p>";
 echo "</div>";
-echo "</body></html>";
+echo "<?php require_once __DIR__ . '/footer.php'; ?>
+</body></html>";
 ?>';
     
     if (file_put_contents('teste_pagina_usuario_navegador.php', $teste_content)) {

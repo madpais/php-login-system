@@ -828,5 +828,6 @@ if ($usuario_logado) {
             }, 1000);
         <?php endif; ?>
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>

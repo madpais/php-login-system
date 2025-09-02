@@ -234,5 +234,6 @@ if ($usuario_logado) {
         // Ativar debug
         localStorage.setItem('debug_paises', 'true');
     </script>
+<?php require_once __DIR__ . '/footer.php'; ?>
 </body>
 </html>
