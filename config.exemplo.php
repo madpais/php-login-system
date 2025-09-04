@@ -175,6 +175,15 @@ if (DEBUG_MODE && SHOW_ERRORS) {
 // Timezone padrão
 date_default_timezone_set('America/Sao_Paulo');
 
+// Incluir arquivos do sistema de badges
+if (file_exists(__DIR__ . '/badges_manager.php')) {
+    require_once __DIR__ . '/badges_manager.php';
+}
+
+if (file_exists(__DIR__ . '/sistema_badges.php')) {
+    require_once __DIR__ . '/sistema_badges.php';
+}
+
 /**
  * INSTRUÇÕES PARA COLABORADORES:
  * ==============================

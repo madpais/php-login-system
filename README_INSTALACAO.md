@@ -242,6 +242,33 @@ SELECT COUNT(*) FROM forum_categorias; -- Deve retornar 5
 
 ## 🛠️ Troubleshooting
 
+### **❌ Sistema de Badges Não Funcional**
+```
+Classe BadgesManager não encontrada
+Função verificarBadgesProvas não disponível
+```
+**Causa:** Os arquivos do sistema de badges não estão sendo incluídos automaticamente.
+
+**Solução:**
+1. **Verificar se os arquivos existem:**
+   ```bash
+   ls -la badges_manager.php sistema_badges.php
+   ```
+
+2. **Executar diagnóstico:**
+   ```bash
+   php diagnostico_badges.php
+   ```
+
+3. **Se o problema persistir, os arquivos já foram corrigidos no config.php:**
+   - `badges_manager.php` e `sistema_badges.php` são incluídos automaticamente
+   - Verifique se ambos os arquivos existem no diretório raiz
+
+4. **Reinstalar badges se necessário:**
+   ```bash
+   php inserir_badges.php
+   ```
+
 ### **❌ Erro de Conexão com Banco**
 ```
 Solução: Verifique as credenciais em config.php

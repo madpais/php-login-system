@@ -301,11 +301,30 @@ function salvarGPA($usuario_id, $gpa, $notas) {
     try {
         $pdo = conectarBD();
         
+        // Salvar na tabela usuario_gpa
         $stmt = $pdo->prepare("
             INSERT INTO usuario_gpa (usuario_id, gpa_calculado, notas_utilizadas, data_calculo)
             VALUES (?, ?, ?, NOW())
         ");
         $stmt->execute([$usuario_id, $gpa, json_encode($notas)]);
+        
+        // Atualizar o GPA no perfil do usuário
+        $stmt = $pdo->prepare("
+            UPDATE perfil_usuario 
+            SET gpa = ? 
+            WHERE usuario_id = ?
+        ");
+        $stmt->execute([$gpa, $usuario_id]);
+        
+        // Se o perfil não existe, criar um novo
+        if ($stmt->rowCount() == 0) {
+            $stmt = $pdo->prepare("
+                INSERT INTO perfil_usuario (usuario_id, gpa) 
+                VALUES (?, ?)
+                ON DUPLICATE KEY UPDATE gpa = VALUES(gpa)
+            ");
+            $stmt->execute([$usuario_id, $gpa]);
+        }
         
         // Verificar badges de GPA após salvar
         verificarBadgesGPA($usuario_id);
