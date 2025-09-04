@@ -11,7 +11,7 @@ echo "===========================================\n\n";
 
 // Configurações do banco de dados
 $host = 'localhost';
-$dbname = 'daydreamming_db';
+$dbname = 'db_daydreamming_project'; // Atualizado para corresponder ao config.php
 $username = 'root';
 $password = '';
 

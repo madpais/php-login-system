@@ -20,7 +20,7 @@ echo "==============================================\n\n";
 
 // Configurações do banco de dados
 $host = 'localhost';
-$dbname = 'daydreamming_db';
+$dbname = 'db_daydreamming_project'; // Atualizado para corresponder ao config.php
 $username = 'root';
 $password = '';
 
@@ -28,6 +28,8 @@ try {
     // Conectar ao MySQL (sem especificar o banco)
     $pdo = new PDO("mysql:host=$host", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     
     echo "✅ Conectado ao MySQL\n";
     
@@ -36,8 +38,13 @@ try {
     echo "✅ Banco de dados '$dbname' criado/verificado\n";
     
     // Conectar ao banco específico
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    
+    // Configurar timezone para corresponder ao config.php
+    $pdo->exec("SET time_zone = '+00:00'");
     
     echo "✅ Conectado ao banco '$dbname'\n\n";
     

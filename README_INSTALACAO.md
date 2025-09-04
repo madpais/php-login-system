@@ -77,7 +77,7 @@ php instalar_sistema_limpo.php
 
 1. **Configure o banco de dados:**
    ```sql
-   CREATE DATABASE daydreamming_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE DATABASE db_daydreamming_project CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
 2. **Execute o script:**
@@ -95,7 +95,7 @@ Verifique se o arquivo `config.php` está configurado corretamente:
 <?php
 // Configurações do banco de dados
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'daydreamming_db');
+define('DB_NAME', 'db_daydreamming_project');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 ```
@@ -207,7 +207,7 @@ Solução: Verifique as credenciais em config.php
 ### **❌ Erro de Permissões**
 ```
 Solução: Verifique permissões do usuário MySQL
-GRANT ALL PRIVILEGES ON daydreamming_db.* TO 'root'@'localhost';
+GRANT ALL PRIVILEGES ON db_daydreamming_project.* TO 'root'@'localhost';
 ```
 
 ### **❌ Erro de Charset**

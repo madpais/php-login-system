@@ -1,5 +1,5 @@
 # Arquivos de configuração sensíveis
-config.php
+#config.php
 *.env
 .env*
 
