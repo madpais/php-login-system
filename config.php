@@ -1,10 +1,7 @@
 <?php
-
-
 /**
  * Arquivo de configuração do sistema DayDreaming
  * Configurado automaticamente para desenvolvimento local
- * 
  */
 
 // Configurações do banco de dados
@@ -139,25 +136,32 @@ function configurarSessao() {
     ini_set('session.use_only_cookies', 1);
     ini_set('session.cookie_secure', 0); // Mudar para 1 em HTTPS
     ini_set('session.gc_maxlifetime', SESSION_TIMEOUT);
-
+    
     // Nome da sessão personalizado
     session_name('DAYDREAMING_SESSION');
 }
 
 /**
  * Inicia sessão de forma segura
- * Deve ser chamada no início de cada página que precisa de sessão
+ * @return bool True se a sessão foi iniciada com sucesso
  */
 function iniciarSessaoSegura() {
-    if (session_status() == PHP_SESSION_NONE && !headers_sent()) {
-        configurarSessao();
-        session_start();
+    // Verificar se a sessão já está ativa
+    if (session_status() === PHP_SESSION_ACTIVE) {
         return true;
     }
-    return session_status() == PHP_SESSION_ACTIVE;
+    
+    // Configurar sessão antes de iniciar
+    configurarSessao();
+    
+    // Iniciar sessão
+    return session_start();
 }
-// NÃO iniciar sessão automaticamente no config.php
-// As páginas devem iniciar suas próprias sessões conforme necessário
+
+// Configurar sessão se ainda não foi iniciada
+if (session_status() == PHP_SESSION_NONE) {
+    configurarSessao();
+}
 
 // Configurações de erro para desenvolvimento
 if (DEBUG_MODE && SHOW_ERRORS) {
@@ -201,5 +205,4 @@ date_default_timezone_set('America/Sao_Paulo');
  *    - Erro de permissão: GRANT ALL PRIVILEGES
  *    - Erro de charset: Verifique utf8mb4 no MySQL
  */
-
 ?>

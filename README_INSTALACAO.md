@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-Este guia contém instruções completas para instalação do Sistema DayDreamming em um novo ambiente. O sistema inclui **22 tabelas** com todas as funcionalidades implementadas.
+Este guia contém instruções completas para instalação do Sistema DayDreamming em um novo ambiente. O sistema inclui **23 tabelas** com todas as funcionalidades implementadas.
 
 ## 🛠️ Pré-requisitos
 
@@ -17,7 +17,7 @@ Este guia contém instruções completas para instalação do Sistema DayDreammi
 
 ## 📦 Estrutura do Sistema
 
-### 🗄️ Tabelas Principais (22 tabelas)
+### 🗄️ Tabelas Principais (23 tabelas)
 
 #### **👥 Usuários e Perfis**
 - `usuarios` - Dados básicos dos usuários
@@ -52,8 +52,51 @@ Este guia contém instruções completas para instalação do Sistema DayDreammi
 - `notificacoes_usuario` - Notificações específicas do usuário
 - `logs_acesso` - Logs de acesso
 - `logs_sistema` - Logs do sistema
+- `usuario_gpa` - Cálculos de GPA dos usuários
 
 ## 🚀 Instalação
+
+### **🆕 Para Novos Colaboradores**
+
+**Passo a passo completo para configurar o ambiente:**
+
+1. **Clone o repositório:**
+   ```bash
+   git clone [URL_DO_REPOSITORIO]
+   cd php-login-system
+   ```
+
+2. **Configure o arquivo de configuração:**
+   ```bash
+   # Copie o arquivo de exemplo
+   copy config.exemplo.php config.php
+   # OU no Linux/Mac:
+   cp config.exemplo.php config.php
+   ```
+
+3. **Edite o config.php com suas credenciais MySQL:**
+   ```php
+   define('DB_HOST', 'localhost');     // Seu host MySQL
+   define('DB_USER', 'root');          // Seu usuário MySQL
+   define('DB_PASS', 'sua_senha');     // Sua senha MySQL
+   define('DB_NAME', 'db_daydreamming_project'); // Mantenha este nome
+   ```
+
+4. **Execute a instalação automática:**
+   ```bash
+   php setup_database.php
+   ```
+
+5. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   php -S localhost:8080
+   ```
+
+6. **Acesse o sistema:**
+   - URL: http://localhost:8080
+   - Login: admin / admin123
+
+**✅ Pronto! O sistema está funcionando com todas as funcionalidades.**
 
 ### **Método 1: Instalação Padrão**
 
@@ -150,7 +193,7 @@ O sistema cria automaticamente dois usuários:
 ### **1. Verificar Tabelas**
 ```sql
 SHOW TABLES;
--- Deve mostrar 22 tabelas
+-- Deve mostrar 23 tabelas
 ```
 
 ### **2. Verificar Dados**
@@ -243,7 +286,7 @@ Solução: Execute instalar_sistema_limpo.php para instalação limpa
 ## 📈 Estatísticas da Instalação
 
 Após a instalação bem-sucedida, você terá:
-- **22 tabelas** criadas
+- **23 tabelas** criadas
 - **2 usuários** padrão
 - **10 badges** configuradas
 - **5 categorias** do fórum

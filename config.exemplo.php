@@ -141,6 +141,23 @@ function configurarSessao() {
     session_name('DAYDREAMING_SESSION');
 }
 
+/**
+ * Inicia sessão de forma segura
+ * @return bool True se a sessão foi iniciada com sucesso
+ */
+function iniciarSessaoSegura() {
+    // Verificar se a sessão já está ativa
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return true;
+    }
+    
+    // Configurar sessão antes de iniciar
+    configurarSessao();
+    
+    // Iniciar sessão
+    return session_start();
+}
+
 // Configurar sessão se ainda não foi iniciada
 if (session_status() == PHP_SESSION_NONE) {
     configurarSessao();
