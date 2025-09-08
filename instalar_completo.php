@@ -28,8 +28,8 @@ function exibirProgresso($passo, $total, $descricao) {
 }
 
 // PASSO 1: Verificar ambiente
-echo "📋 PASSO 1/6: Verificando ambiente...\n";
-exibirProgresso(1, 6, "Verificando PHP e extensões");
+echo "📋 PASSO 1/7: Verificando ambiente...\n";
+exibirProgresso(1, 7, "Verificando PHP e extensões");
 
 // Verificar PHP
 if (version_compare(phpversion(), '7.4.0', '<')) {
@@ -57,8 +57,8 @@ $passos_concluidos[] = "Ambiente verificado";
 sleep(1);
 
 // PASSO 2: Verificar/criar config.php
-echo "\n📋 PASSO 2/6: Configurando arquivo de configuração...\n";
-exibirProgresso(2, 6, "Verificando config.php");
+echo "\n📋 PASSO 2/7: Configurando arquivo de configuração...\n";
+exibirProgresso(2, 7, "Verificando config.php");
 
 if (!file_exists('config.php')) {
     if (file_exists('config.exemplo.php')) {
@@ -78,8 +78,8 @@ $passos_concluidos[] = "Configuração verificada";
 sleep(1);
 
 // PASSO 3: Testar conexão com banco
-echo "\n📋 PASSO 3/6: Testando conexão com banco de dados...\n";
-exibirProgresso(3, 6, "Conectando ao MySQL");
+echo "\n📋 PASSO 3/7: Testando conexão com banco de dados...\n";
+exibirProgresso(3, 7, "Conectando ao MySQL");
 
 try {
     require_once 'config.php';
@@ -114,8 +114,8 @@ try {
 sleep(1);
 
 // PASSO 4: Instalar banco de dados
-echo "\n📋 PASSO 4/6: Instalando estrutura do banco...\n";
-exibirProgresso(4, 6, "Executando setup_database.php");
+echo "\n📋 PASSO 4/7: Instalando estrutura do banco...\n";
+exibirProgresso(4, 7, "Executando setup_database.php");
 
 if (file_exists('setup_database.php')) {
     echo "\n🗄️ Executando instalação do banco...\n";
@@ -150,8 +150,8 @@ if (file_exists('setup_database.php')) {
 sleep(1);
 
 // PASSO 5: Verificar instalação
-echo "\n📋 PASSO 5/6: Verificando instalação...\n";
-exibirProgresso(5, 6, "Contando tabelas e dados");
+echo "\n📋 PASSO 5/7: Verificando instalação...\n";
+exibirProgresso(5, 7, "Contando tabelas e dados");
 
 try {
     $dsn_db = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
@@ -175,8 +175,13 @@ try {
         $stmt = $pdo_db->query("SELECT COUNT(*) FROM badges");
         $badges = $stmt->fetchColumn();
         
+        // Verificar questões SAT
+        $stmt = $pdo_db->query("SELECT COUNT(*) FROM questoes WHERE tipo_prova = 'sat'");
+        $questoes_sat = $stmt->fetchColumn();
+        
         echo "👥 Usuários: $usuarios\n";
         echo "🏆 Badges: $badges\n";
+        echo "📝 Questões SAT: $questoes_sat\n";
         
         if ($usuarios >= 2 && $badges >= 10) {
             echo "✅ Dados iniciais carregados\n";
@@ -195,9 +200,64 @@ try {
 
 sleep(1);
 
-// PASSO 6: Finalização
-echo "\n📋 PASSO 6/6: Finalizando instalação...\n";
-exibirProgresso(6, 6, "Preparando sistema");
+// PASSO 6: Carregar questões do simulador
+echo "\n📋 PASSO 6/7: Carregando questões do simulador...\n";
+exibirProgresso(6, 7, "Carregando questões SAT");
+
+echo "\n📚 Carregando questões do simulador SAT...\n";
+
+if (file_exists('carregar_questoes_sat.php')) {
+    // Capturar output do carregamento de questões
+    ob_start();
+    try {
+        include 'carregar_questoes_sat.php';
+        $output = ob_get_contents();
+        ob_end_clean();
+        
+        // Verificar se houve erros
+        if (strpos($output, 'ERRO') !== false || strpos($output, 'ERROR') !== false) {
+            echo "⚠️ Possíveis avisos durante carregamento de questões:\n";
+            echo $output;
+            $avisos[] = "Verifique os logs de carregamento de questões";
+        } else {
+            echo "✅ Questões do simulador SAT carregadas com sucesso\n";
+        }
+        
+        // Verificar questões carregadas
+        if (file_exists('verificar_questoes_carregadas.php')) {
+            echo "\n📊 Verificando questões carregadas...\n";
+            ob_start();
+            include 'verificar_questoes_carregadas.php';
+            $output_verificacao = ob_get_contents();
+            ob_end_clean();
+            
+            // Extrair apenas as informações essenciais
+            if (preg_match('/Total de questões no banco: (\d+)/', $output_verificacao, $matches)) {
+                echo "📝 Total de questões no banco: {$matches[1]}\n";
+            }
+            
+            if (preg_match('/🎯 SAT: (\d+) questões/', $output_verificacao, $matches)) {
+                echo "📝 Questões SAT carregadas: {$matches[1]}\n";
+            }
+        }
+        
+    } catch (Exception $e) {
+        ob_end_clean();
+        echo "⚠️ Aviso durante carregamento de questões: " . $e->getMessage() . "\n";
+        $avisos[] = "Aviso no carregamento de questões: " . $e->getMessage();
+    }
+    
+    $passos_concluidos[] = "Questões do simulador carregadas";
+} else {
+    echo "⚠️ Arquivo carregar_questoes_sat.php não encontrado\n";
+    $avisos[] = "Arquivo carregar_questoes_sat.php não encontrado";
+}
+
+sleep(1);
+
+// PASSO 7: Finalização
+echo "\n📋 PASSO 7/7: Finalizando instalação...\n";
+exibirProgresso(7, 7, "Preparando sistema");
 
 // Verificar arquivos essenciais
 $arquivos_essenciais = [
@@ -251,13 +311,15 @@ if (empty($erros)) {
     echo "   👤 Admin: admin / admin123\n";
     echo "   👤 Teste: teste / teste123\n";
     echo "4. 🧪 Execute verificar_ambiente.php para diagnósticos\n";
-    echo "5. 📚 Consulte README_INSTALACAO.md para mais detalhes\n\n";
+    echo "5. 📝 Acesse o simulador SAT: http://localhost:8080/simulador_provas.php\n";
+    echo "6. 📚 Consulte README_INSTALACAO.md para mais detalhes\n\n";
     
     echo "🎯 FUNCIONALIDADES DISPONÍVEIS:\n";
     echo "===============================\n";
     echo "✅ Sistema de usuários e autenticação\n";
     echo "✅ Dashboard personalizado\n";
     echo "✅ Sistema de testes e simulador\n";
+    echo "✅ Simulador SAT com questões carregadas\n";
     echo "✅ Fórum com categorias e moderação\n";
     echo "✅ Sistema de badges e gamificação\n";
     echo "✅ Páginas de países (28 países)\n";
