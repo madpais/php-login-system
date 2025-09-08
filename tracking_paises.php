@@ -67,7 +67,7 @@ function registrarVisitaPais($usuario_id, $pais_codigo) {
             ");
             $stmt->execute([$visita_existente["id"]]);
             
-            return [
+            $resultado = [
                 "primeira_visita" => false,
                 "total_visitas" => $visita_existente["total_visitas"] + 1,
                 "pais_nome" => $pais_nome
@@ -80,7 +80,7 @@ function registrarVisitaPais($usuario_id, $pais_codigo) {
             ");
             $stmt->execute([$usuario_id, $pais_codigo, $pais_nome]);
             
-            return [
+            $resultado = [
                 "primeira_visita" => true,
                 "total_visitas" => 1,
                 "pais_nome" => $pais_nome
@@ -89,6 +89,8 @@ function registrarVisitaPais($usuario_id, $pais_codigo) {
         
         // Verificar badges de países após registrar visita
         verificarBadgesPaises($usuario_id);
+        
+        return $resultado;
         
     } catch (Exception $e) {
         error_log("Erro ao registrar visita: " . $e->getMessage());
