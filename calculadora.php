@@ -1,10 +1,9 @@
 <?php
 require_once 'config.php';
-iniciarSessaoSegura();
+require_once 'header_status.php';
 
-// Verificar se o usuário está logado
-$usuario_logado = isset($_SESSION['usuario_id']);
-$nome_usuario = $usuario_logado && isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Visitante';
+// Usar as variáveis definidas em header_status.php
+$nome_usuario = $usuario_nome ?: 'Visitante';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -197,7 +196,7 @@ $nome_usuario = $usuario_logado && isset($_SESSION['nome']) ? $_SESSION['nome'] 
     <div style="background: linear-gradient(135deg, #187bcb 0%, #6c5ce7 100%); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <?php if ($usuario_logado): ?>
-                <span>✅ Logado como: <?php echo htmlspecialchars($nome_usuario ?? 'Usuário'); ?></span>
+                <span>✅ Logado como: <?php echo htmlspecialchars($usuario_nome); ?></span>
             <?php else: ?>
                 <span>❌ Você não está logado</span>
             <?php endif; ?>
