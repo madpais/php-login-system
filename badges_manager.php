@@ -89,7 +89,7 @@ class BadgesManager {
             }
             
             // Busca a badge
-            $stmt = $this->pdo->prepare("SELECT id, nome, icone FROM badges WHERE codigo = ? AND ativo = 1");
+            $stmt = $this->pdo->prepare("SELECT id, nome, icone FROM badges WHERE codigo = ? AND ativa = 1");
             $stmt->execute([$badge_codigo]);
             $badge = $stmt->fetch(PDO::FETCH_ASSOC);
             

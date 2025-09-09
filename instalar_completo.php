@@ -264,7 +264,9 @@ $arquivos_essenciais = [
     'index.php' => 'Página inicial',
     'login.php' => 'Sistema de login',
     'forum.php' => 'Fórum',
-    'pagina_usuario.php' => 'Dashboard do usuário'
+    'pagina_usuario.php' => 'Dashboard do usuário',
+    'badges_manager.php' => 'Sistema de badges',
+    'sistema_badges.php' => 'Funções de badges'
 ];
 
 $arquivos_ok = 0;
@@ -322,6 +324,22 @@ if (empty($erros)) {
     echo "✅ Simulador SAT com questões carregadas\n";
     echo "✅ Fórum com categorias e moderação\n";
     echo "✅ Sistema de badges e gamificação\n";
+echo "   • Verificando sistema de badges...\n";
+
+// Verificar se as badges estão ativas
+try {
+    $stmt = $pdo_db->query("SELECT COUNT(*) FROM badges WHERE ativa = 1");
+    $badges_ativas = $stmt->fetchColumn();
+    echo "   • Badges ativas: $badges_ativas\n";
+    
+    if ($badges_ativas < 10) {
+        echo "   • ⚠️ Ativando badges...\n";
+        $pdo_db->exec("UPDATE badges SET ativa = 1 WHERE ativa = 0");
+        echo "   • ✅ Badges ativadas com sucesso\n";
+    }
+} catch (Exception $e) {
+    echo "   • ❌ Erro ao verificar badges: " . $e->getMessage() . "\n";
+}
     echo "✅ Páginas de países (28 países)\n";
     echo "✅ Sistema de notificações\n";
     echo "✅ Tracking de países visitados\n\n";
