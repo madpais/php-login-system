@@ -331,12 +331,61 @@ try {
     $stmt = $pdo_db->query("SELECT COUNT(*) FROM badges WHERE ativa = 1");
     $badges_ativas = $stmt->fetchColumn();
     echo "   • Badges ativas: $badges_ativas\n";
-    
-    if ($badges_ativas < 10) {
-        echo "   • ⚠️ Ativando badges...\n";
-        $pdo_db->exec("UPDATE badges SET ativa = 1 WHERE ativa = 0");
-        echo "   • ✅ Badges ativadas com sucesso\n";
+
+    if ($badges_ativas < 30) {
+        echo "   • ⚠️ Poucas badges encontradas. Executando inserção completa...\n";
+
+        // Executar inserção de badges
+        if (file_exists('inserir_badges.php')) {
+            ob_start();
+            include 'inserir_badges.php';
+            $output = ob_get_contents();
+            ob_end_clean();
+
+            // Verificar novamente
+            $stmt = $pdo_db->query("SELECT COUNT(*) FROM badges WHERE ativa = 1");
+            $badges_ativas_apos = $stmt->fetchColumn();
+            echo "   • ✅ Badges inseridas: $badges_ativas_apos badges ativas\n";
+        } else {
+            echo "   • ⚠️ Arquivo inserir_badges.php não encontrado\n";
+        }
+    } else {
+        echo "   • ✅ Sistema de badges OK\n";
     }
+
+    // Testar funções de badges
+    echo "   • Testando funções de badges...\n";
+
+    if (function_exists('verificarBadgesProvas')) {
+        echo "   • ✅ verificarBadgesProvas: Disponível\n";
+    } else {
+        echo "   • ❌ verificarBadgesProvas: NÃO DISPONÍVEL\n";
+    }
+
+    if (function_exists('verificarBadgesForum')) {
+        echo "   • ✅ verificarBadgesForum: Disponível\n";
+    } else {
+        echo "   • ❌ verificarBadgesForum: NÃO DISPONÍVEL\n";
+    }
+
+    if (function_exists('verificarBadgesGPA')) {
+        echo "   • ✅ verificarBadgesGPA: Disponível\n";
+    } else {
+        echo "   • ❌ verificarBadgesGPA: NÃO DISPONÍVEL\n";
+    }
+
+    if (function_exists('verificarBadgesPaises')) {
+        echo "   • ✅ verificarBadgesPaises: Disponível\n";
+    } else {
+        echo "   • ❌ verificarBadgesPaises: NÃO DISPONÍVEL\n";
+    }
+
+    if (class_exists('BadgesManager')) {
+        echo "   • ✅ BadgesManager: Disponível\n";
+    } else {
+        echo "   • ❌ BadgesManager: NÃO DISPONÍVEL\n";
+    }
+
 } catch (Exception $e) {
     echo "   • ❌ Erro ao verificar badges: " . $e->getMessage() . "\n";
 }

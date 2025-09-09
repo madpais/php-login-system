@@ -1,81 +1,77 @@
 <?php
 /**
- * Script para inserir todas as badges do sistema
+ * Script completo para inserir TODAS as badges necessárias
+ * Versão definitiva e robusta
  */
 
 require_once 'config.php';
 
+echo "🏆 INSERÇÃO COMPLETA DE BADGES - VERSÃO DEFINITIVA\n";
+echo "==================================================\n\n";
+
 try {
     $pdo = conectarBD();
     
-    echo "🏆 INSERINDO BADGES NO SISTEMA\n";
-    echo "==============================\n\n";
-    
-    // Array com todas as badges
+    // Array completo com TODAS as badges necessárias
     $badges = [
-        // BADGES DE PROVAS (sistema_badges.php)
+        // ===== BADGES DE PROVAS =====
         [
             'codigo' => 'prova_bronze',
             'nome' => 'Primeiro Passo',
-            'descricao' => 'Realizou uma prova e obteve entre 20% e 40% de acertos',
+            'descricao' => 'Obteve entre 20% e 40% de acertos em uma prova',
             'icone' => '🥉',
             'tipo' => 'pontuacao',
             'categoria' => 'teste',
             'condicao_valor' => 20,
             'raridade' => 'comum',
-            'experiencia_bonus' => 50,
-            'imagem' => 'badge_prova_bronze.jpg'
+            'experiencia_bonus' => 50
         ],
         [
             'codigo' => 'prova_prata',
             'nome' => 'Progredindo',
-            'descricao' => 'Realizou uma prova e obteve entre 40% e 60% de acertos',
+            'descricao' => 'Obteve entre 40% e 60% de acertos em uma prova',
             'icone' => '🥈',
             'tipo' => 'pontuacao',
             'categoria' => 'teste',
             'condicao_valor' => 40,
             'raridade' => 'comum',
-            'experiencia_bonus' => 100,
-            'imagem' => 'badge_prova_prata.jpg'
+            'experiencia_bonus' => 100
         ],
         [
             'codigo' => 'prova_ouro',
             'nome' => 'Bom Desempenho',
-            'descricao' => 'Realizou uma prova e obteve entre 60% e 80% de acertos',
+            'descricao' => 'Obteve entre 60% e 80% de acertos em uma prova',
             'icone' => '🥇',
             'tipo' => 'pontuacao',
             'categoria' => 'teste',
             'condicao_valor' => 60,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_prova_ouro.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'prova_rubi',
             'nome' => 'Excelente',
-            'descricao' => 'Realizou uma prova e obteve entre 80% e 100% de acertos',
+            'descricao' => 'Obteve entre 80% e 99% de acertos em uma prova',
             'icone' => '💎',
             'tipo' => 'pontuacao',
             'categoria' => 'teste',
             'condicao_valor' => 80,
             'raridade' => 'epico',
-            'experiencia_bonus' => 300,
-            'imagem' => 'badge_prova_rubi.jpg'
+            'experiencia_bonus' => 300
         ],
         [
             'codigo' => 'prova_diamante',
             'nome' => 'Perfeição',
-            'descricao' => 'Realizou uma prova e obteve 100% de acertos',
+            'descricao' => 'Obteve 100% de acertos em uma prova',
             'icone' => '💠',
             'tipo' => 'pontuacao',
             'categoria' => 'teste',
             'condicao_valor' => 100,
             'raridade' => 'lendario',
-            'experiencia_bonus' => 500,
-            'imagem' => 'badge_prova_diamante.jpg'
+            'experiencia_bonus' => 500
         ],
-
-        // BADGES DE FÓRUM
+        
+        // ===== BADGES DE FÓRUM =====
         [
             'codigo' => 'forum_bronze',
             'nome' => 'Primeira Participação',
@@ -85,8 +81,7 @@ try {
             'categoria' => 'forum',
             'condicao_valor' => 1,
             'raridade' => 'comum',
-            'experiencia_bonus' => 50,
-            'imagem' => 'badge_forum_bronze.jpg'
+            'experiencia_bonus' => 50
         ],
         [
             'codigo' => 'forum_prata',
@@ -97,8 +92,7 @@ try {
             'categoria' => 'forum',
             'condicao_valor' => 3,
             'raridade' => 'comum',
-            'experiencia_bonus' => 100,
-            'imagem' => 'badge_forum_prata.jpg'
+            'experiencia_bonus' => 100
         ],
         [
             'codigo' => 'forum_ouro',
@@ -109,8 +103,7 @@ try {
             'categoria' => 'forum',
             'condicao_valor' => 5,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_forum_ouro.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'forum_rubi',
@@ -121,8 +114,7 @@ try {
             'categoria' => 'forum',
             'condicao_valor' => 7,
             'raridade' => 'epico',
-            'experiencia_bonus' => 300,
-            'imagem' => 'badge_forum_rubi.jpg'
+            'experiencia_bonus' => 300
         ],
         [
             'codigo' => 'forum_diamante',
@@ -133,73 +125,67 @@ try {
             'categoria' => 'forum',
             'condicao_valor' => 9,
             'raridade' => 'lendario',
-            'experiencia_bonus' => 500,
-            'imagem' => 'badge_forum_diamante.jpg'
+            'experiencia_bonus' => 500
         ],
-
-        // BADGES DE GPA
+        
+        // ===== BADGES DE GPA =====
         [
             'codigo' => 'gpa_bronze',
             'nome' => 'GPA Iniciante',
-            'descricao' => 'Calculou GPA e obteve entre 2.0 e 2.5',
+            'descricao' => 'Calculou GPA entre 2.0 e 2.5',
             'icone' => '📊',
             'tipo' => 'pontuacao',
             'categoria' => 'gpa',
-            'condicao_valor' => 20,
+            'condicao_valor' => 20, // 2.0 * 10
             'raridade' => 'comum',
-            'experiencia_bonus' => 50,
-            'imagem' => 'badge_gpa_bronze.jpg'
+            'experiencia_bonus' => 50
         ],
         [
             'codigo' => 'gpa_prata',
             'nome' => 'GPA Bom',
-            'descricao' => 'Calculou GPA e obteve entre 2.5 e 3.0',
+            'descricao' => 'Calculou GPA entre 2.5 e 3.0',
             'icone' => '📊',
             'tipo' => 'pontuacao',
             'categoria' => 'gpa',
-            'condicao_valor' => 25,
+            'condicao_valor' => 25, // 2.5 * 10
             'raridade' => 'comum',
-            'experiencia_bonus' => 100,
-            'imagem' => 'badge_gpa_prata.jpg'
+            'experiencia_bonus' => 100
         ],
         [
             'codigo' => 'gpa_ouro',
             'nome' => 'GPA Excelente',
-            'descricao' => 'Calculou GPA e obteve entre 3.0 e 3.5',
+            'descricao' => 'Calculou GPA entre 3.0 e 3.5',
             'icone' => '📊',
             'tipo' => 'pontuacao',
             'categoria' => 'gpa',
-            'condicao_valor' => 30,
+            'condicao_valor' => 30, // 3.0 * 10
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_gpa_ouro.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'gpa_rubi',
             'nome' => 'GPA Superior',
-            'descricao' => 'Calculou GPA e obteve entre 3.5 e 4.0',
+            'descricao' => 'Calculou GPA entre 3.5 e 4.0',
             'icone' => '📊',
             'tipo' => 'pontuacao',
             'categoria' => 'gpa',
-            'condicao_valor' => 35,
+            'condicao_valor' => 35, // 3.5 * 10
             'raridade' => 'epico',
-            'experiencia_bonus' => 300,
-            'imagem' => 'badge_gpa_rubi.jpg'
+            'experiencia_bonus' => 300
         ],
         [
             'codigo' => 'gpa_diamante',
             'nome' => 'GPA Perfeito',
-            'descricao' => 'Calculou GPA e obteve 4.0',
+            'descricao' => 'Calculou GPA 4.0',
             'icone' => '📊',
             'tipo' => 'pontuacao',
             'categoria' => 'gpa',
-            'condicao_valor' => 40,
+            'condicao_valor' => 40, // 4.0 * 10
             'raridade' => 'lendario',
-            'experiencia_bonus' => 500,
-            'imagem' => 'badge_gpa_diamante.jpg'
+            'experiencia_bonus' => 500
         ],
-
-        // BADGES DE PAÍSES
+        
+        // ===== BADGES DE PAÍSES =====
         [
             'codigo' => 'paises_bronze',
             'nome' => 'Explorador Iniciante',
@@ -209,8 +195,7 @@ try {
             'categoria' => 'paises',
             'condicao_valor' => 5,
             'raridade' => 'comum',
-            'experiencia_bonus' => 50,
-            'imagem' => 'badge_paises_bronze.jpg'
+            'experiencia_bonus' => 50
         ],
         [
             'codigo' => 'paises_prata',
@@ -221,8 +206,7 @@ try {
             'categoria' => 'paises',
             'condicao_valor' => 10,
             'raridade' => 'comum',
-            'experiencia_bonus' => 100,
-            'imagem' => 'badge_paises_prata.jpg'
+            'experiencia_bonus' => 100
         ],
         [
             'codigo' => 'paises_ouro',
@@ -233,8 +217,7 @@ try {
             'categoria' => 'paises',
             'condicao_valor' => 15,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_paises_ouro.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'paises_rubi',
@@ -245,8 +228,7 @@ try {
             'categoria' => 'paises',
             'condicao_valor' => 20,
             'raridade' => 'epico',
-            'experiencia_bonus' => 300,
-            'imagem' => 'badge_paises_rubi.jpg'
+            'experiencia_bonus' => 300
         ],
         [
             'codigo' => 'paises_diamante',
@@ -257,61 +239,56 @@ try {
             'categoria' => 'paises',
             'condicao_valor' => 28,
             'raridade' => 'lendario',
-            'experiencia_bonus' => 500,
-            'imagem' => 'badge_paises_diamante.jpg'
+            'experiencia_bonus' => 500
         ],
 
-        // BADGES DO BADGESMANAGER (badges_manager.php)
+        // ===== BADGES DO BADGESMANAGER =====
         [
             'codigo' => 'iniciante',
             'nome' => 'Iniciante',
             'descricao' => 'Realizou os primeiros testes',
             'icone' => '🌱',
-            'tipo' => 'nivel',
+            'tipo' => 'especial',
             'categoria' => 'teste',
             'condicao_valor' => 1,
             'raridade' => 'comum',
-            'experiencia_bonus' => 25,
-            'imagem' => 'badge_iniciante.jpg'
+            'experiencia_bonus' => 25
         ],
         [
             'codigo' => 'experiente',
             'nome' => 'Experiente',
             'descricao' => 'Realizou vários testes com bom desempenho',
             'icone' => '📚',
-            'tipo' => 'nivel',
+            'tipo' => 'especial',
             'categoria' => 'teste',
             'condicao_valor' => 5,
             'raridade' => 'comum',
-            'experiencia_bonus' => 100,
-            'imagem' => 'badge_experiente.jpg'
+            'experiencia_bonus' => 100
         ],
         [
             'codigo' => 'mestre',
             'nome' => 'Mestre',
             'descricao' => 'Demonstrou maestria em testes',
             'icone' => '🎓',
-            'tipo' => 'nivel',
+            'tipo' => 'especial',
             'categoria' => 'teste',
             'condicao_valor' => 15,
             'raridade' => 'epico',
-            'experiencia_bonus' => 300,
-            'imagem' => 'badge_mestre.jpg'
+            'experiencia_bonus' => 300
         ],
         [
             'codigo' => 'lenda',
             'nome' => 'Lenda',
             'descricao' => 'Alcançou status lendário nos testes',
             'icone' => '👑',
-            'tipo' => 'nivel',
+            'tipo' => 'especial',
             'categoria' => 'teste',
             'condicao_valor' => 30,
             'raridade' => 'lendario',
-            'experiencia_bonus' => 500,
-            'imagem' => 'badge_lenda.jpg'
+            'experiencia_bonus' => 500
         ],
 
-        // BADGES DE ESPECIALISTA
+        // ===== BADGES DE ESPECIALISTA =====
         [
             'codigo' => 'especialista_sat',
             'nome' => 'Especialista SAT',
@@ -321,8 +298,7 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 5,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_especialista_sat.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'especialista_enem',
@@ -333,8 +309,7 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 5,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_especialista_enem.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'especialista_vestibular',
@@ -345,11 +320,10 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 5,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_especialista_vestibular.jpg'
+            'experiencia_bonus' => 200
         ],
 
-        // BADGES DE CONSISTÊNCIA
+        // ===== BADGES DE CONSISTÊNCIA =====
         [
             'codigo' => 'consistente',
             'nome' => 'Consistente',
@@ -359,8 +333,7 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 5,
             'raridade' => 'raro',
-            'experiencia_bonus' => 200,
-            'imagem' => 'badge_consistente.jpg'
+            'experiencia_bonus' => 200
         ],
         [
             'codigo' => 'dedicado',
@@ -371,11 +344,10 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 10,
             'raridade' => 'epico',
-            'experiencia_bonus' => 300,
-            'imagem' => 'badge_dedicado.jpg'
+            'experiencia_bonus' => 300
         ],
 
-        // BADGES DE FREQUÊNCIA
+        // ===== BADGES DE FREQUÊNCIA =====
         [
             'codigo' => 'maratonista',
             'nome' => 'Maratonista',
@@ -385,8 +357,7 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 20,
             'raridade' => 'raro',
-            'experiencia_bonus' => 250,
-            'imagem' => 'badge_maratonista.jpg'
+            'experiencia_bonus' => 250
         ],
         [
             'codigo' => 'persistente',
@@ -397,11 +368,10 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 50,
             'raridade' => 'epico',
-            'experiencia_bonus' => 400,
-            'imagem' => 'badge_persistente.jpg'
+            'experiencia_bonus' => 400
         ],
 
-        // BADGES DE VELOCIDADE E EFICIÊNCIA
+        // ===== BADGES DE VELOCIDADE E EFICIÊNCIA =====
         [
             'codigo' => 'rapido',
             'nome' => 'Rápido',
@@ -411,8 +381,7 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 1,
             'raridade' => 'raro',
-            'experiencia_bonus' => 150,
-            'imagem' => 'badge_rapido.jpg'
+            'experiencia_bonus' => 150
         ],
         [
             'codigo' => 'eficiente',
@@ -423,8 +392,7 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 1,
             'raridade' => 'epico',
-            'experiencia_bonus' => 250,
-            'imagem' => 'badge_eficiente.jpg'
+            'experiencia_bonus' => 250
         ],
         [
             'codigo' => 'perfeccionista',
@@ -435,10 +403,11 @@ try {
             'categoria' => 'teste',
             'condicao_valor' => 3,
             'raridade' => 'lendario',
-            'experiencia_bonus' => 500,
-            'imagem' => 'badge_perfeccionista.jpg'
+            'experiencia_bonus' => 500
         ]
     ];
+
+    echo "📊 Total de badges a inserir: " . count($badges) . "\n\n";
     
     // Preparar statement para inserção
     $stmt = $pdo->prepare("
@@ -452,7 +421,8 @@ try {
         categoria = VALUES(categoria),
         condicao_valor = VALUES(condicao_valor),
         raridade = VALUES(raridade),
-        experiencia_bonus = VALUES(experiencia_bonus)
+        experiencia_bonus = VALUES(experiencia_bonus),
+        ativa = 1
     ");
     
     $inseridas = 0;
@@ -485,15 +455,25 @@ try {
         }
     }
     
-    echo "\n📊 RESUMO:\n";
-    echo "==========\n";
+    echo "\n📊 RESUMO FINAL:\n";
+    echo "================\n";
     echo "✅ Badges inseridas: $inseridas\n";
     echo "🔄 Badges atualizadas: $atualizadas\n";
-    echo "📝 Total de badges: " . count($badges) . "\n";
+    echo "📝 Total processado: " . count($badges) . "\n";
     
-    echo "\n🎉 BADGES INSERIDAS COM SUCESSO!\n";
+    // Verificar resultado final
+    $stmt = $pdo->query("SELECT COUNT(*) FROM badges WHERE ativa = 1");
+    $total_ativas = $stmt->fetchColumn();
+    echo "🏆 Total de badges ativas no sistema: $total_ativas\n";
+    
+    echo "\n🎉 INSERÇÃO COMPLETA REALIZADA COM SUCESSO!\n";
     
 } catch (Exception $e) {
-    echo "❌ Erro: " . $e->getMessage() . "\n";
+    echo "❌ Erro durante inserção: " . $e->getMessage() . "\n";
+    echo "📋 Detalhes do erro:\n";
+    echo "   Arquivo: " . $e->getFile() . "\n";
+    echo "   Linha: " . $e->getLine() . "\n";
 }
+
+echo "\n🎯 INSERÇÃO CONCLUÍDA!\n";
 ?>
