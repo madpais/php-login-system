@@ -385,56 +385,9 @@ if ($usuario_logado) {
 <body>
     <?php include 'header_status.php'; ?>
     
-    <!-- Navbar -->
-    <div class="navbar-custom">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-lg-3 col-md-3 col-6">
-                    <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="DayDreaming Logo" class="logo">
-                </div>
-                <div class="col-lg-2 col-md-2 d-none d-md-block">
-                    <a href="#" class="nav-button" onclick="alert('Funcionalidade em desenvolvimento!')">
-                        <i class="fas fa-user-check me-2"></i>Testes de Perfil
-                    </a>
-                </div>
-                <div class="col-lg-2 col-md-2 d-none d-md-block">
-                    <a href="pesquisa_por_pais.php" class="nav-button" style="background: rgba(255,255,255,0.2);">
-                        <i class="fas fa-globe me-2"></i>Guia por Países
-                    </a>
-                </div>
-                <div class="col-lg-2 col-md-2 d-none d-md-block">
-                    <a href="<?php echo $usuario_logado ? 'simulador_provas.php' : 'login.php'; ?>" class="nav-button">
-                        <i class="fas fa-graduation-cap me-2"></i>Simuladores
-                    </a>
-                </div>
-                <div class="col-lg-3 col-md-3 col-6 text-right">
-                    <?php if ($usuario_logado): ?>
-                        <a href="pagina_usuario.php" class="nav-button me-2">
-                            <i class="fas fa-user me-2"></i>Perfil
-                        </a>
-                        <a href="index.php" class="nav-button">
-                            <i class="fas fa-home me-2"></i>Dashboard
-                        </a>
-                    <?php else: ?>
-                        <a href="login.php" class="nav-button">
-                            <i class="fas fa-sign-in-alt me-2"></i>Entrar
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
-    <!-- Botão Voltar -->
-    <div class="container-fluid mt-3">
-        <div class="row">
-            <div class="col-12">
-                <button type="button" class="btn back-button" onclick="window.history.back()">
-                    <i class="fas fa-arrow-left me-2"></i>Voltar
-                </button>
-            </div>
-        </div>
-    </div>
+    <?php include 'nav_padronizada.php'; ?>
 
     <!-- Título -->
     <div class="container-fluid">
@@ -922,18 +875,7 @@ if ($usuario_logado) {
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="container-fluid text-center" style="background-color: #03254c; color: white; padding: 40px 0; margin-top: 60px;">
-        <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" class="img-fluid" style="max-width: 200px;">
-        <p class="mt-3">© 2024 DayDreaming - Sua jornada para educação internacional começa aqui!</p>
-        <p>Todos os direitos reservados</p>
-
-        <?php if ($usuario_logado): ?>
-            <div class="mt-3">
-                <small>Logado como: <?php echo htmlspecialchars($usuario_nome); ?> | <a href="logout.php" style="color: #2a9df4;">Sair</a></small>
-            </div>
-        <?php endif; ?>
-    </footer>
+    
 
     <script>
         // Lista de países para busca

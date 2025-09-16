@@ -210,8 +210,8 @@ $nome_usuario = $usuario_nome ?: 'Visitante';
         </div>
     </div>
 
+    <?php include 'nav_padronizada.php'; ?>
 
-    
     <!-- Navigation -->
     <div class="container-fluid">
         <div class="row">

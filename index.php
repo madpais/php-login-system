@@ -394,57 +394,7 @@ if ($usuario_logado) {
    
   
 
-    <!-- Menu de navegação principal -->
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Botão Quem Somos -->
-            <div class="col-lg-3 col-md-3 col-sm-6 col-6 exam-card nav-button"
-                 style="background: linear-gradient(135deg, #2a9df4 0%, #187bcd 100%); min-height: 100px; border: 3px solid white; padding: 15px; cursor: pointer; transition: all 0.3s ease;"
-                 onclick="scrollToSection('quem-somos')">
-                <div class="d-flex flex-column justify-content-center h-100 text-center">
-                    <i class="fas fa-users mb-2" style="color: white; font-size: 24px;"></i>
-                    <p class="text1 mb-0" style="color: white; font-weight: 600; font-size: 16px;">Quem Somos</p>
-                    <small style="color: rgba(255,255,255,0.8);">Nossa missão</small>
-                </div>
-            </div>
-
-            <!-- Botão Teste Vocacional -->
-            <div class="col-lg-3 col-md-3 col-sm-6 col-6 exam-card nav-button"
-                 style="background: linear-gradient(135deg, #2a9df4 0%, #187bcd 100%); min-height: 100px; border: 3px solid white; padding: 15px; cursor: pointer; transition: all 0.3s ease;"
-                 onclick="alert('Funcionalidade em desenvolvimento! Em breve você poderá descobrir qual curso combina mais com seu perfil.')">
-                <div class="d-flex flex-column justify-content-center h-100 text-center">
-                    <i class="fas fa-compass mb-2" style="color: white; font-size: 24px;"></i>
-                    <p class="text1 mb-0" style="color: white; font-weight: 600; font-size: 16px;">Teste Vocacional</p>
-                    <small style="color: rgba(255,255,255,0.8);">Descubra seu curso</small>
-                </div>
-            </div>
-
-            <!-- Botão Simulador Prático -->
-            <div class="col-lg-3 col-md-3 col-sm-6 col-6 exam-card nav-button"
-                 style="background: linear-gradient(135deg, #2a9df4 0%, #187bcd 100%); min-height: 100px; border: 3px solid white; padding: 15px; cursor: pointer; transition: all 0.3s ease;"
-                 onclick="<?php echo $usuario_logado ? "location.href='simulador_provas.php'" : "location.href='login.php'"; ?>">
-                <div class="d-flex flex-column justify-content-center h-100 text-center">
-                    <i class="fas fa-graduation-cap mb-2" style="color: white; font-size: 24px;"></i>
-                    <p class="text1 mb-0" style="color: white; font-weight: 600; font-size: 16px;">Simulador Prático</p>
-                    <small style="color: rgba(255,255,255,0.8);">Pratique para os exames</small>
-                </div>
-            </div>
-
-            <!-- Botão Comunidade -->
-            <div class="col-lg-3 col-md-3 col-sm-6 col-6 exam-card nav-button"
-                 style="background: linear-gradient(135deg, #2a9df4 0%, #187bcd 100%); min-height: 100px; border: 3px solid white; padding: 15px; cursor: pointer; transition: all 0.3s ease;"
-                 onclick="scrollToSection('comunidade')">
-                <div class="d-flex flex-column justify-content-center h-100 text-center">
-                    <i class="fas fa-comments mb-2" style="color: white; font-size: 24px;"></i>
-                    <p class="text1 mb-0" style="color: white; font-weight: 600; font-size: 16px;">Comunidade</p>
-                    <small style="color: rgba(255,255,255,0.8);">Conecte-se com outros</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Espaçamento entre navegação e banner -->
-    <div class="nav-banner-spacing"></div>
+    <?php include 'nav_padronizada.php'; ?>
 
     <!-- Seção banner -->
      <section class="banner-section">
@@ -549,7 +499,7 @@ if ($usuario_logado) {
             <div class="col-lg-5 col-md-5 col-sm-12 col-12 mb-4">
                 <p class="title1">Descubra sua vocação</p>
                 <p class="text1">De medicina à engenharia, de artes à diplomacia — o mundo te espera. Descubra qual caminho internacional combina com você.</p>
-                <button type="button" class="btn btn-primary btn-lg" onclick="alert('Funcionalidade em desenvolvimento!')">Faça já</button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="location.href='teste_vocacional.php'">Faça já</button>
             </div>
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
@@ -583,7 +533,7 @@ if ($usuario_logado) {
             <div class="col-lg-5 col-md-5 col-sm-12 col-12 mb-4">
                 <p class="title1">Ranking de universidades</p>
                 <p class="text1">Veja a melhor para o seu perfil</p>
-                <a href="ranking.php" class="btn btn-primary btn-lg">Checar rank</a>
+                <a href="ranking.php" class="btn btn-primary btn-lg">Checar Ranking</a>
             </div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
                 <img src="imagens/image36.png" alt="Ranking de universidades" class="img-fluid">
@@ -634,7 +584,7 @@ if ($usuario_logado) {
                     <div class="image-container mb-3">
                         <img src="Imagens/image 38.png" alt="Simulador de Entrevista" class="img-fluid feature-image">
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block feature-btn" onclick="alert('Funcionalidade em desenvolvimento! Em breve você poderá praticar entrevistas universitárias.')">
+                    <button type="button" class="btn btn-primary btn-lg btn-block feature-btn" onclick="location.href='entrevista.php'">
                         <i class="fas fa-microphone me-2"></i>
                         Realizar entrevista
                     </button>
@@ -701,97 +651,8 @@ if ($usuario_logado) {
         </div>
     </div>
 
-    <!-- Seção Quem Somos -->
-    <div id="quem-somos" class="container-fluid section-spacing" style="background: linear-gradient(135deg, #03254c 0%, #2a9df4 100%); padding: 80px 0; color: white;">
-        <div class="row">
-            <div class="col-lg-2 col-md-1 d-none d-md-block"></div>
-            <div class="col-lg-8 col-md-10 col-sm-12 col-12 text-center">
-                <div class="about-content">
-                    <h2 class="title1 mb-4" style="color: white; font-size: 2.5rem;">
-                        <i class="fas fa-heart me-3" style="color: #fd79a8;"></i>
-                        Quem Somos
-                    </h2>
-                    <p class="text1 mb-4" style="font-size: 20px; line-height: 1.8; color: rgba(255,255,255,0.95);">
-                        <strong>Somos mais que uma plataforma - somos um movimento de transformação social!</strong>
-                    </p>
-                    <p class="text1 mb-5" style="font-size: 18px; line-height: 1.7; color: rgba(255,255,255,0.9);">
-                        O DayDreaming nasceu com uma missão clara: <strong>democratizar o acesso ao ensino superior internacional</strong>,
-                        especialmente para jovens da rede pública que enfrentam barreiras de informação e recursos.
-                        Acreditamos que todo estudante, independente de sua origem socioeconômica, merece a chance de realizar
-                        o sonho de estudar no exterior.
-                    </p>
 
-                    <div class="mission-cards row mb-5">
-                        <div class="col-md-4 mb-3">
-                            <div class="mission-card">
-                                <i class="fas fa-graduation-cap mb-3" style="font-size: 2rem; color: #fd79a8;"></i>
-                                <h5 style="color: white;">Educação Acessível</h5>
-                                <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Simulados gratuitos e informações sobre bolsas de estudo</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="mission-card">
-                                <i class="fas fa-users mb-3" style="font-size: 2rem; color: #fd79a8;"></i>
-                                <h5 style="color: white;">Comunidade Forte</h5>
-                                <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Rede de apoio entre estudantes com objetivos similares</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="mission-card">
-                                <i class="fas fa-globe mb-3" style="font-size: 2rem; color: #fd79a8;"></i>
-                                <h5 style="color: white;">Oportunidades Globais</h5>
-                                <p style="color: rgba(255,255,255,0.8); font-size: 14px;">Informações sobre universidades e programas mundiais</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <?php if ($usuario_logado): ?>
-                    <div class="mt-4 p-4" style="background: rgba(3, 37, 76, 0.1); border-radius: 15px;">
-                        <h5 style="color: #03254c;">Bem-vindo de volta, <?php echo htmlspecialchars($usuario_nome); ?>! 🎓</h5>
-                        <p class="text1">Continue sua jornada de preparação para estudar no exterior.</p>
-                        <div class="row mt-3">
-                            <div class="col-md-4">
-                                <a href="simulador_provas.php" class="btn btn-primary btn-block">Fazer Simulados</a>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="historico_provas.php" class="btn btn-outline-primary btn-block">Ver Histórico</a>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="logout.php" class="btn btn-outline-secondary btn-block">Sair</a>
-                            </div>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <div class="mt-4">
-                        <p class="text1"><strong>Faça login para acessar todas as funcionalidades!</strong></p>
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <a href="login.php" class="btn btn-primary btn-lg btn-block">Entrar</a>
-                            </div>
-                            <div class="col-md-6">
-                                <a href="cadastro.php" class="btn btn-outline-primary btn-lg btn-block">Criar Conta</a>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <div class="col-lg-2 col-md-1 d-none d-md-block"></div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="container-fluid section-spacing text-center" style="background-color: #03254c; color: white; padding: 40px 0;">
-        <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" class="img-fluid" style="max-width: 200px;">
-        <p class="text1 mt-3">© 2024 DayDreaming - Sua jornada para educação internacional começa aqui!</p>
-        <p class="text1">Todos os direitos reservados</p>
-
-        <?php if ($usuario_logado): ?>
-            <div class="mt-3">
-                <small>Logado como: <?php echo htmlspecialchars($usuario_nome); ?> | <a href="logout.php" style="color: #2a9df4;">Sair</a></small>
-            </div>
-        <?php endif; ?>
-    </footer>
+    
 
     <script>
         // Função para scroll suave para seções

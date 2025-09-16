@@ -1,3 +1,6 @@
+<?php
+// Footer do sistema DayDreaming
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -165,38 +168,38 @@
                     <div class="footer-column">
                         <h3>Navegação</h3>
                         <ul>
-                            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                            <li><a href="#"><i class="fas fa-calculator"></i> Conversor GPA</a></li>
-                            <li><a href="#"><i class="fas fa-comments"></i> Fórum</a></li>
-                            <li><a href="#"><i class="fas fa-trophy"></i> Rank Universidades</a></li>
+                            <li><a href="../index.php"><i class="fas fa-home"></i> Home</a></li>
+                            <li><a href="../calculadora.php"><i class="fas fa-calculator"></i> Conversor GPA</a></li>
+                            <li><a href="../forum.php"><i class="fas fa-comments"></i> Fórum</a></li>
+                            <li><a href="../ranking.php"><i class="fas fa-trophy"></i> Rank Universidades</a></li>
                         </ul>
                     </div>
                     
                     <div class="footer-column">
                         <h3>Ferramentas</h3>
                         <ul>
-                            <li><a href="#"><i class="fas fa-file-alt"></i> Simulador de Provas</a></li>
-                            <li><a href="#"><i class="fas fa-user-tie"></i> Simulador de Entrevistas</a></li>
-                            <li><a href="#"><i class="fas fa-compass"></i> Teste Vocacional</a></li>
-                            <li><a href="#"><i class="fas fa-globe"></i> Guia de Países</a></li>
+                            <li><a href="../simulador_provas.php"><i class="fas fa-file-alt"></i> Simulador de Provas</a></li>
+                            <li><a href="../entrevista.php"><i class="fas fa-user-tie"></i> Simulador de Entrevistas</a></li>
+                            <li><a href="../teste_vocacional.php"><i class="fas fa-compass"></i> Teste Vocacional</a></li>
+                            <li><a href="../pesquisa_por_pais.php"><i class="fas fa-globe"></i> Guia de Países</a></li>
                         </ul>
                     </div>
                     
                     <div class="footer-column">
                         <h3>Legal</h3>
                         <ul>
-                            <li><a href="#"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
-                            <li><a href="#"><i class="fas fa-shield-alt"></i> Política de Privacidade</a></li>
+                            <li><a href="termos_uso.php"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
+                            <li><a href="politica_privacidade.php"><i class="fas fa-shield-alt"></i> Política de Privacidade</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 DayDreaming. Todos os direitos reservados.</p>
+                <p>&copy; <?php echo date('Y'); ?> DayDreaming. Todos os direitos reservados.</p>
                 <div>
-                    <a href="#">Termos de Uso</a> | 
-                    <a href="#">Política de Privacidade</a>
+                    <a href="termos_uso.php">Termos de Uso</a> | 
+                    <a href="politica_privacidade.php">Política de Privacidade</a>
                 </div>
             </div>
         </div>

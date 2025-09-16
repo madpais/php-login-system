@@ -179,7 +179,7 @@
                         <h3>Ferramentas</h3>
                         <ul>
                             <li><a href="simulador_provas.php"><i class="fas fa-file-alt"></i> Simulador de Provas</a></li>
-                            <li><a href="simulador_entrevistas.php"><i class="fas fa-user-tie"></i> Simulador de Entrevistas</a></li>
+                            <li><a href="entrevista.php"><i class="fas fa-user-tie"></i> Simulador de Entrevistas</a></li>
                             <li><a href="teste_vocacional.php"><i class="fas fa-compass"></i> Teste Vocacional</a></li>
                             <li><a href="pesquisa_por_pais.php"><i class="fas fa-globe"></i> Guia de Países</a></li>
                         </ul>

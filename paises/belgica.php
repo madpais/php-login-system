@@ -472,31 +472,9 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
         </div>
     </div>
 
-    <!-- Navegação -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="scrollToSection('quem-somos')">
-                    <p class="navbutton">Quem Somos</p>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="alert('Funcionalidade em desenvolvimento!')">
-                    <p class="navbutton">Teste Vocacional</p>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="<?php echo $usuario_logado ? "location.href='../simulador_provas.php'" : "location.href='../login.php'"; ?>">
-                    <p class="navbutton">Simulador Prático</p>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="scrollToSection('comunidade')">
-                    <p class="navbutton">Comunidade</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- Navegação -->
+        <?php include 'nav_paises.php'; ?>
+
 
     <!-- Imagem Hero -->
     <div class="container-fluid hero-image-container">
@@ -798,21 +776,332 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
 
                 <p><strong>💰 Valores típicos:</strong> Bolsas parciais variam de €3.000 a €10.000 por ano. Bolsas integrais podem cobrir 100% das taxas + €800-1200/mês para subsistência.</p>
             </div>
+
+            <!-- Universidades -->
+            <div class="tab-pane fade" id="universidades" role="tabpanel">
+                <h4><i class="fas fa-university me-2"></i>Principais Universidades</h4>
+                <p>A Bélgica possui <strong>universidades de excelência mundial</strong> com forte tradição em pesquisa e inovação.</p>
+
+                <h5>🏛️ Universidades de Destaque:</h5>
+                <ul>
+                    <li><strong>KU Leuven:</strong> #42 mundial (QS 2024)
+                        <br><a href="https://www.kuleuven.be/" target="_blank" class="btn-custom">🔗 KU Leuven</a>
+                    </li>
+                    <li><strong>Ghent University:</strong> #143 mundial (QS 2024)
+                        <br><a href="https://www.ugent.be/" target="_blank" class="btn-custom">🔗 Ghent University</a>
+                    </li>
+                    <li><strong>UCLouvain:</strong> #171 mundial (QS 2024)
+                        <br><a href="https://uclouvain.be/" target="_blank" class="btn-custom">🔗 UCLouvain</a>
+                    </li>
+                    <li><strong>ULB (Université Libre de Bruxelles):</strong> #189 mundial (QS 2024)
+                        <br><a href="https://www.ulb.be/" target="_blank" class="btn-custom">🔗 ULB</a>
+                    </li>
+                </ul>
+
+                <h5>📊 Estatísticas:</h5>
+                <ul>
+                    <li><strong>Estudantes internacionais:</strong> 15% do total</li>
+                    <li><strong>Programas em inglês:</strong> 200+ programas de mestrado</li>
+                    <li><strong>Taxa de matrícula:</strong> €835-4.175/ano (não-UE)</li>
+                    <li><strong>Requisito de idioma:</strong> B2-C1 no idioma de instrução</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h5>🎯 Dicas para Aplicação:</h5>
+                    <ul>
+                        <li><strong>Prazo:</strong> Aplicações até 1º de fevereiro (setembro)</li>
+                        <li><strong>Documentos:</strong> Histórico, diploma, carta de motivação</li>
+                        <li><strong>Idioma:</strong> Certificado oficial de proficiência</li>
+                        <li><strong>Visto:</strong> Processo pode levar 2-3 meses</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Comunidade Brasileira -->
+            <div class="tab-pane fade" id="comunidade-br" role="tabpanel">
+                <h4><i class="fas fa-flag me-2"></i>Comunidade de Brasileiros</h4>
+                <p>A Bélgica possui uma <strong>comunidade brasileira crescente</strong>, estimada em 15.000-20.000 pessoas, concentrada principalmente nas grandes cidades.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>🏙️ Principais Cidades:</h5>
+                        <ul>
+                            <li><strong>Bruxelas:</strong> Maior concentração, sede da UE</li>
+                            <li><strong>Antuérpia:</strong> Centro comercial e portuário</li>
+                            <li><strong>Liège:</strong> Região francófona</li>
+                            <li><strong>Ghent:</strong> Cidade universitária</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>🤝 Organizações e Grupos:</h5>
+                        <ul>
+                            <li><strong>Embaixada do Brasil:</strong> Bruxelas</li>
+                            <li><strong>Consulado Geral:</strong> Antuérpia</li>
+                            <li><strong>Associações culturais:</strong> Grupos no Facebook</li>
+                            <li><strong>Eventos:</strong> Festa Junina, Carnaval</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h5>🍽️ Vida Cultural Brasileira:</h5>
+                <ul>
+                    <li><strong>Restaurantes:</strong> Vários estabelecimentos brasileiros</li>
+                    <li><strong>Produtos:</strong> Lojas especializadas em produtos brasileiros</li>
+                    <li><strong>Eventos:</strong> Festivais e encontros regulares</li>
+                    <li><strong>Redes sociais:</strong> Grupos ativos no Facebook e WhatsApp</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h5>💡 Dicas de Integração:</h5>
+                    <ul>
+                        <li>Participe de eventos da comunidade brasileira</li>
+                        <li>Use grupos no Facebook para networking</li>
+                        <li>Visite a Embaixada para documentação</li>
+                        <li>Explore restaurantes brasileiros para sentir-se em casa</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cultura -->
+            <div class="tab-pane fade" id="cultura" role="tabpanel">
+                <h4><i class="fas fa-palette me-2"></i>Cultura e Tradições</h4>
+                <p>A Bélgica possui uma <strong>cultura rica e diversificada</strong>, resultado da fusão de três comunidades linguísticas e uma história milenar.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>🎨 Arte e Arquitetura:</h5>
+                        <ul>
+                            <li><strong>Arquitetura medieval:</strong> Bruges, Ghent, Antuérpia</li>
+                            <li><strong>Art Nouveau:</strong> Victor Horta em Bruxelas</li>
+                            <li><strong>Quadrinhos:</strong> Tintim, Smurfs, Lucky Luke</li>
+                            <li><strong>Museus:</strong> Museus de arte renomados</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>🍫 Gastronomia:</h5>
+                        <ul>
+                            <li><strong>Chocolates:</strong> Godiva, Neuhaus, Leonidas</li>
+                            <li><strong>Cervejas:</strong> 1.500+ tipos artesanais</li>
+                            <li><strong>Waffles:</strong> Liège e Bruxelas</li>
+                            <li><strong>Batatas fritas:</strong> Origem belga</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h5>🎭 Festivais e Eventos:</h5>
+                <ul>
+                    <li><strong>Tomorrowland:</strong> Maior festival de música eletrônica</li>
+                    <li><strong>Carnaval de Binche:</strong> Patrimônio da UNESCO</li>
+                    <li><strong>Festival de Bruges:</strong> Música clássica</li>
+                    <li><strong>Mercados de Natal:</strong> Tradição centenária</li>
+                </ul>
+
+                <h5>🏛️ Patrimônio Mundial UNESCO:</h5>
+                <ul>
+                    <li><strong>Centro histórico de Bruges</strong></li>
+                    <li><strong>Grande Place de Bruxelas</strong></li>
+                    <li><strong>Casas de Victor Horta</strong></li>
+                    <li><strong>Mina de carvão de Bois-du-Luc</strong></li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h5>🎯 Dicas Culturais:</h5>
+                    <ul>
+                        <li>Visite os centros históricos das cidades</li>
+                        <li>Experimente as cervejas artesanais locais</li>
+                        <li>Participe dos festivais de música</li>
+                        <li>Explore os museus de arte e história</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Calendário -->
+            <div class="tab-pane fade" id="calendario" role="tabpanel">
+                <h4><i class="fas fa-calendar-alt me-2"></i>Calendário Acadêmico e Feriados</h4>
+                <p>O ano acadêmico belga tem <strong>dois semestres</strong>, com feriados nacionais e regionais distribuídos ao longo do ano.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>📚 Calendário Acadêmico:</h5>
+                        <ul>
+                            <li><strong>1º Semestre:</strong> Setembro - Janeiro</li>
+                            <li><strong>Férias de Natal:</strong> 2-3 semanas em dezembro/janeiro</li>
+                            <li><strong>2º Semestre:</strong> Fevereiro - Junho</li>
+                            <li><strong>Férias de Páscoa:</strong> 2 semanas em março/abril</li>
+                            <li><strong>Férias de Verão:</strong> Julho - Agosto</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>📅 Feriados Nacionais:</h5>
+                        <ul>
+                            <li><strong>1º Janeiro:</strong> Ano Novo</li>
+                            <li><strong>Páscoa:</strong> Domingo e segunda-feira</li>
+                            <li><strong>1º Maio:</strong> Dia do Trabalho</li>
+                            <li><strong>21 Julho:</strong> Dia Nacional da Bélgica</li>
+                            <li><strong>15 Agosto:</strong> Assunção de Maria</li>
+                            <li><strong>1º Novembro:</strong> Dia de Todos os Santos</li>
+                            <li><strong>11 Novembro:</strong> Dia do Armistício</li>
+                            <li><strong>25 Dezembro:</strong> Natal</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h5>🗓️ Feriados Regionais:</h5>
+                <ul>
+                    <li><strong>Flandres:</strong> 11 de julho (Dia da Comunidade Flamenga)</li>
+                    <li><strong>Valônia:</strong> 27 de setembro (Dia da Comunidade Francesa)</li>
+                    <li><strong>Bruxelas:</strong> 8 de maio (Dia da Comunidade Alemã)</li>
+                </ul>
+
+                <h5>📝 Prazos Importantes:</h5>
+                <ul>
+                    <li><strong>Aplicações:</strong> Até 1º de fevereiro (setembro)</li>
+                    <li><strong>Matrículas:</strong> Julho - setembro</li>
+                    <li><strong>Início das aulas:</strong> Meados de setembro</li>
+                    <li><strong>Exames:</strong> Janeiro e junho</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h5>💡 Dicas de Planejamento:</h5>
+                    <ul>
+                        <li>Prepare documentos com antecedência</li>
+                        <li>Considere feriados para viagens</li>
+                        <li>Aproveite férias para explorar a Europa</li>
+                        <li>Organize-se com o calendário acadêmico</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Guia Bolsas -->
+            <div class="tab-pane fade" id="guia" role="tabpanel">
+                <h4><i class="fas fa-map me-2"></i>Guia Completo para Bolsas</h4>
+                <p>Para conseguir uma bolsa na Bélgica, é essencial <strong>planejar com antecedência</strong> e cumprir todos os requisitos.</p>
+
+                <h5>📋 Passo a Passo:</h5>
+                <ul>
+                    <li><strong>1. Escolha do programa:</strong> Defina área de estudo e universidade</li>
+                    <li><strong>2. Verificação de requisitos:</strong> Idiomas, notas, experiência</li>
+                    <li><strong>3. Preparação de documentos:</strong> Histórico, diploma, cartas</li>
+                    <li><strong>4. Aplicação:</strong> Preencha formulários com cuidado</li>
+                    <li><strong>5. Entrevista:</strong> Prepare-se para possíveis entrevistas</li>
+                </ul>
+
+                <h5>🎯 Bolsas Específicas para Brasileiros:</h5>
+                <ul>
+                    <li><strong>CAPES/CNPq:</strong> Bolsas do governo brasileiro
+                        <br><a href="https://www.capes.gov.br/" target="_blank" class="btn-custom">🔗 CAPES</a>
+                    </li>
+                    <li><strong>FAPESP:</strong> Fundação de Amparo à Pesquisa de SP
+                        <br><a href="https://fapesp.br/" target="_blank" class="btn-custom">🔗 FAPESP</a>
+                    </li>
+                    <li><strong>Fulbright:</strong> Para pós-graduação
+                        <br><a href="https://fulbright.org.br/" target="_blank" class="btn-custom">🔗 Fulbright</a>
+                    </li>
+                </ul>
+
+                <h5>📚 Documentos Necessários:</h5>
+                <ul>
+                    <li><strong>Histórico escolar:</strong> Traduzido e apostilado</li>
+                    <li><strong>Diploma:</strong> Reconhecido no Brasil</li>
+                    <li><strong>Cartas de recomendação:</strong> 2-3 cartas acadêmicas</li>
+                    <li><strong>Carta de motivação:</strong> 1-2 páginas bem estruturadas</li>
+                    <li><strong>CV acadêmico:</strong> Formato europeu</li>
+                    <li><strong>Certificado de idioma:</strong> B2-C1 no idioma de instrução</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h5>💡 Dicas de Sucesso:</h5>
+                    <ul>
+                        <li><strong>Comece cedo:</strong> 12-18 meses antes da data desejada</li>
+                        <li><strong>Pesquise bem:</strong> Cada bolsa tem critérios específicos</li>
+                        <li><strong>Mantenha excelência acadêmica:</strong> Média 8.0+ é ideal</li>
+                        <li><strong>Invista em idiomas:</strong> Francês, holandês ou alemão</li>
+                        <li><strong>Construa network:</strong> Contatos acadêmicos são valiosos</li>
+                    </ul>
+                </div>
+
+                <h5>🔗 Links Úteis:</h5>
+                <ul>
+                    <li><a href="https://www.studyinbelgium.be/" target="_blank" class="btn-custom">🎓 Study in Belgium</a></li>
+                    <li><a href="https://www.vliruos.be/" target="_blank" class="btn-custom">🏆 VLIR-UOS</a></li>
+                    <li><a href="https://www.ares-ac.be/" target="_blank" class="btn-custom">🌟 ARES</a></li>
+                </ul>
+            </div>
+
+            <!-- Trabalho -->
+            <div class="tab-pane fade" id="trabalho" role="tabpanel">
+                <h4><i class="fas fa-briefcase me-2"></i>Trabalho com Visto de Estudante</h4>
+                <p><strong>Sim!</strong> Estudantes internacionais podem trabalhar na Bélgica com algumas restrições e permissões específicas.</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>✅ Permissões de Trabalho:</h5>
+                        <ul>
+                            <li><strong>Estudantes UE:</strong> Trabalho livre sem restrições</li>
+                            <li><strong>Estudantes não-UE:</strong> 20h/semana durante estudos</li>
+                            <li><strong>Férias acadêmicas:</strong> Trabalho em tempo integral</li>
+                            <li><strong>Autorização:</strong> Necessária para não-UE</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>💰 Salários e Benefícios:</h5>
+                        <ul>
+                            <li><strong>Salário mínimo:</strong> €1.593,81/mês (2024)</li>
+                            <li><strong>Salário médio:</strong> €2.300/mês</li>
+                            <li><strong>Salário estudante:</strong> €10-15/hora</li>
+                            <li><strong>Benefícios:</strong> Seguro social, férias pagas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h5>💼 Setores com Oportunidades:</h5>
+                <ul>
+                    <li><strong>Hospitalidade:</strong> Restaurantes, hotéis, turismo</li>
+                    <li><strong>Varejo:</strong> Lojas, supermercados, centros comerciais</li>
+                    <li><strong>Call centers:</strong> Atendimento multilingue</li>
+                    <li><strong>Assistente de pesquisa:</strong> Universidades e institutos</li>
+                    <li><strong>Babá/Au pair:</strong> Cuidado de crianças</li>
+                </ul>
+
+                <h5>📋 Requisitos para Trabalhar:</h5>
+                <ul>
+                    <li><strong>Visto de estudante válido</strong></li>
+                    <li><strong>Número de segurança social belga</strong></li>
+                    <li><strong>Conta bancária belga</strong></li>
+                    <li><strong>Conhecimento básico do idioma local</strong></li>
+                    <li><strong>Autorização de trabalho (não-UE)</strong></li>
+                </ul>
+
+                <h5>🎓 Pós-Graduação e Carreira:</h5>
+                <ul>
+                    <li><strong>Visto de busca de emprego:</strong> 12 meses após graduação</li>
+                    <li><strong>Blue Card:</strong> Para profissionais altamente qualificados</li>
+                    <li><strong>Startup visa:</strong> Para empreendedores</li>
+                    <li><strong>Permanência:</strong> 5 anos de residência legal</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h5>💡 Dicas para Encontrar Trabalho:</h5>
+                    <ul>
+                        <li><strong>Use redes sociais:</strong> LinkedIn, grupos do Facebook</li>
+                        <li><strong>Visite agências de emprego:</strong> VDAB, Le Forem, Actiris</li>
+                        <li><strong>Participe de feiras de emprego:</strong> Universidades organizam eventos</li>
+                        <li><strong>Melhore idiomas:</strong> Francês, holandês ou alemão</li>
+                        <li><strong>Construa network:</strong> Contatos são fundamentais</li>
+                    </ul>
+                </div>
+
+                <h5>🔗 Recursos Úteis:</h5>
+                <ul>
+                    <li><a href="https://www.vdab.be/" target="_blank" class="btn-custom">💼 VDAB (Flandres)</a></li>
+                    <li><a href="https://www.leforem.be/" target="_blank" class="btn-custom">💼 Le Forem (Valônia)</a></li>
+                    <li><a href="https://www.actiris.be/" target="_blank" class="btn-custom">💼 Actiris (Bruxelas)</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="container-fluid text-center" style="background-color: #03254c; color: white; padding: 40px 0; margin-top: 60px;">
-        <img src="../Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" class="img-fluid" style="max-width: 200px;">
-        <p class="mt-3">© 2024 DayDreaming - Sua jornada para educação internacional começa aqui!</p>
-        <p>Todos os direitos reservados</p>
-
-        <?php if ($usuario_logado): ?>
-            <div class="mt-3">
-                <small>Logado como: <?php echo htmlspecialchars($usuario_nome); ?> | <a href="../logout.php" style="color: #2a9df4;">Sair</a></small>
-            </div>
-        <?php endif; ?>
-    </footer>
+    <?php include '../footer_padronizado.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -822,6 +1111,6 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
             alert('Funcionalidade em desenvolvimento!');
         }
     </script>
-<?php require_once __DIR__ . '/../footer.php'; ?>
+<?php require_once 'footer_paises.php'; ?>
 </body>
 </html>

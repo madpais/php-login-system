@@ -529,44 +529,7 @@ $nome_usuario = $usuario_logado && isset($_SESSION['nome']) ? $_SESSION['nome'] 
 </head>
 <body>
     <!-- Navigation Header -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2a9df4; padding: 10px 0;">
-        <div class="container">
-            <div class="row w-100 align-items-center">
-                <div class="col-md-3">
-                    <a href="index.php" class="navbar-brand">
-                        <img src="Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" style="height: 40px;">
-                    </a>
-                </div>
-                <div class="col-md-6 text-center">
-                    <h4 style="color: white; margin: 0;">Ranking Mundial de Universidades</h4>
-                </div>
-                <?php if ($usuario_logado): ?>
-                    <div class="col-md-3 text-right">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown">
-                                <i class="fas fa-user"></i> <?php echo htmlspecialchars($nome_usuario); ?>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="pagina_usuario.php">
-                                    <i class="fas fa-user-circle"></i> Meu Perfil
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="logout.php">
-                                    <i class="fas fa-sign-out-alt"></i> Sair
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <div class="col-md-3 text-right">
-                        <a href="login.php" class="btn btn-outline-light">
-                            <i class="fas fa-sign-in-alt"></i> Entrar
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </nav>
+    <?php include 'nav_padronizada.php'; ?>
 
     <div class="container">
         <div class="header">
@@ -722,53 +685,8 @@ $nome_usuario = $usuario_logado && isset($_SESSION['nome']) ? $_SESSION['nome'] 
         </div>
     </div>
     
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <h2>DayDreaming</h2>
-                    <p>Sua plataforma para transformar sonhos de intercâmbio em realidade</p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h3>Navegação</h3>
-                        <ul>
-                            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                            <li><a href="#"><i class="fas fa-calculator"></i> Conversor GPA</a></li>
-                            <li><a href="#"><i class="fas fa-comments"></i> Fórum</a></li>
-                            <li><a href="#"><i class="fas fa-trophy"></i> Rank Universidades</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h3>Ferramentas</h3>
-                        <ul>
-                            <li><a href="#"><i class="fas fa-file-alt"></i> Simulador de Provas</a></li>
-                            <li><a href="#"><i class="fas fa-user-tie"></i> Simulador de Entrevistas</a></li>
-                            <li><a href="#"><i class="fas fa-compass"></i> Teste Vocacional</a></li>
-                            <li><a href="#"><i class="fas fa-globe"></i> Guia de Países</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-column">
-                        <h3>Legal</h3>
-                        <ul>
-                            <li><a href="#"><i class="fas fa-file-contract"></i> Termos de Uso</a></li>
-                            <li><a href="#"><i class="fas fa-shield-alt"></i> Política de Privacidade</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2023 DayDreaming. Todos os direitos reservados.</p>
-                <div>
-                    <a href="#">Termos de Uso</a> | 
-                    <a href="#">Política de Privacidade</a>
-                </div>
-            </div>
-        </div>
+ 
+                   
     </footer>
     
     <script>

@@ -473,30 +473,7 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
     </div>
 
     <!-- Navegação -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="scrollToSection('quem-somos')">
-                    <p class="navbutton">Quem Somos</p>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="alert('Funcionalidade em desenvolvimento!')">
-                    <p class="navbutton">Teste Vocacional</p>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="<?php echo $usuario_logado ? "location.href='../simulador_provas.php'" : "location.href='../login.php'"; ?>">
-                    <p class="navbutton">Simulador Prático</p>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-3 col-sm-6 col-md-6 col-6">
-                <div class="nav-item-container" onclick="scrollToSection('comunidade')">
-                    <p class="navbutton">Comunidade</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php include 'nav_paises.php'; ?>
 
     <!-- Imagem Hero -->
     <div class="container-fluid hero-image-container">
@@ -1128,18 +1105,7 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="container-fluid text-center" style="background-color: #03254c; color: white; padding: 40px 0; margin-top: 60px;">
-        <img src="../Imagens/Logo_DayDreaming_trasp 1.png" alt="Logo DayDreaming" class="img-fluid" style="max-width: 200px;">
-        <p class="mt-3">© 2024 DayDreaming - Sua jornada para educação internacional começa aqui!</p>
-        <p>Todos os direitos reservados</p>
-
-        <?php if ($usuario_logado): ?>
-            <div class="mt-3">
-                <small>Logado como: <?php echo htmlspecialchars($usuario_nome); ?> | <a href="../logout.php" style="color: #2a9df4;">Sair</a></small>
-            </div>
-        <?php endif; ?>
-    </footer>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -1149,6 +1115,6 @@ if ($resultado_visita && $resultado_visita['primeira_visita']) {
             alert('Funcionalidade em desenvolvimento!');
         }
     </script>
-<?php require_once __DIR__ . '/../footer.php'; ?>
+<?php require_once 'footer_paises.php'; ?>
 </body>
 </html>
