@@ -503,7 +503,7 @@ if ($usuario_logado) {
             </div>
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
-                <img src="Imagens/segunda sessão.png" alt="Segunda sessão" class="img-fluid">
+                <img src="Imagens/segunda.png" alt="Segunda sessão" class="img-fluid">
             </div>
         </div>
     </div>
@@ -513,7 +513,7 @@ if ($usuario_logado) {
         <div class="row reverse-columns-mobile">
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12 mb-4">
-                <img src="Imagens/image 52.png" alt="Bolsas de estudo" class="img-fluid">
+                <img src="Imagens/paises.png" alt="Bolsas de estudo" class="img-fluid">
             </div>
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
@@ -536,7 +536,7 @@ if ($usuario_logado) {
                 <a href="ranking.php" class="btn btn-primary btn-lg">Checar Ranking</a>
             </div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
-                <img src="imagens/image36.png" alt="Ranking de universidades" class="img-fluid">
+                <img src="imagens/ranking.png" alt="Ranking de universidades" class="img-fluid">
             </div>
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
         </div>
@@ -551,7 +551,7 @@ if ($usuario_logado) {
                     <p class="title1">Simulador de Prova</p>
                     <p class="text1">Faça simulados para provas de diversos países e prepare-se para conquistar sua vaga internacional</p>
                     <div class="image-container mb-3">
-                        <img src="Imagens/image 37 (1).png" alt="Simulador de Prova" class="img-fluid feature-image">
+                        <img src="Imagens/simulador_prova.png" alt="Simulador de Prova" class="img-fluid feature-image">
                     </div>
                     <button type="button" class="btn btn-primary btn-lg btn-block feature-btn" onclick="location.href='<?php echo $usuario_logado ? 'simulador_provas.php' : 'login.php'; ?>'">
                         <i class="fas fa-play-circle me-2"></i>
@@ -565,7 +565,7 @@ if ($usuario_logado) {
                     <p class="title1">Conversor de GPA</p>
                     <p class="text1">Insira suas notas do ensino médio e calcule seu GPA para universidades internacionais</p>
                     <div class="image-container mb-3">
-                        <img src="Imagens/Rectangle 73.png" alt="Conversor de GPA" class="img-fluid feature-image">
+                        <img src="Imagens/calc.png" alt="Conversor de GPA" class="img-fluid feature-image">
                     </div>
                     <a href="calculadora.php" class="btn btn-primary btn-lg btn-block feature-btn">
                         <i class="fas fa-calculator me-2"></i>
@@ -582,7 +582,7 @@ if ($usuario_logado) {
                     <p class="title1">Simulador de Entrevista</p>
                     <p class="text1">Simule como seria uma entrevista para universidades dos seus sonhos e ganhe confiança</p>
                     <div class="image-container mb-3">
-                        <img src="Imagens/image 38.png" alt="Simulador de Entrevista" class="img-fluid feature-image">
+                        <img src="Imagens/simulador_entrevista.png" alt="Simulador de Entrevista" class="img-fluid feature-image">
                     </div>
                     <button type="button" class="btn btn-primary btn-lg btn-block feature-btn" onclick="location.href='entrevista.php'">
                         <i class="fas fa-microphone me-2"></i>
@@ -596,7 +596,7 @@ if ($usuario_logado) {
                     <p class="title1">Descoberta Final</p>
                     <p class="text1">Com base nas notas, entrevista e provas, veja suas chances de aprovação nas universidades</p>
                     <div class="image-container mb-3">
-                        <img src="Imagens/image 39.png" alt="Descoberta Final" class="img-fluid feature-image">
+                        <img src="Imagens/descoberta.png" alt="Descoberta Final" class="img-fluid feature-image">
                     </div>
                     <button type="button" class="btn btn-primary btn-lg btn-block feature-btn" onclick="alert('Funcionalidade em desenvolvimento! Em breve você poderá ver suas chances de aprovação.')">
                         <i class="fas fa-trophy me-2"></i>
@@ -614,7 +614,7 @@ if ($usuario_logado) {
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>
             <div class="col-lg-5 col-md-5 col-sm-12 col-12 mb-4">
                 <div class="community-image-container">
-                    <img src="Imagens/image 51.png" alt="Fórum Comunitário" class="img-fluid community-image">
+                    <img src="Imagens/forum.png" alt="Fórum Comunitário" class="img-fluid community-image">
                 </div>
             </div>
             <div class="col-lg-1 col-md-1 d-none d-md-block"></div>

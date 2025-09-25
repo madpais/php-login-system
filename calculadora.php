@@ -244,7 +244,7 @@ $nome_usuario = $usuario_nome ?: 'Visitante';
         <div class="row justify-content-center">
             <div class="col-12 col-md-8">
                 <div class="titulo-notas">
-                    <img src="imagens/calculadora (1).png" style="width: 60px;height: 60px;">
+                    <img src="imagens/calculadora.png" style="width: 60px;height: 60px;">
                     <div>
                         <p class="title1" style="font-weight: bold; margin-bottom: 0;">Suas Notas</p>
                         <p>Insira suas notas de 0 a 10 do sistema brasileiro</p>
